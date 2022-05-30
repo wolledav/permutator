@@ -1,0 +1,88 @@
+//
+// Created by honza on 21.11.21.
+//
+#include "solution.hpp"
+
+Solution::Solution() = default;
+
+Solution::Solution(uint node_cnt) {
+    this->node_cnt = node_cnt;
+    this->frequency.reserve(node_cnt);
+    this->permutation.reserve(node_cnt);
+    for (uint i = 0; i < node_cnt; i++)
+        this->frequency.push_back(0);
+    this->is_feasible = false;
+    this->fitness = std::numeric_limits<fitness_t>::max();
+}
+
+Solution::Solution(uint node_cnt, std::vector<uint> &freq) {
+    this->node_cnt = node_cnt;
+    this->frequency = freq;
+    this->permutation.reserve(node_cnt);
+    this->is_feasible = false;
+    this->fitness = std::numeric_limits<fitness_t>::max();
+}
+
+Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible) {
+    this->node_cnt = node_cnt;
+    this->frequency.reserve(node_cnt);
+    this->permutation = std::move(perm);
+    this->fitness = fit;
+    this->is_feasible = is_feasible;
+    for (auto node : perm) {
+        this->frequency[node]++;
+    }
+}
+
+Solution::Solution(Solution const &sol) {
+    this->node_cnt = sol.node_cnt;
+    this->permutation = sol.permutation;
+    this->frequency = sol.frequency;
+    this->fitness = sol.fitness;
+    this->is_feasible = sol.is_feasible;
+}
+
+void Solution::copy(Solution const &sol) {
+    this->node_cnt = sol.node_cnt;
+    this->permutation = sol.permutation;
+    this->frequency = sol.frequency;
+    this->fitness = sol.fitness;
+    this->is_feasible = sol.is_feasible;
+}
+
+void Solution::save_to_json(json& container) {
+    container["solution"]["fitness"] = this->fitness;
+    container["solution"]["is_feasible"] = this->is_feasible;
+    container["solution"]["permutation"] = this->permutation;
+}
+
+bool Solution::operator == (const Solution& other) {
+    if (other.permutation.size() != this->permutation.size())
+        return false;
+    for (uint i = 0; i < other.permutation.size(); i++) {
+        if (this->permutation[i] != other.permutation[i])
+            return false;
+    }
+    return true;
+}
+
+bool Solution::operator <= (const Solution& other) const {
+    return this->fitness <= other.fitness;
+}
+
+bool Solution::operator < (const Solution& other) const {
+    return this->fitness < other.fitness;
+}
+
+bool Solution::operator > (const Solution& other) const {
+    return this->fitness > other.fitness;
+}
+
+bool Solution::operator >= (const Solution& other) const {
+    return this->fitness >= other.fitness;
+}
+
+bool Solution::operator[] (uint idx) {
+    return this->permutation[idx];
+}
+
