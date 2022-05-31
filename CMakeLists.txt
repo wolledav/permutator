@@ -27,7 +27,7 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_executable(cvrp_meta
         tools/cvrp_meta.cpp
         src/config.cpp
-        src/generic/pwr_optimizer.cpp
+        src/generic/LS_optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/cvrp.cpp
@@ -40,7 +40,7 @@ add_executable(cvrp_meta
 add_executable(qap_meta
         tools/qap_meta.cpp
         src/config.cpp
-        src/generic/pwr_optimizer.cpp
+        src/generic/LS_optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/qap.cpp
@@ -49,7 +49,7 @@ add_executable(qap_meta
 add_executable(npfs_meta
         tools/npfs_meta.cpp
         src/config.cpp
-        src/generic/pwr_optimizer.cpp
+        src/generic/LS_optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/npfs.cpp
@@ -58,7 +58,7 @@ add_executable(npfs_meta
 add_executable(sudoku_meta
         tools/sudoku_meta.cpp
         src/config.cpp
-        src/generic/pwr_optimizer.cpp
+        src/generic/LS_optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/sudoku.cpp
@@ -95,7 +95,7 @@ target_include_directories(sudoku_meta PUBLIC
 add_executable(cvrp_ilp
         tools/cvrp_ilp.cpp
         src/config.cpp
-        src/generic/pwr_optimizer.cpp
+        src/generic/LS_optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/cvrp.cpp
@@ -108,7 +108,7 @@ add_executable(cvrp_ilp
 add_executable(qap_ilp
         tools/qap_ilp.cpp
         src/config.cpp
-        src/generic/pwr_optimizer.cpp
+        src/generic/LS_optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/qap.cpp
@@ -118,7 +118,7 @@ add_executable(npfs_ilp
         src/problem/qap.cpp
         tools/npfs_ilp.cpp
         src/config.cpp
-        src/generic/pwr_optimizer.cpp
+        src/generic/LS_optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/npfs.cpp

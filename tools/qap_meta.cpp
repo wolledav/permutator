@@ -5,7 +5,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "generic/pwr_optimizer.hpp"
+#include "generic/LS_optimizer.hpp"
 #include "problem/qap.hpp"
 
 using std::string;
@@ -75,7 +75,7 @@ int main (int argc, char *argv[])
     parse_filename(filename, &node_cnt);
     QAPInstance inst = QAPInstance(data_path.c_str(), node_cnt);
     std::cout << "Solving " << inst.name << std::endl;
-    PWROptimizer optimizer = PWROptimizer(&inst, config, seed);
+    LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
     optimizer.run();
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {

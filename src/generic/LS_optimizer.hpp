@@ -23,7 +23,7 @@ using std::vector;
 using std::string;
 
 // Metaheuristical optimizer for problems definable as Permutations With Repetitions
-class PWROptimizer
+class LS_optimizer
 {
     private:
         json config;
@@ -130,8 +130,8 @@ class PWROptimizer
     public:
         std::map<string, std::pair<uint, uint>> operation_histogram = {};
         // Initialization
-        explicit PWROptimizer(Instance* inst, json config, uint seed=0);
-        ~PWROptimizer() = default;
+        explicit LS_optimizer(Instance* inst, json config, uint seed=0);
+        ~LS_optimizer() = default;
         static std::mt19937* init_rng(uint seed);
         void setLogger(std::basic_ostream<char>& logs);
         void setConstruction(const string& constr);

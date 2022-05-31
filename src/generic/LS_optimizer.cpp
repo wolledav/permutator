@@ -1,4 +1,4 @@
-#include "pwr_optimizer.hpp"
+#include "LS_optimizer.hpp"
 
 #include <utility>
 
@@ -6,13 +6,13 @@
 // INITIALIZATION
 //**********************************************************************
 
-PWROptimizer::PWROptimizer(Instance *inst, json config, uint seed) {
+LS_optimizer::LS_optimizer(Instance *inst, json config, uint seed) {
     this->instance = inst;
     this->config = std::move(config);
     Solution sol(inst->node_cnt);
     this->solution = sol;
     this->best_known_solution = sol;
-    this->rng = PWROptimizer::init_rng(seed);
+    this->rng = LS_optimizer::init_rng(seed);
     this->timeout_s = this->config["timeout"].get<uint>();
     this->setConstruction(this->config["construction"].get<string>());
     this->setMetaheuristic(this->config["metaheuristic"].get<string>());
@@ -22,7 +22,7 @@ PWROptimizer::PWROptimizer(Instance *inst, json config, uint seed) {
     omp_set_num_threads(this->config["num_threads"]);
 }
 
-std::mt19937* PWROptimizer::init_rng(uint seed) {
+std::mt19937* LS_optimizer::init_rng(uint seed) {
     if (seed == 0) {
         std::random_device rd;     // only used once to initialise (seed) engine
         seed = rd();
@@ -31,7 +31,7 @@ std::mt19937* PWROptimizer::init_rng(uint seed) {
 
 }
 
-void PWROptimizer::setConstruction(const string& constr) {
+void LS_optimizer::setConstruction(const string& constr) {
     if (constr == "greedy")
         this->construction = [this] { construct_greedy(); };
     else if (constr == "random")
@@ -42,7 +42,7 @@ void PWROptimizer::setConstruction(const string& constr) {
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
 
-void PWROptimizer::setMetaheuristic(const string& meta) {
+void LS_optimizer::setMetaheuristic(const string& meta) {
     if (meta == "ILS")
         this->metaheuristic = [this] { ILS(); };
     else if (meta == "BVNS")
@@ -53,7 +53,7 @@ void PWROptimizer::setMetaheuristic(const string& meta) {
         throw std::system_error(EINVAL, std::system_category(), meta);
 }
 
-void PWROptimizer::setLocalSearch(const string& vnd_method) {
+void LS_optimizer::setLocalSearch(const string& vnd_method) {
     if (vnd_method == "BVND")
         this->local_search = [this] { basicVND(); };
     else if (vnd_method == "PVND")
@@ -68,7 +68,7 @@ void PWROptimizer::setLocalSearch(const string& vnd_method) {
         throw std::system_error(EINVAL, std::system_category(), vnd_method);
 }
 
-void PWROptimizer::setOperators(const vector<string>& operators) {
+void LS_optimizer::setOperators(const vector<string>& operators) {
     this->operation_list = operators;
     if (this->operation_list.empty())
         throw std::system_error(EINVAL, std::system_category(), "ERROR: No neighborhood selected!");
@@ -77,13 +77,13 @@ void PWROptimizer::setOperators(const vector<string>& operators) {
     }
 }
 
-void PWROptimizer::setPerturbations(const vector<string>& perturbations) {
+void LS_optimizer::setPerturbations(const vector<string>& perturbations) {
     this->perturbation_list = perturbations;
     if (this->perturbation_list.empty())
         throw std::system_error(EINVAL, std::system_category(), "ERROR: No perturbation selected!");
 }
 
-void PWROptimizer::setLogger(std::basic_ostream<char> &logs) {
+void LS_optimizer::setLogger(std::basic_ostream<char> &logs) {
     if (this->log_stream == nullptr) {
         this->log_stream = &logs;
     } else {
@@ -91,7 +91,7 @@ void PWROptimizer::setLogger(std::basic_ostream<char> &logs) {
     }
 }
 
-void PWROptimizer::run() {
+void LS_optimizer::run() {
     this->start = std::chrono::steady_clock::now();
     this->last_improvement = this->start;
     this->construction();
@@ -102,7 +102,7 @@ void PWROptimizer::run() {
 // OPERATORS
 //**********************************************************************
 
-bool PWROptimizer::insert1() {
+bool LS_optimizer::insert1() {
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
@@ -134,7 +134,7 @@ bool PWROptimizer::insert1() {
     return updated;
 }
 
-bool PWROptimizer::remove1() {
+bool LS_optimizer::remove1() {
     if (this->solution.permutation.empty())
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -165,7 +165,7 @@ bool PWROptimizer::remove1() {
     return updated;
 }
 
-bool PWROptimizer::relocate(uint x, bool reverse) {
+bool LS_optimizer::relocate(uint x, bool reverse) {
     if (x > this->solution.permutation.size())
         return false;
     fitness_t fitness;
@@ -202,7 +202,7 @@ bool PWROptimizer::relocate(uint x, bool reverse) {
     return updated;
 }
 
-bool PWROptimizer::centered_exchange(uint x) {
+bool LS_optimizer::centered_exchange(uint x) {
     fitness_t fitness;
     if (x > this->solution.permutation.size())
         return false;
@@ -232,7 +232,7 @@ bool PWROptimizer::centered_exchange(uint x) {
     return updated;
 }
 
-bool PWROptimizer::exchange(uint x, uint y, bool reverse) {
+bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
     if (x + y > this->solution.permutation.size())
         return false;
     fitness_t fitness;
@@ -282,7 +282,7 @@ bool PWROptimizer::exchange(uint x, uint y, bool reverse) {
     return updated;
 }
 
-bool PWROptimizer::move_all(uint x) {
+bool LS_optimizer::move_all(uint x) {
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -326,7 +326,7 @@ bool PWROptimizer::move_all(uint x) {
     return updated;
 }
 
-bool PWROptimizer::exchange_ids() {
+bool LS_optimizer::exchange_ids() {
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -369,7 +369,7 @@ bool PWROptimizer::exchange_ids() {
     return updated;
 }
 
-bool PWROptimizer::exchange_n_ids() {
+bool LS_optimizer::exchange_n_ids() {
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -415,7 +415,7 @@ bool PWROptimizer::exchange_n_ids() {
     return updated;
 }
 
-bool PWROptimizer::two_opt() {
+bool LS_optimizer::two_opt() {
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
     if (perm.size() < 2)
@@ -448,7 +448,7 @@ bool PWROptimizer::two_opt() {
 // PERTURBATIONS
 // **********************************************************************
 
-void PWROptimizer::double_bridge(uint k, bool reverse_all) {
+void LS_optimizer::double_bridge(uint k, bool reverse_all) {
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
     string log_args[k];
     std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt-1);
@@ -485,7 +485,7 @@ void PWROptimizer::double_bridge(uint k, bool reverse_all) {
 #endif
 }
 
-void PWROptimizer::random_swap(uint k) {
+void LS_optimizer::random_swap(uint k) {
     uint sel1, sel2, temp;
     vector<uint> perm = this->solution.permutation;
     std::uniform_int_distribution<uint> uni_select(0, perm.size() - 1);
@@ -503,7 +503,7 @@ void PWROptimizer::random_swap(uint k) {
 #endif
 }
 
-void PWROptimizer::random_move(uint k) {
+void LS_optimizer::random_move(uint k) {
     uint sel1, sel2, temp;
     vector<uint> perm = this->solution.permutation;
     std::uniform_int_distribution<uint> uni_select(0, perm.size() - 1);
@@ -521,7 +521,7 @@ void PWROptimizer::random_move(uint k) {
 #endif
 }
 
-void PWROptimizer::reinsert(uint k) {
+void LS_optimizer::reinsert(uint k) {
     vector<uint> idx_choice, node_cnt;
     vector<string> log_args;
     vector<uint> perm = this->solution.permutation;
@@ -556,7 +556,7 @@ void PWROptimizer::reinsert(uint k) {
 #endif
 }
 
-void PWROptimizer::random_move_all(uint k) {
+void LS_optimizer::random_move_all(uint k) {
     vector<string> log_args;
     int move;
     uint node_id;
@@ -599,7 +599,7 @@ void PWROptimizer::random_move_all(uint k) {
 // VARIABLE NEIGHBORHOOD DESCENT
 //**********************************************************************
 
-void PWROptimizer::basicVND() {
+void LS_optimizer::basicVND() {
     std::chrono::steady_clock::time_point now;
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
@@ -613,7 +613,7 @@ void PWROptimizer::basicVND() {
     }
 }
 
-void PWROptimizer::pipeVND() {
+void LS_optimizer::pipeVND() {
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
     while (current_fitness < prev_fitness) {
@@ -631,7 +631,7 @@ void PWROptimizer::pipeVND() {
     }
 }
 
-void PWROptimizer::cyclicVND() {
+void LS_optimizer::cyclicVND() {
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
     while (current_fitness < prev_fitness) {
@@ -644,7 +644,7 @@ void PWROptimizer::cyclicVND() {
     }
 }
 
-void PWROptimizer::randomVND() {
+void LS_optimizer::randomVND() {
     std::uniform_int_distribution<uint> uni(0, this->operation_list.size() - 1);
     vector<uint> order;
     for (uint i = 0; i < operation_list.size(); i++)
@@ -662,7 +662,7 @@ void PWROptimizer::randomVND() {
     }
 }
 
-void PWROptimizer::randompipeVND() {
+void LS_optimizer::randompipeVND() {
     std::uniform_int_distribution<uint> uni(0, this->operation_list.size() - 1);
     vector<uint> order;
     for (uint i = 0; i < operation_list.size(); i++)
@@ -685,7 +685,7 @@ void PWROptimizer::randompipeVND() {
 // METAHEURISTICS
 //**********************************************************************
 
-void PWROptimizer::ILS() {
+void LS_optimizer::ILS() {
     this->local_search();
     do {
         for (const auto &pert : this->perturbation_list) {
@@ -699,7 +699,7 @@ void PWROptimizer::ILS() {
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
-void PWROptimizer::basicVNS() {
+void LS_optimizer::basicVNS() {
     uint min_k = config["bvns_min_k"].get<uint>();
     uint max_k = config["bvns_max_k"].get<uint>();
     uint k = min_k;
@@ -725,7 +725,7 @@ void PWROptimizer::basicVNS() {
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
-void PWROptimizer::calibratingVNS() {
+void LS_optimizer::calibratingVNS() {
     uint min_k = config["bvns_min_k"].get<uint>();
     uint max_k = config["bvns_max_k"].get<uint>();
     uint it_per_k = config["bvns_it_per_k"].get<uint>();
@@ -767,7 +767,7 @@ void PWROptimizer::calibratingVNS() {
 // Initial Solution
 //**********************************************************************
 
-void PWROptimizer::construct_greedy() {
+void LS_optimizer::construct_greedy() {
     bool updated, valid;
     do {
         updated = insert1();
@@ -775,7 +775,7 @@ void PWROptimizer::construct_greedy() {
     } while((!valid || updated) && !this->timeout());
 }
 
-void PWROptimizer::construct_random() {
+void LS_optimizer::construct_random() {
     uint rnd_idx;
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++) {
         for (uint counter = 0; counter < this->instance->lbs[node_id]; counter++) {
@@ -786,7 +786,7 @@ void PWROptimizer::construct_random() {
     }
 }
 
-void PWROptimizer::construct_random_replicate() {
+void LS_optimizer::construct_random_replicate() {
     vector<uint> perm;
     for (uint i = 0; i < this->instance->node_cnt; i++)
         perm.push_back(i);
@@ -805,7 +805,7 @@ void PWROptimizer::construct_random_replicate() {
 // UTILS
 //**********************************************************************
 
-bool PWROptimizer::operation_call(const string &operation_name) {
+bool LS_optimizer::operation_call(const string &operation_name) {
     bool result;
     this->operation_histogram[operation_name].first++;
     result = this->operation_map.at(operation_name)();
@@ -819,7 +819,7 @@ bool PWROptimizer::operation_call(const string &operation_name) {
     return result;
 }
 
-void PWROptimizer::perturbation_call(const string &perturbation_name, uint k) {
+void LS_optimizer::perturbation_call(const string &perturbation_name, uint k) {
     if (!config["allow_infeasible"].get<bool>()) {
         do {
             this->solution.copy(this->best_known_solution);
@@ -830,30 +830,30 @@ void PWROptimizer::perturbation_call(const string &perturbation_name, uint k) {
     }
 }
 
-long PWROptimizer::get_runtime() {
+long LS_optimizer::get_runtime() {
     auto now = std::chrono::steady_clock::now();
     return std::chrono::duration_cast<std::chrono::seconds>(now - this->start).count();
 }
 
-bool PWROptimizer::timeout() {
+bool LS_optimizer::timeout() {
     return this->get_runtime() > this->timeout_s;
 }
 
-void PWROptimizer::random_reverse(std::vector<uint>::iterator it1, std::vector<uint>::iterator it2){
+void LS_optimizer::random_reverse(std::vector<uint>::iterator it1, std::vector<uint>::iterator it2){
     std::uniform_int_distribution<uint> uni(0, 1);
     uint choice = uni(*this->rng);
     if (choice)
         std::reverse(it1, it2);
 }
 
-Solution PWROptimizer::make_solution(const vector<uint> &permutation) {
+Solution LS_optimizer::make_solution(const vector<uint> &permutation) {
     Solution new_solution;
     new_solution.permutation = permutation;
     new_solution.is_feasible = this->instance->compute_fitness(permutation, &new_solution.fitness);
     return new_solution;
 }
 
-bool PWROptimizer::valid_solution(Solution *sol) {
+bool LS_optimizer::valid_solution(Solution *sol) {
     for (uint i = 0; i < this->instance->node_cnt; i++){
         if (sol->frequency[i] < this->instance->lbs[i] || sol->frequency[i] > this->instance->ubs[i])
             return false;
@@ -865,7 +865,7 @@ bool PWROptimizer::valid_solution(Solution *sol) {
 // Logging
 //**********************************************************************
 
-void PWROptimizer::print_operation(bool update, const string& msg) {
+void LS_optimizer::print_operation(bool update, const string& msg) {
     std::cout << (update ? "{*}" :  "{-}") << std::setw(6) << std::right << str(format("[%1%] ") % this->get_runtime());
     std::cout << std::setw(30) << std::left << msg;
     std::cout << " --> Feasible:" << this->solution.is_feasible <<
@@ -875,7 +875,7 @@ void PWROptimizer::print_operation(bool update, const string& msg) {
             "  Curr Fitness:" << this->solution.fitness << std::endl;
 }
 
-void PWROptimizer::save_to_json(json& container) {
+void LS_optimizer::save_to_json(json& container) {
     std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(this->last_improvement-this->start);
     container["name"] = this->instance->name;
     container["last_improvement"] = sec.count();

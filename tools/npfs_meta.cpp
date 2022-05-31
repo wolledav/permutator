@@ -5,7 +5,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "generic/pwr_optimizer.hpp"
+#include "generic/LS_optimizer.hpp"
 #include "problem/npfs.hpp"
 
 using std::string;
@@ -80,7 +80,7 @@ int main (int argc, char *argv[])
     parse_filename(filename, &job_cnt, &machine_cnt);
     NPFSInstance inst = NPFSInstance(data_path, job_cnt, machine_cnt);
     std::cout << "Solving " << inst.name << std::endl;
-    PWROptimizer optimizer = PWROptimizer(&inst, config, seed);
+    LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
     optimizer.run();
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {

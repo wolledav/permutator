@@ -2,7 +2,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "generic/pwr_optimizer.hpp"
+#include "generic/LS_optimizer.hpp"
 #include "problem/cvrp.hpp"
 #include "lib/tinyxml/tinyxml.h"
 
@@ -25,7 +25,7 @@ void parse_filename(string name, uint *N, uint *k) {
 }
 
 void show_usage(){
-    std::cout << "Usage: cvrp_meta -d dataset_path [-c] config path [-t] timeout(sec) [-s] seed [-o] output file path\n";
+    std::cout << "Usage: cvrp_meta -d data_path [-c] config_path [-t] timeout(sec) [-s] seed [-o] output_file_path\n";
 }
 
 int main (int argc, char *argv[])
@@ -60,27 +60,33 @@ int main (int argc, char *argv[])
         }
     }
 
+    // Display usage instructions
     if (data_path.empty()) {
         show_usage();
         exit(EXIT_FAILURE);
     }
 
+    // Load config
     if (!conf_path.empty()) {
         config = Config::read_config(conf_path);
     } else {
         config = Config::read_default_config("cvrp");
     }
 
+    // Rewrite timeout
     if (timeout_s != 0) {
         config["timeout"] = timeout_s;
     }
 
+    // Parse and solve instance
     string filename = get_filename(data_path);
     parse_filename(filename, &node_cnt, &tours);
     CVRPInstance inst = CVRPInstance(data_path.c_str(), node_cnt, tours);
     std::cout << "Solving " << inst.name << std::endl;
-    PWROptimizer optimizer = PWROptimizer(&inst, config, seed);
+    LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
     optimizer.run();
+
+    // Export solution
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {
         output_file.open(output_path);
