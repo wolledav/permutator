@@ -28,11 +28,11 @@ cp libgurobi_c++.a ../../lib/
 ## Components overview
 
 ### Metaheuristics
-| Name            | Description           | Parameters                         |
-|-----------------|-----------------------|------------------------------------|
-| ILS             | Iterated Local Search | ils_k . . . perturbation parameter |
-| basic VNS       |                       |                                    |
-| calibrating VNS |                       |                                    |
+| Name            | Parameters                            |
+|-----------------|---------------------------------------|
+| ILS             | ils_k                                 |
+| basic VNS       | bvns_min_k, bvns_max_k                |
+| calibrating VNS | cvns_min_k, cvns_max_k, cvns_it_per_k |
 
 ### Perturbations
 | Name                          | Description |
