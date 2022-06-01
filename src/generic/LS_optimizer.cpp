@@ -48,7 +48,7 @@ void LS_optimizer::setMetaheuristic(const string& meta) {
     else if (meta == "BVNS")
         this->metaheuristic = [this] { basicVNS(); };
     else if (meta == "CVNS")
-        this->metaheuristic = [this] { calibratingVNS(); };
+        this->metaheuristic = [this] { calibratedVNS(); };
     else
         throw std::system_error(EINVAL, std::system_category(), meta);
 }
@@ -685,13 +685,22 @@ void LS_optimizer::randompipeVND() {
 // METAHEURISTICS
 //**********************************************************************
 
+/*
+ * Iterated Local Search metaheuristic.
+ * Alternates pertubation and local search.
+ * Parameters:
+ * ils_k . . . perturbation parameter
+ */
 void LS_optimizer::ILS() {
     this->local_search();
     do {
+        // Apply perturbation to this->solution
         for (const auto &pert : this->perturbation_list) {
             this->perturbation_call(pert, config["ils_k"].get<uint>());
         }
+        // Perform local search on this->solution, ev. update this->best_known_solution
         this->local_search();
+        // Reset this->solution to this->best_known_solution
         if (this->best_known_solution.fitness != this->solution.fitness) {
             this->solution.copy(this->best_known_solution);
         }
@@ -699,65 +708,89 @@ void LS_optimizer::ILS() {
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
+/*
+ * Basic Variable Neighborhood Search metaheuristic.
+ * Alternates perturbation and local search.
+ * Perturbation parameter k resets after improving local search, otherwise increases by 1.
+ * Parameters:
+ * bvns_min_k  . . . initial value of k
+ * bvns_max_k . . . max value of k
+ */
 void LS_optimizer::basicVNS() {
     uint min_k = config["bvns_min_k"].get<uint>();
     uint max_k = config["bvns_max_k"].get<uint>();
     uint k = min_k;
-    Solution best_solution(this->solution);
-    std::chrono::steady_clock::time_point now;
+
     this->local_search();
-    best_solution.copy(this->solution);
+    Solution current_best_solution(this->solution); // needed, as this->best_known_solution is updated internally
     do {
+        // Apply perturbation to this->solution
         for (const auto &pert : this->perturbation_list) {
             this->perturbation_call(pert, k);
         }
+        // Perform local search on this->solution, ev. update this->best_known_solution
         this->local_search();
-        if (this->solution < best_solution){
-            best_solution.copy(this->solution);
+        // Adjust k
+        if (this->solution < current_best_solution){
+            current_best_solution.copy(this->solution);
             k = min_k;
         } else {
             k = k < max_k ? k + 1 : max_k;
         }
-        if (this->best_known_solution.fitness != best_solution.fitness)
+        // TODO this should never happen
+        if (this->best_known_solution.fitness != current_best_solution.fitness)
             std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
+        // Reset this->solution to this->best_known_solution
         this->solution.copy(this->best_known_solution);
     } while (!this->timeout());
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
-void LS_optimizer::calibratingVNS() {
-    uint min_k = config["bvns_min_k"].get<uint>();
-    uint max_k = config["bvns_max_k"].get<uint>();
-    uint it_per_k = config["bvns_it_per_k"].get<uint>();
+/*
+ * Calibrated Variable Neighborhood Search metaheuristic (custom).
+ * TODO think through intended logic.
+ * Parameters:
+ * cvns_min_k . . . initial value of k
+ * cvns_max_k . . . max value of k
+ * cvns_it_per_k . . . ???
+ */
+void LS_optimizer::calibratedVNS() {
+    uint min_k = config["cvns_min_k"].get<uint>();
+    uint max_k = config["cvns_max_k"].get<uint>();
+    uint it_per_k = config["cvns_it_per_k"].get<uint>();
     uint same_sol_cnt = 0;
     uint k = min_k;
-    Solution best_solution(this->solution);
-    std::chrono::steady_clock::time_point now;
     this->local_search();
-    best_solution.copy(this->solution);
+
+    Solution current_best_solution(this->solution);
     do {
-        for (const auto &pert : this->perturbation_list) {
+        // Apply perturbation to this->solution
+        for (const auto &pert: this->perturbation_list) {
             this->perturbation_call(pert, k);
         }
+        // Perform local search on this->solution, ev. update this->best_known_solution
         this->local_search();
-        if (this->solution < best_solution) {
-            best_solution.copy(this->solution);
+
+        if (this->solution < current_best_solution) { // Improving solution -> reset k
+            current_best_solution.copy(this->solution);
             k = min_k;
         }
-        if (this->solution.fitness == best_solution.fitness){
-            if (++same_sol_cnt == it_per_k) {
+        if (this->solution.fitness == current_best_solution.fitness){ // Improving or same solution found
+            if (++same_sol_cnt == it_per_k) { // Increase k after it_per_k
                 same_sol_cnt = 0;
                 k = k < max_k ? k + 1 : max_k;
             }
-        } else {
+        } else { // Worse solution found
             if (same_sol_cnt > 0) {
                 same_sol_cnt--;
             } else {
                 //k = k > min_k ? k - 1 : min_k;
             }
         }
-        if (this->best_known_solution.fitness != best_solution.fitness)
+        // TODO this should never happen
+        if (this->best_known_solution.fitness != current_best_solution.fitness)
             std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
+        // Reset this->solution to this->best_known_solution
         this->solution.copy(this->best_known_solution);
     } while (!this->timeout());
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;

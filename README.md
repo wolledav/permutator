@@ -10,8 +10,8 @@ cmake --build cmake-build-release --target all -- -j 6
 ```
 
 ### Gurobi installation
-1) Download and extract Gurobi in /opt
-2) Add to ~/.bashrc
+1) Download and extract Gurobi to /opt
+2) Add to ~/.bashrc:
 ```
 export GUROBI_HOME="/opt/gurobi951/linux64"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
@@ -28,11 +28,11 @@ cp libgurobi_c++.a ../../lib/
 ## Components overview
 
 ### Metaheuristics
-| Name            | Description |
-|-----------------|-------------|
-| ILS             |             |
-| basic VNS       |             |
-| calibrating VNS |             |
+| Name            | Description           | Parameters                         |
+|-----------------|-----------------------|------------------------------------|
+| ILS             | Iterated Local Search | ils_k . . . perturbation parameter |
+| basic VNS       |                       |                                    |
+| calibrating VNS |                       |                                    |
 
 ### Perturbations
 | Name                          | Description |

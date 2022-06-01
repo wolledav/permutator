@@ -1,0 +1,11 @@
+{
+    "timeout": 5,
+    "num_threads": 1,
+    "allow_infeasible": true,
+    "ils_k": 4,
+    "construction": "greedy",
+    "metaheuristic": "ILS",
+    "local_search": "PVND",
+    "operators": ["two_opt"],
+    "perturbation" : ["double_bridge"]
+}
