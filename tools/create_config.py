@@ -20,6 +20,10 @@ for i in range(0, len(params), 2):
         config[param] = bool(value)
     elif param == "ils_k":
         config[param] = int(value)
+    elif param == "bvns_min_k":
+        config[param] = int(value)
+    elif param == "bvns_max_k":
+        config[param] = int(value)
     elif param == "construction":
         config[param] = value
     elif param == "metaheuristic":

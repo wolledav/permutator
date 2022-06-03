@@ -66,7 +66,7 @@ $EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE 1> ${STDOUT} 2> ${STDERR}
 if [ -s "${STDOUT}" ]; then
     COST=$(tail -n 1 ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
     echo "$COST"
-#    rm -f "${STDOUT}" "${STDERR}" "${CONFIG_FILE}"
+    rm -f "${STDOUT}" "${STDERR}" "${CONFIG_FILE}"
     exit 0
 else
     error "${STDOUT}: No such file or directory"
