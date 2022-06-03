@@ -65,10 +65,10 @@ cp libgurobi_c++.a ../../lib/
 | exchange_n_ids          |             |
 
 ### Construction procedures
-| Name             | Description |
-|------------------|-------------|
-| greedy           |             |
-| random           |             |
-| random replicate |             |
+| Name             | Parameters |
+|------------------|------------|
+| greedy           | none       |
+| random           | none       |
+| random replicate | none       |
 
 

@@ -681,9 +681,9 @@ void LS_optimizer::randompipeVND() {
     }
 }
 
-//**********************************************************************
+//**********************************************************************************************************************
 // METAHEURISTICS
-//**********************************************************************
+//**********************************************************************************************************************
 
 /*
  * Iterated Local Search metaheuristic.
@@ -796,10 +796,14 @@ void LS_optimizer::calibratedVNS() {
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
-//**********************************************************************
-// Initial Solution
-//**********************************************************************
+//**********************************************************************************************************************
+// CONSTRUCTIONS
+//**********************************************************************************************************************
 
+/*
+ * Applies insert1 operator until the solution is not valid w.r.t. LBs and UBs or the operator does not update the solution.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::construct_greedy() {
     bool updated, valid;
     do {
@@ -808,6 +812,10 @@ void LS_optimizer::construct_greedy() {
     } while((!valid || updated) && !this->timeout());
 }
 
+/*
+ * Adds nodes to random positions of the solution, until all nodes are at their LBs.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::construct_random() {
     uint rnd_idx;
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++) {
@@ -819,6 +827,11 @@ void LS_optimizer::construct_random() {
     }
 }
 
+/*
+ * Creates a random permutation of nodes.
+ * Replicates the permutation, until the solution is not valid w.r.t. LBs and UBs.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::construct_random_replicate() {
     vector<uint> perm;
     for (uint i = 0; i < this->instance->node_cnt; i++)
