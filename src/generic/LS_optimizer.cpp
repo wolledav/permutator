@@ -138,13 +138,15 @@ bool LS_optimizer::remove1() {
     if (this->solution.permutation.empty())
         return false;
     vector<uint> perm = this->solution.permutation;
-    uint removed_node = 0;
+    uint removed_node = -1;
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, removed_node, perm)
     for (uint i = 0; i < perm.size(); i++){
-        if (this->solution.frequency[perm[i]] <= this->instance->lbs[perm[i]]) {continue;}
+        if (this->solution.frequency[perm[i]] <= this->instance->lbs[perm[i]]) {
+            continue;
+        }
         vector<uint> new_perm = perm;
         new_perm.erase(new_perm.begin() + i);
         this->instance->compute_fitness(new_perm, &fitness);
@@ -154,7 +156,7 @@ bool LS_optimizer::remove1() {
             removed_node = perm[i];
         }
     }
-    if (best_solution <= this->solution) {
+    if (best_solution <= this->solution && removed_node != -1) {
         updated = true;
         this->solution.copy(best_solution);
         this->solution.frequency[removed_node]--; // decrement frequency
@@ -595,10 +597,16 @@ void LS_optimizer::random_move_all(uint k) {
 #endif
 }
 
-//**********************************************************************
-// VARIABLE NEIGHBORHOOD DESCENT
+//**********************************************************************************************************************
+// LOCAL SEARCH HEURISTICS
 //**********************************************************************
 
+/*
+ * Sequentially applies local search operators in fixed order.
+ * Resets back to the first operator in case of improvement.
+ * Terminates, when no operator improves the current solution.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::basicVND() {
     std::chrono::steady_clock::time_point now;
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
@@ -613,13 +621,19 @@ void LS_optimizer::basicVND() {
     }
 }
 
+/*
+ * Sequentially applies local search operators in fixed order.
+ * Repeats the same operator in case of improvement.
+ * Terminates, when no operator improves the current solution.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::pipeVND() {
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+    int last_improving_operator = -1;
     while (current_fitness < prev_fitness) {
-        int last_improving_operator = -1;
         for (int i = 0; i < (int)this->operation_list.size(); i++) {
-            if (last_improving_operator == i) {return;}
+            if (last_improving_operator == i) {return;} // won't help this time
             string operation = this->operation_list[i];
             while (this->operation_call(operation)) {
                 last_improving_operator = i;
@@ -631,12 +645,18 @@ void LS_optimizer::pipeVND() {
     }
 }
 
+/*
+ * Sequentially applies local search operators in fixed order.
+ * Terminates, when no operator improves the current solution.
+ * Updates existing this->solution.
+ * TODO termination could be sped up as in pipeVND
+ */
 void LS_optimizer::cyclicVND() {
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
     while (current_fitness < prev_fitness) {
         for (const auto &operation : this->operation_list) {
-            this->operation_call(operation);
+            auto res = this->operation_call(operation);
             if (this->timeout()) {return;}
         }
         prev_fitness = current_fitness;
@@ -823,6 +843,7 @@ void LS_optimizer::construct_random() {
             std::uniform_int_distribution<uint> uni(0, this->solution.getSize());
             rnd_idx = uni(*this->rng);
             this->solution.permutation.insert(this->solution.permutation.begin() + rnd_idx, node_id);
+            this->solution.frequency[node_id]++;
         }
     }
 }
