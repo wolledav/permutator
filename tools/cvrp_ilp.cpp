@@ -49,6 +49,7 @@ GRBModel* make_model(CVRPInstance* inst, GRBVar **x , const string& model_filena
     GRBEnv *env;
     auto *y = new GRBVar[N];
     env = new GRBEnv();
+//    env->set("UserName", "wolledav");
     auto *model = new GRBModel(*env);
     GRBLinExpr obj = 0;
     // Create variables and objective function
