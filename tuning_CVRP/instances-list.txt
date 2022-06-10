@@ -10,24 +10,14 @@
 # 100/100-1_100-3.tsp --time 2
 # 100/100-1_100-4.tsp --time 3
 
-# A-n65-k09.xml timeout 6
-# P-n050-k10.xml timeout 6
-# P-n076-k05.xml timeout 6
-# X-n148-k46.xml timeout 18
-# X-n204-k19.xml timeout 18
-# X-n251-k28.xml timeout 18
-# X-n351-k40.xml timeout 36
-# X-n561-k42.xml timeout 36
-# X-n749-k98.xml timeout 36
-# X-n1001-k43.xml timeout 36
+A-n65-k09.xml timeout 600
+P-n050-k10.xml timeout 600
+P-n076-k05.xml timeout 600
+X-n148-k46.xml timeout 1800
+X-n204-k19.xml timeout 1800
+X-n251-k28.xml timeout 1800
+X-n351-k40.xml timeout 3600
+X-n561-k42.xml timeout 3600
+X-n749-k98.xml timeout 3600
+X-n1001-k43.xml timeout 3600
 
-A-n65-k09.xml timeout 5
-P-n050-k10.xml timeout 5
-P-n076-k05.xml timeout 5
-X-n148-k46.xml timeout 5
-X-n204-k19.xml timeout 5
-X-n251-k28.xml timeout 5
-X-n351-k40.xml timeout 5
-X-n561-k42.xml timeout 5
-X-n749-k98.xml timeout 5
-X-n1001-k43.xml timeout 5
