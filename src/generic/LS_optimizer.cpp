@@ -95,7 +95,11 @@ void LS_optimizer::run() {
     this->start = std::chrono::steady_clock::now();
     this->last_improvement = this->start;
     this->construction();
-    this->metaheuristic();
+    if (!this->timeout()) {
+        this->metaheuristic();
+    } else {
+        this->best_known_solution = this->solution;
+    }
 }
 
 //**********************************************************************
