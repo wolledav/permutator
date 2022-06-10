@@ -11,5 +11,5 @@ json Config::read_config(const string& path) {
 }
 
 json Config::read_default_config(const string& problem_type) {
-    return read_config("../data/default_config.json")[problem_type];
+    return read_config("../configs/default_config.json")[problem_type];
 }
