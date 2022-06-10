@@ -47,7 +47,7 @@ perturbation        "perturbation "     c   (double_bridge, random_double_bridge
 allow_infeasible    "allow_infeasible " c   (0, 1)
 
 ## LOCAL SEARCH HEURISTIC
-local_search        "local_search "     c   (BVND, PVND, CVND, RVND, RPVNP)
+local_search        "local_search "     c   (BVND, PVND, CVND, RVND, RPVND)
 
 ## LOCAL SEARCH OPERATORS
 insert_1            "op_insert_1 "      c   (0, 1)
