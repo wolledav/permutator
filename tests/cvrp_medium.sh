@@ -5,7 +5,7 @@ TEST_TIMEOUT=1800 # 30 minutes
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/cvrp-medium/$TIMESTAMP"
 
-DATASETS=( "../data/cvrp-uchoa/X-n148-k46.xml" "../data/cvrp-uchoa/X-n204-k19.xml" "../data/cvrp-uchoa/X-n251-k28.xml" )
+DATASETS=( "../data/cvrp/cvrp-uchoa/X-n148-k46.xml" "../data/cvrp/cvrp-uchoa/X-n204-k19.xml" "../data/cvrp/cvrp-uchoa/X-n251-k28.xml" )
 
 echo $LOGDIR
 # Create log directory
