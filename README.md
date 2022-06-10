@@ -44,13 +44,13 @@ cp libgurobi_c++.a ../../lib/
 | random_move_all(k)            |             |
 
 ### Local search heuristics
-| Name            | Description |
-|-----------------|-------------|
-| basic VND       |             |
-| pipe VND        |             |
-| cyclic VND      |             |
-| random VND      |             |
-| random pipe VND |             |
+| Name            | Parameters | Neighborhood order |
+|-----------------|------------|--------------------|
+| basic VND       | none       | fixed              |
+| pipe VND        | none       | fixed              |
+| cyclic VND      | none       | fixed              |
+| random VND      |            |                    |
+| random pipe VND |            |                    |
 
 ### Local search operators
 | Name                    | Description |
