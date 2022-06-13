@@ -1,0 +1,72 @@
+A-n65-k09.xml
+Reading '../data/cvrp-augerat-A/A-n65-k09.xml':
+Car capacity = 100, Number of tours = 9
+[0]: (25, 51) lb=1, ub=4294967295, quant=0
+[1]: (35, 7) lb=1, ub=1, quant=12
+[2]: (93, 75) lb=1, ub=1, quant=24
+[3]: (53, 95) lb=1, ub=1, quant=16
+[4]: (51, 81) lb=1, ub=1, quant=7
+[5]: (51, 55) lb=1, ub=1, quant=9
+[6]: (1, 67) lb=1, ub=1, quant=20
+[7]: (9, 23) lb=1, ub=1, quant=10
+[8]: (75, 7) lb=1, ub=1, quant=18
+[9]: (15, 97) lb=1, ub=1, quant=26
+[10]: (79, 5) lb=1, ub=1, quant=17
+[11]: (9, 19) lb=1, ub=1, quant=2
+[12]: (39, 1) lb=1, ub=1, quant=11
+[13]: (47, 1) lb=1, ub=1, quant=9
+[14]: (33, 97) lb=1, ub=1, quant=12
+[15]: (27, 83) lb=1, ub=1, quant=11
+[16]: (83, 79) lb=1, ub=1, quant=12
+[17]: (17, 59) lb=1, ub=1, quant=23
+[18]: (47, 19) lb=1, ub=1, quant=7
+[19]: (57, 9) lb=1, ub=1, quant=1
+[20]: (87, 41) lb=1, ub=1, quant=26
+[21]: (55, 25) lb=1, ub=1, quant=10
+[22]: (21, 91) lb=1, ub=1, quant=9
+[23]: (21, 13) lb=1, ub=1, quant=22
+[24]: (67, 1) lb=1, ub=1, quant=21
+[25]: (59, 21) lb=1, ub=1, quant=17
+[26]: (1, 75) lb=1, ub=1, quant=2
+[27]: (33, 85) lb=1, ub=1, quant=15
+[28]: (25, 21) lb=1, ub=1, quant=16
+[29]: (45, 29) lb=1, ub=1, quant=14
+[30]: (63, 77) lb=1, ub=1, quant=23
+[31]: (1, 77) lb=1, ub=1, quant=24
+[32]: (77, 41) lb=1, ub=1, quant=2
+[33]: (35, 11) lb=1, ub=1, quant=12
+[34]: (9, 77) lb=1, ub=1, quant=18
+[35]: (61, 87) lb=1, ub=1, quant=5
+[36]: (59, 91) lb=1, ub=1, quant=19
+[37]: (63, 79) lb=1, ub=1, quant=15
+[38]: (97, 67) lb=1, ub=1, quant=8
+[39]: (9, 45) lb=1, ub=1, quant=6
+[40]: (93, 21) lb=1, ub=1, quant=14
+[41]: (83, 71) lb=1, ub=1, quant=13
+[42]: (95, 57) lb=1, ub=1, quant=5
+[43]: (31, 69) lb=1, ub=1, quant=24
+[44]: (77, 17) lb=1, ub=1, quant=25
+[45]: (63, 57) lb=1, ub=1, quant=2
+[46]: (3, 63) lb=1, ub=1, quant=8
+[47]: (11, 69) lb=1, ub=1, quant=14
+[48]: (7, 9) lb=1, ub=1, quant=2
+[49]: (37, 65) lb=1, ub=1, quant=13
+[50]: (75, 83) lb=1, ub=1, quant=10
+[51]: (15, 53) lb=1, ub=1, quant=6
+[52]: (69, 5) lb=1, ub=1, quant=6
+[53]: (69, 27) lb=1, ub=1, quant=24
+[54]: (5, 19) lb=1, ub=1, quant=21
+[55]: (49, 31) lb=1, ub=1, quant=20
+[56]: (77, 17) lb=1, ub=1, quant=24
+[57]: (15, 7) lb=1, ub=1, quant=4
+[58]: (91, 39) lb=1, ub=1, quant=19
+[59]: (79, 17) lb=1, ub=1, quant=14
+[60]: (67, 75) lb=1, ub=1, quant=23
+[61]: (93, 51) lb=1, ub=1, quant=2
+[62]: (25, 33) lb=1, ub=1, quant=16
+[63]: (9, 19) lb=1, ub=1, quant=23
+[64]: (3, 65) lb=1, ub=1, quant=14
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-04-30
+Error number: 10013
+Unable to write to file '../model/A-n65-k09.xml.mps'
