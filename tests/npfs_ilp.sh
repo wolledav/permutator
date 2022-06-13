@@ -10,7 +10,8 @@ DATASETS=(
           "../data/npfs-vfr/Large/VFR600_40_1_Gap.txt" "../data/npfs-vfr/Large/VFR600_60_1_Gap.txt"
           "../data/npfs-vfr/Large/VFR400_40_1_Gap.txt" "../data/npfs-vfr/Large/VFR400_60_1_Gap.txt"
            )
-TIMEOUTS=( 600 600 600 1800 1800 1800 3600 3600 3600 3600 )
+#TIMEOUTS=( 600 600 600 1800 1800 1800 3600 3600 3600 3600 )
+TIMEOUTS=( 6 6 6 6 6 6 6 6 6 6 )
 
 echo $LOGDIR
 # Create log directory
@@ -21,6 +22,6 @@ do
   echo ${TIMEOUTS[${ITER}]}
   filename=$(basename $data ".txt")
   echo "[gurobi] Testing ${filename}..."
-  $METAOPT_BIN/npfs_ilp -d $data -t ${TIMEOUTS[${ITER}]} -o "${LOGDIR}/ilp-${filename}.out" #> /dev/null 2>&1
+  $METAOPT_BIN/npfs_ilp -d $data -t ${TIMEOUTS[${ITER}]} -o "${LOGDIR}/ilp-${filename}.out" > "${LOGDIR}/ilp-${filename}.stdout" 2>&1
   ITER=$ITER+1
 done
