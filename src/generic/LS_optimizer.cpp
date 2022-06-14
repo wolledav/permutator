@@ -114,18 +114,19 @@ bool LS_optimizer::insert1() {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, inserted_node, perm)
     for (uint i = 0; i <= perm.size(); i++) {
+        if (this->timeout()) continue;
         vector<uint> new_perm = perm;
-        new_perm.insert(new_perm.begin() + i, 0);
-        for (uint j = 0; j < this->instance->node_cnt; j++){
-            if (this->solution.frequency[j] >= this->instance->ubs[j]) {continue;}
-            new_perm[i] = j;
-            this->instance->compute_fitness(new_perm, &fitness);
+            new_perm.insert(new_perm.begin() + i, 0);
+            for (uint j = 0; j < this->instance->node_cnt; j++){
+                if (this->solution.frequency[j] >= this->instance->ubs[j]) {continue;}
+                new_perm[i] = j;
+                this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
-             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
-                inserted_node = j;
+                if (fitness < best_solution.fitness) {
+                    best_solution = make_solution(new_perm);
+                    inserted_node = j;
+                }
             }
-        }
     }
     if (best_solution < this->solution) {
         updated = true;
@@ -148,6 +149,7 @@ bool LS_optimizer::remove1() {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, removed_node, perm)
     for (uint i = 0; i < perm.size(); i++){
+        if (this->timeout()) continue;
         if (this->solution.frequency[perm[i]] <= this->instance->lbs[perm[i]]) {
             continue;
         }
@@ -180,6 +182,7 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, reverse)
     for (uint i = 0; i < perm.size() - x; i++) {
+        if (this->timeout()) continue;
         vector<uint> reduced_perm = perm;
         vector<uint> subsequence(perm.begin() + i, perm.begin() + i + x);
         reduced_perm.erase(reduced_perm.begin() + i, reduced_perm.begin() + i + x);
@@ -217,6 +220,7 @@ bool LS_optimizer::centered_exchange(uint x) {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
     for (int i = (int)x; i < (int)perm.size() - (int)x; i++) {
+        if (this->timeout()) continue;
         vector<uint> new_perm = perm;
         for (int j = 1; j <= (int)x; j++) {
             new_perm[i+j] = perm[i-j];
@@ -247,6 +251,7 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, y, reverse)
     for (uint i = 0; i < perm.size() - x; i++) {
+        if (this->timeout()) continue;
         for (uint j = 0; j < perm.size() - y; j++) {
             if ((i >= j && i < j + y) || (j >= i && j < i + x)) {
                 continue;
@@ -297,6 +302,7 @@ bool LS_optimizer::move_all(uint x) {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++){
+        if (this->timeout()) continue;
         vector<uint> positions;
         for (uint i = 0; i < perm.size(); i++){
             if (perm[i] == node_id){
@@ -342,6 +348,7 @@ bool LS_optimizer::exchange_ids() {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, id1, cnt_id1, id2, cnt_id2, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) {
+        if (this->timeout()) continue;
         for (uint j = 0; j < i; j++) {
             uint counter1 = 0, counter2 = 0;
             vector<uint> new_perm = perm;
@@ -385,6 +392,7 @@ bool LS_optimizer::exchange_n_ids() {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, split, id1, cnt_id1, id2, cnt_id2, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) {
+        if (this->timeout()) continue;
         for (uint j = 0; j < i; j++) {
             for (uint n = 1; n < this->solution.frequency[i]; n++) {
                 uint counter1 = 0, counter2 = 0;
@@ -430,15 +438,17 @@ bool LS_optimizer::two_opt() {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i <= perm.size() - 2; i++) {
-        for (uint j = i+2; j <= perm.size(); j++) {
-            vector<uint> new_perm = perm;
-            reverse(new_perm.begin() + i, new_perm.begin() + j); // half closed interval [i, j)
-            this->instance->compute_fitness(new_perm, &fitness);
+        if (this->timeout()) continue;
+            for (uint j = i+2; j <= perm.size(); j++) {
+                vector<uint> new_perm = perm;
+                reverse(new_perm.begin() + i, new_perm.begin() + j); // half closed interval [i, j)
+                this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
-            if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                if (fitness < best_solution.fitness) {
+                    best_solution = make_solution(new_perm);
+                }
             }
-        }
+
     }
     if (best_solution < this->solution) {
         updated = true;
@@ -717,7 +727,7 @@ void LS_optimizer::randompipeVND() {
  */
 void LS_optimizer::ILS() {
     this->local_search();
-    do {
+    while (!this->timeout()) {
         // Apply perturbation to this->solution
         for (const auto &pert : this->perturbation_list) {
             this->perturbation_call(pert, config["ils_k"].get<uint>());
@@ -728,7 +738,7 @@ void LS_optimizer::ILS() {
         if (this->best_known_solution.fitness != this->solution.fitness) {
             this->solution.copy(this->best_known_solution);
         }
-    } while (!this->timeout());
+    }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
@@ -747,7 +757,7 @@ void LS_optimizer::basicVNS() {
 
     this->local_search();
     Solution current_best_solution(this->solution); // needed, as this->best_known_solution is updated internally
-    do {
+    while (!this->timeout()) {
         // Apply perturbation to this->solution
         for (const auto &pert : this->perturbation_list) {
             this->perturbation_call(pert, k);
@@ -766,7 +776,7 @@ void LS_optimizer::basicVNS() {
             std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
         // Reset this->solution to this->best_known_solution
         this->solution.copy(this->best_known_solution);
-    } while (!this->timeout());
+    }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
@@ -787,7 +797,7 @@ void LS_optimizer::calibratedVNS() {
     this->local_search();
 
     Solution current_best_solution(this->solution);
-    do {
+    while (!this->timeout()) {
         // Apply perturbation to this->solution
         for (const auto &pert: this->perturbation_list) {
             this->perturbation_call(pert, k);
@@ -816,7 +826,7 @@ void LS_optimizer::calibratedVNS() {
             std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
         // Reset this->solution to this->best_known_solution
         this->solution.copy(this->best_known_solution);
-    } while (!this->timeout());
+    }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
