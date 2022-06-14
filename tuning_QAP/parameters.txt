@@ -43,6 +43,7 @@ bvns_max_k          "bvns_max_k "       i   (2, 12)             | metaheuristic 
 construction        "construction "     c   (greedy, random, random_replicate)
 
 ## PERTURBATION
+## perturbation        "perturbation "     c   (double_bridge, random_double_bridge, reinsert, random_move_all, random_move, random_swap)
 perturbation        "perturbation "     c   (double_bridge, random_double_bridge, reinsert, random_move, random_swap)
 allow_infeasible    "allow_infeasible " c   (0, 1)
 
