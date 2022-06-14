@@ -637,6 +637,7 @@ void LS_optimizer::pipeVND() {
     int last_improving_operator = -1;
     while (current_fitness < prev_fitness) {
         for (int i = 0; i < (int)this->operation_list.size(); i++) {
+            std::cout << "pipeVND\n";
             if (last_improving_operator == i) {return;} // won't help this time
             string operation = this->operation_list[i];
             while (this->operation_call(operation)) {
@@ -717,7 +718,7 @@ void LS_optimizer::randompipeVND() {
  */
 void LS_optimizer::ILS() {
     this->local_search();
-    do {
+    while (!this->timeout()) {
         // Apply perturbation to this->solution
         for (const auto &pert : this->perturbation_list) {
             this->perturbation_call(pert, config["ils_k"].get<uint>());
@@ -728,7 +729,7 @@ void LS_optimizer::ILS() {
         if (this->best_known_solution.fitness != this->solution.fitness) {
             this->solution.copy(this->best_known_solution);
         }
-    } while (!this->timeout());
+    }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
@@ -747,7 +748,7 @@ void LS_optimizer::basicVNS() {
 
     this->local_search();
     Solution current_best_solution(this->solution); // needed, as this->best_known_solution is updated internally
-    do {
+    while (!this->timeout()) {
         // Apply perturbation to this->solution
         for (const auto &pert : this->perturbation_list) {
             this->perturbation_call(pert, k);
@@ -766,7 +767,7 @@ void LS_optimizer::basicVNS() {
             std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
         // Reset this->solution to this->best_known_solution
         this->solution.copy(this->best_known_solution);
-    } while (!this->timeout());
+    }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
@@ -787,7 +788,7 @@ void LS_optimizer::calibratedVNS() {
     this->local_search();
 
     Solution current_best_solution(this->solution);
-    do {
+    while (!this->timeout()) {
         // Apply perturbation to this->solution
         for (const auto &pert: this->perturbation_list) {
             this->perturbation_call(pert, k);
@@ -816,7 +817,7 @@ void LS_optimizer::calibratedVNS() {
             std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
         // Reset this->solution to this->best_known_solution
         this->solution.copy(this->best_known_solution);
-    } while (!this->timeout());
+    }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
 
