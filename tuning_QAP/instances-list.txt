@@ -1,0 +1,33 @@
+## This is an example of specifying instances with a file.
+
+# Each line is an instance relative to trainInstancesDir
+# (see scenario.txt.tmpl) and an optional sequence of instance-specific
+# parameters that will be passed to target-runnerx when invoked on that
+# instance.
+
+# Empty lines and comments are ignored.
+# 100/100-1_100-2.tsp --time 1
+# 100/100-1_100-3.tsp --time 2
+# 100/100-1_100-4.tsp --time 3
+
+# tai20b.dat      timeout     600
+# tai25a.dat      timeout     600
+# tai30b.dat      timeout     600
+# tai40a.dat      timeout     1800
+# tai50b.dat      timeout     1800
+# tai60a.dat      timeout     1800
+# tai80a.dat      timeout     3600
+# tai80b.dat      timeout     3600
+# tai100a.dat     timeout     3600
+# tai100b.dat     timeout     3600
+
+tai20b.dat      timeout     5
+tai25a.dat      timeout     5
+tai30b.dat      timeout     5
+tai40a.dat      timeout     5
+tai50b.dat      timeout     5
+tai60a.dat      timeout     5
+tai80a.dat      timeout     5
+tai80b.dat      timeout     5
+tai100a.dat     timeout     5
+tai100b.dat     timeout     5
