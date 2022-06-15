@@ -1,0 +1,36 @@
+{
+    "num_threads": 1,
+    "timeout": 600,
+    "metaheuristic": "BVNS",
+    "bvns_min_k": 6,
+    "bvns_max_k": 12,
+    "construction": "greedy",
+    "allow_infeasible": true,
+    "local_search": "RPVND",
+    "operators": [
+        "remove_1",
+        "two_opt",
+        "exchange_ids",
+        "exchange_n_ids",
+        "exchange_1_1",
+        "exchange_2_3",
+        "exchange_3_4",
+        "exchange_4_4",
+        "rexchange_1_2",
+        "rexchange_2_2",
+        "rexchange_4_4",
+        "centered_exchange_1",
+        "centered_exchange_2",
+        "relocate_3",
+        "relocate_5",
+        "rrelocate_2",
+        "rrelocate_3",
+        "rrelocate_5",
+        "move_all_by_1",
+        "move_all_by_3",
+        "move_all_by_4"
+    ],
+    "perturbation": [
+        "random_double_bridge"
+    ]
+}
