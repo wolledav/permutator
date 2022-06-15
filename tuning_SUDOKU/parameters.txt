@@ -1,0 +1,91 @@
+## Template for parameter description file for Iterated Race.
+##
+## The format is one parameter per line. Each line contains:
+##
+## 1: Name of the parameter. An unquoted alphanumeric string,
+##    example: ants
+
+## 2: Switch to pass the parameter. A quoted (possibly empty) string, 
+##    if the value and the switch must be separated, add a space at
+##    the end of the string. Example : "--version1 --ants "
+
+## 3: Type. An unquoted single letter, among 
+##     i: Integer, c: categorical, o: ordinal, r: real.
+
+## 4: For c and o: All possible values, that is, a variable number of
+##    quoted or unquoted strings separated by commas within
+##    parenthesis. Empty strings and strings containing commas or
+##    spaces must be quoted.
+##    For i,r: a pair of unquoted numbers representing minimum and
+##    maximum values. 
+
+## 5: A conditional parameter can be defined according to the values of
+##    one or several other parameters.  This is done by adding a
+##    character '|' followed by an R expression involving the names of
+##    other parameters. This expression must return TRUE if the 
+##    condition is satisfied, FALSE otherwise.
+
+# 1:                2:                  3: 4:                   5:
+#param1          "--param1 "            i  (1, 10)              | mode %in% c("x1", "x2")
+#param2          "--param2 "            i  (1, 10)              | mode %in% c("x1", "x3") && real > 2.5 && real <= 3.5
+#mode            "--"                   c  ("x1" ,"x2", "x3")
+#real            "--paramreal="         r  (1.5, 4.5)
+#mutation        "--mutation="          o  ("none", "very low", "low", "medium", "high", "very high", "all")
+#unused         "-u "                   c  (1, 2, 10, 20)
+
+## METAHEURISTIC
+metaheuristic       "metaheuristic "    c   (ILS, BVNS)
+ils_k               "ils_k "            i   (1, 8)              | metaheuristic == "ILS"
+bvns_min_k          "bvns_min_k "       i   (1, 8)              | metaheuristic == "BVNS"
+bvns_max_k          "bvns_max_k "       i   (2, 12)             | metaheuristic == "BVNS"
+
+## CONSTRUCTION
+construction        "construction "     c   (greedy, random, random_replicate)
+
+## PERTURBATION
+perturbation        "perturbation "     c   (double_bridge, random_double_bridge, reinsert, random_move_all, random_move, random_swap)
+allow_infeasible    "allow_infeasible " c   (0, 1)
+
+## LOCAL SEARCH HEURISTIC
+local_search        "local_search "     c   (BVND, PVND, CVND, RVND, RPVND)
+
+## LOCAL SEARCH OPERATORS
+insert_1            "op_insert_1 "      c   (0, 1)
+remove_1            "op_remove_1 "      c   (0, 1)
+two_opt             "op_two_opt "       c   (0, 1)
+exchange_ids        "op_exchange_ids "  c   (0, 1)
+# exchange_n_ids      "op_exchange_n_ids "    c   (0, 1)
+exchange_1_1        "op_exchange_1_1 "      c   (0, 1)
+exchange_1_2        "op_exchange_1_2 "      c   (0, 1)
+exchange_2_2        "op_exchange_2_2 "      c   (0, 1)
+exchange_2_3        "op_exchange_2_3 "      c   (0, 1)
+exchange_2_4        "op_exchange_2_4 "      c   (0, 1)
+exchange_3_3        "op_exchange_3_3 "      c   (0, 1)
+exchange_3_4        "op_exchange_3_4 "      c   (0, 1)
+exchange_4_4        "op_exchange_4_4 "      c   (0, 1)
+rexchange_1_2       "op_rexchange_1_2 "     c   (0, 1)
+rexchange_2_2       "op_rexchange_2_2 "     c   (0, 1)
+rexchange_2_3       "op_rexchange_2_3 "     c   (0, 1)
+rexchange_2_4       "op_rexchange_2_4 "     c   (0, 1)
+rexchange_3_3       "op_rexchange_3_3 "     c   (0, 1)
+rexchange_3_4       "op_rexchange_3_4 "     c   (0, 1)
+rexchange_4_4       "op_rexchange_4_4 "     c   (0, 1)
+centered_exchange_1 "op_centered_exchange_1 "   c   (0, 1)
+centered_exchange_2 "op_centered_exchange_2 "   c   (0, 1)
+centered_exchange_3 "op_centered_exchange_3 "   c   (0, 1)
+centered_exchange_4 "op_centered_exchange_4 "   c   (0, 1)
+centered_exchange_5 "op_centered_exchange_5 "   c   (0, 1)
+relocate_1          "op_relocate_1 "        c   (0, 1)
+relocate_2          "op_relocate_2 "        c   (0, 1)
+relocate_3          "op_relocate_3 "        c   (0, 1)
+relocate_4          "op_relocate_4 "        c   (0, 1)
+relocate_5          "op_relocate_5 "        c   (0, 1)
+rrelocate_2         "op_rrelocate_2 "       c   (0, 1)
+rrelocate_3         "op_rrelocate_3 "       c   (0, 1)
+rrelocate_4         "op_rrelocate_4 "       c   (0, 1)
+rrelocate_5         "op_rrelocate_5 "       c   (0, 1)
+move_all_by_1       "op_move_all_by_1 "     c   (0, 1)
+move_all_by_2       "op_move_all_by_2 "     c   (0, 1)
+move_all_by_3       "op_move_all_by_3 "     c   (0, 1)
+move_all_by_4       "op_move_all_by_4 "     c   (0, 1)
+move_all_by_10      "op_move_all_by_10 "    c   (0, 1)
