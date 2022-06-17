@@ -10,13 +10,31 @@
 # 100/100-1_100-3.tsp --time 2
 # 100/100-1_100-4.tsp --time 3
 
-tai20b.dat      timeout     600
-tai25a.dat      timeout     600
-tai30b.dat      timeout     600
-tai40a.dat      timeout     1800
-tai50b.dat      timeout     1800
+# tai20b.dat      timeout     600
+# tai25a.dat      timeout     600
+# tai30b.dat      timeout     600
+# tai40a.dat      timeout     1800
+# tai50b.dat      timeout     1800
+# tai60a.dat      timeout     1800
+# tai80a.dat      timeout     3600
+# tai80b.dat      timeout     3600
+# tai100a.dat     timeout     3600
+# tai100b.dat     timeout     3600
+
+tai10b.dat      timeout     300
+tai12a.dat      timeout     300
+tai13a.dat      timeout     300
+tai15a.dat      timeout     300
+tai16a.dat      timeout     300
+tai18a.dat      timeout     300
+tai20a.dat      timeout     300
+tai25a.dat      timeout     300
+tai30a.dat      timeout     300
+tai35a.dat      timeout     300
+tai40a.dat      timeout     300
+tai40b.dat      timeout     300
+tai50a.dat      timeout     1800
 tai60a.dat      timeout     1800
-tai80a.dat      timeout     3600
-tai80b.dat      timeout     3600
-tai100a.dat     timeout     3600
-tai100b.dat     timeout     3600
+tai80a.dat      timeout     1800
+tai100a.dat     timeout     1800
+tai150b.dat     timeout     1800
