@@ -10,13 +10,34 @@
 # 100/100-1_100-3.tsp --time 2
 # 100/100-1_100-4.tsp --time 3
 
-A-n65-k09.xml timeout 600
-P-n050-k10.xml timeout 600
-P-n076-k05.xml timeout 600
-X-n148-k46.xml timeout 1800
-X-n204-k19.xml timeout 1800
-X-n251-k28.xml timeout 1800
-X-n351-k40.xml timeout 3600
-X-n561-k42.xml timeout 3600
-X-n749-k98.xml timeout 3600
-X-n1001-k43.xml timeout 3600
+# A-n65-k09.xml timeout 600
+# P-n050-k10.xml timeout 600
+# P-n076-k05.xml timeout 600
+# X-n148-k46.xml timeout 1800
+# X-n204-k19.xml timeout 1800
+# X-n251-k28.xml timeout 1800
+# X-n351-k40.xml timeout 3600
+# X-n561-k42.xml timeout 3600
+# X-n749-k98.xml timeout 3600
+# X-n1001-k43.xml timeout 3600
+
+A-n33-k06.xml   timeout 300
+A-n37-k06.xml   timeout 300
+A-n44-k06.xml   timeout 300
+A-n48-k07.xml   timeout 300
+A-n60-k09.xml   timeout 300
+A-n63-k10.xml   timeout 300
+A-n80-k10.xml   timeout 300
+P-n021-k02.xml  timeout 300
+P-n040-k05.xml  timeout 300
+P-n050-k08.xml  timeout 300
+P-n051-k10.xml  timeout 300
+P-n055-k10.xml  timeout 300
+P-n065-k10.xml  timeout 300
+P-n101-k04.xml  timeout 900
+X-n125-k30.xml  timeout 900
+X-n228-k23.xml  timeout 900
+X-n327-k20.xml  timeout 900
+X-n429-k61.xml  timeout 1200
+X-n524-k137.xml timeout 3600
+X-n627-k43.xml  timeout 3600
