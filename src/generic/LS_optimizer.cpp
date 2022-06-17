@@ -107,6 +107,7 @@ void LS_optimizer::run() {
 //**********************************************************************
 
 bool LS_optimizer::insert1() {
+//     std::cout << __func__ << std::endl;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
@@ -140,6 +141,7 @@ bool LS_optimizer::insert1() {
 }
 
 bool LS_optimizer::remove1() {
+//     std::cout << __func__ << std::endl;
     if (this->solution.permutation.empty())
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -174,6 +176,7 @@ bool LS_optimizer::remove1() {
 }
 
 bool LS_optimizer::relocate(uint x, bool reverse) {
+//     std::cout << __func__ << std::endl;
     if (x > this->solution.permutation.size())
         return false;
     fitness_t fitness;
@@ -212,6 +215,7 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
 }
 
 bool LS_optimizer::centered_exchange(uint x) {
+//     std::cout << __func__ << std::endl;
     fitness_t fitness;
     if (x > this->solution.permutation.size())
         return false;
@@ -243,6 +247,7 @@ bool LS_optimizer::centered_exchange(uint x) {
 }
 
 bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
+//     std::cout << __func__ << std::endl;
     if (x + y > this->solution.permutation.size())
         return false;
     fitness_t fitness;
@@ -294,6 +299,7 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
 }
 
 bool LS_optimizer::move_all(uint x) {
+//     std::cout << __func__ << std::endl;
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -339,6 +345,7 @@ bool LS_optimizer::move_all(uint x) {
 }
 
 bool LS_optimizer::exchange_ids() {
+//     std::cout << __func__ << std::endl;
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -383,6 +390,7 @@ bool LS_optimizer::exchange_ids() {
 }
 
 bool LS_optimizer::exchange_n_ids() {
+//     std::cout << __func__ << std::endl;
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -430,6 +438,7 @@ bool LS_optimizer::exchange_n_ids() {
 }
 
 bool LS_optimizer::two_opt() {
+//     std::cout << __func__ << std::endl;
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
     if (perm.size() < 2)
@@ -465,6 +474,7 @@ bool LS_optimizer::two_opt() {
 // **********************************************************************
 
 void LS_optimizer::double_bridge(uint k, bool reverse_all) {
+//     std::cout << __func__ << std::endl;
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
     string log_args[k];
     std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt-1);
@@ -697,6 +707,7 @@ void LS_optimizer::randomVND() {
 }
 
 void LS_optimizer::randompipeVND() {
+//     std::cout << __func__ << std::endl;
     std::uniform_int_distribution<uint> uni(0, this->operation_list.size() - 1);
     vector<uint> order;
     for (uint i = 0; i < operation_list.size(); i++)

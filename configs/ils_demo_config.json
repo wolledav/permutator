@@ -3,7 +3,7 @@
     "num_threads": 1,
     "allow_infeasible": true,
     "ils_k": 4,
-    "construction": "greedy",
+    "construction": "random",
     "metaheuristic": "ILS",
     "local_search": "CVND",
     "operators": ["two_opt", "exchange_1_1", "relocate_1"],
