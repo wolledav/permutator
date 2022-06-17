@@ -10,13 +10,13 @@
 # 100/100-1_100-3.tsp --time 2
 # 100/100-1_100-4.tsp --time 3
 
-A-n65-k09.xml timeout 600
-P-n050-k10.xml timeout 600
-P-n076-k05.xml timeout 600
-X-n148-k46.xml timeout 1800
-X-n204-k19.xml timeout 1800
-X-n251-k28.xml timeout 1800
-X-n351-k40.xml timeout 3600
-X-n561-k42.xml timeout 3600
-X-n749-k98.xml timeout 3600
-X-n1001-k43.xml timeout 3600
+tai20b.dat      timeout     600
+tai25a.dat      timeout     600
+tai30b.dat      timeout     600
+tai40a.dat      timeout     1800
+tai50b.dat      timeout     1800
+tai60a.dat      timeout     1800
+tai80a.dat      timeout     3600
+tai80b.dat      timeout     3600
+tai100a.dat     timeout     3600
+tai100b.dat     timeout     3600
