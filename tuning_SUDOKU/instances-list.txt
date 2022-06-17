@@ -10,24 +10,32 @@
 # 100/100-1_100-3.tsp --time 2
 # 100/100-1_100-4.tsp --time 3
 
-# inst9x9_5_0.txt    timeout 5
-# inst9x9_5_1.txt    timeout 5
-# inst9x9_5_2.txt    timeout 5
-# inst16x16_5_0.txt   timeout 5
-# inst16x16_10_0.txt  timeout 5
-# inst16x16_15_1.txt  timeout 5
-# inst25x25_5_0.txt   timeout 5
-# inst25x25_10_0.txt  timeout 5
-# inst25x25_15_0.txt  timeout 5
-# inst25x25_20_0.txt  timeout 5
+# inst9x9_5_0.txt     timeout 600
+# inst9x9_5_1.txt     timeout 600
+# inst9x9_5_2.txt     timeout 600
+# inst16x16_5_0.txt   timeout 1800
+# inst16x16_10_0.txt  timeout 1800
+# inst16x16_15_1.txt  timeout 1800
+# inst25x25_5_0.txt   timeout 3600
+# inst25x25_10_0.txt  timeout 3600
+# inst25x25_15_0.txt  timeout 3600
+# inst25x25_20_0.txt  timeout 3600
 
-inst9x9_5_0.txt     timeout 600
-inst9x9_5_1.txt     timeout 600
-inst9x9_5_2.txt     timeout 600
-inst16x16_5_0.txt   timeout 1800
-inst16x16_10_0.txt  timeout 1800
-inst16x16_15_1.txt  timeout 1800
-inst25x25_5_0.txt   timeout 3600
-inst25x25_10_0.txt  timeout 3600
-inst25x25_15_0.txt  timeout 3600
+inst9x9_5_0.txt     timeout 300
+inst9x9_5_1.txt     timeout 300
+inst9x9_5_2.txt     timeout 300
+inst16x16_5_0.txt   timeout 600
+inst16x16_5_1.txt   timeout 600
+inst16x16_5_2.txt   timeout 600
+inst16x16_10_0.txt  timeout 600
+inst16x16_10_1.txt  timeout 600
+inst16x16_15_1.txt  timeout 600
+inst16x16_15_2.txt  timeout 600
+inst25x25_5_0.txt   timeout 1800
+inst25x25_5_1.txt   timeout 1800
+inst25x25_10_0.txt  timeout 1800
+inst25x25_10_1.txt  timeout 1800
+inst25x25_15_0.txt  timeout 1800
+inst25x25_15_1.txt  timeout 1800
 inst25x25_20_0.txt  timeout 3600
+inst25x25_20_1.txt  timeout 3600
