@@ -21,6 +21,9 @@
 # tai100a.dat     timeout     3600
 # tai100b.dat     timeout     3600
 
+tai7a.dat       timeout     300
+tai8a.dat       timeout     300
+tai9a.dat       timeout     300
 tai10b.dat      timeout     300
 tai12a.dat      timeout     300
 tai13a.dat      timeout     300
