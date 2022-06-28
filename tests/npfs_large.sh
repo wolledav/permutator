@@ -5,7 +5,7 @@ TEST_TIMEOUT=3600 # 60 minutes
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/npfs-large/$TIMESTAMP"
 
-DATASETS=( "../data/npfs-vfr/Large/VFR400_40_1_Gap.txt" "../data/npfs-vfr/Large/VFR400_60_1_Gap.txt" "../data/npfs-vfr/Large/VFR600_40_1_Gap.txt" "../data/npfs-vfr/Large/VFR600_60_1_Gap.txt")
+DATASETS=( "../data/npfs-vfr/Large/VFR400_40_1.txt" "../data/npfs-vfr/Large/VFR400_60_1.txt" "../data/npfs-vfr/Large/VFR600_40_1.txt" "../data/npfs-vfr/Large/VFR600_60_1.txt")
 
 echo $LOGDIR
 # Create log directory
