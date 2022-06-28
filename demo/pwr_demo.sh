@@ -38,14 +38,14 @@ fi
 echo "Testing Non-permutation Flowshop Scheduling Problem..."
 
 echo -n -e "NPFS Metaheuristic: \t"
-if $METAOPT_BIN/npfs_meta -d "../data/npfs-vfr/Small/VFR10_5_1_Gap.txt" -t $TEST_TIMEOUT > /dev/null 2>&1; then
+if $METAOPT_BIN/npfs_meta -d "../data/npfs-vfr/Small/VFR10_5_1.txt" -t $TEST_TIMEOUT > /dev/null 2>&1; then
   echo "[OK]"
 else
   echo "[FAILED]"
 fi
 
 echo -n -e "NPFS MILP: \t\t"
-if $METAOPT_BIN/npfs_ilp -d "../data/npfs-vfr/Small/VFR10_5_1_Gap.txt" -t $TEST_TIMEOUT > /dev/null 2>&1; then
+if $METAOPT_BIN/npfs_ilp -d "../data/npfs-vfr/Small/VFR10_5_1.txt" -t $TEST_TIMEOUT > /dev/null 2>&1; then
   echo "[OK]"
 else
   echo "[FAILED]"
