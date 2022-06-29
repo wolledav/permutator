@@ -1,0 +1,12 @@
+{
+  "VFR20_5_1": {"BKS": 1192, "optimal": 0},
+  "VFR20_15_1": {"BKS": 1936, "optimal": 0},
+  "VFR40_5_1": {"BKS": 2396, "optimal": 0},
+  "VFR100_20_1": {"BKS": 6172, "optimal": 0},
+  "VFR100_20_2": {"BKS": 6267, "optimal": 0},
+  "VFR200_20_1": {"BKS": 11272, "optimal": 0},
+  "VFR400_40_1": {"BKS": 23393, "optimal": 0},
+  "VFR400_60_1": {"BKS": 25395, "optimal": 0},
+  "VFR600_40_1": {"BKS": 33683, "optimal": 0},
+  "VFR600_60_1": {"BKS": 35976, "optimal": 0}
+}
