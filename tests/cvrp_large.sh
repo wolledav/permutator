@@ -15,7 +15,7 @@ cmake -E make_directory "$LOGDIR"
 for data in "${DATASETS[@]}"
 do
   filename=$(basename $data ".xml")
-  for i in {1..5}
+  for i in {1..50}
   do
     echo "[$i/50] Testing ${filename}..."
     cmake -E make_directory "$LOGDIR"/"$filename"
