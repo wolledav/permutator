@@ -1,7 +1,8 @@
 # USAGE
-# python3 ./tools/process_ilp_results.py ./log/cvrp-ilp/cvrp-10_results_10t/ CVRP
+# python3 ./tools/process_ilp_results.py ./log/cvrp-ilp/cvrp-10_results/ CVRP
 # python3 ./tools/process_ilp_results.py ./log/qap-ilp/qap-10_results/ QAP
 # python3 ./tools/process_ilp_results.py ./log/npfs-ilp/npfs-10_results/ NPFS
+# python3 ./tools/process_ilp_results.py ./log/sudoku-ilp/sudoku-10_results/ SUDOKU
 
 import os
 import sys
@@ -66,19 +67,29 @@ def processFile(filename, dir, data):
     for line in lines:
         words = line.split(": ")
         if words[0] == "MIPGap":
-            data[name]["MIPGap"] = words[1]
+            data[name]["MIPGap"] = float(words[1])
         elif words[0] == "Runtime":
-            data[name]["runtime"] = words[1]
+            data[name]["runtime"] = float(words[1])
         elif words[0] == "Best solution":
-            data[name]["fitness"] = words[1]
+            data[name]["fitness"] = int(words[1])
         elif words[0] == "Best bound":
-            data[name]["LB"] = words[1]
+            data[name]["LB"] = int(words[1])
 
 
 def printLatex(data):
-    for problem in data:
-        print(problem, data[problem])
-
+    for instance in data:
+        keys = data[instance].keys()
+        if "fitness" in keys and "LB" in keys and "BKS" in keys:
+            fitness = data[instance]["fitness"]
+            LB = data[instance]["LB"]
+            BKS = data[instance]["BKS"]
+            if BKS != 0:
+                GAP_BKS = 100 * (fitness - BKS)/BKS
+            else:
+                GAP_BKS = -1000
+            print("%s & %d & %d & %.2f \\\\" % (instance, fitness, LB, GAP_BKS))
+        else:
+            print("%s & & &  \\\\" % instance)
 
 dir = sys.argv[1]
 problem = sys.argv[2]
