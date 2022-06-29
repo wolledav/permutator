@@ -45,16 +45,16 @@ all_data = {
             "VFR600_60_1": {"BKS": 35976, "optimal": 0},
             },
     "SUDOKU": {
-        "inst9x9_5_0": {"BKS": 0, "optimal": 0},
-        "inst9x9_5_1": {"BKS": 0, "optimal": 0},
-        "inst9x9_5_2": {"BKS": 0, "optimal": 0},
-        "inst16x16_5_0": {"BKS": 0, "optimal": 0},
-        "inst16x16_10_0": {"BKS": 0, "optimal": 0},
-        "inst16x16_15_1": {"BKS": 0, "optimal": 0},
-        "inst25x25_5_0": {"BKS": 0, "optimal": 0},
-        "inst25x25_10_0": {"BKS": 0, "optimal": 0},
-        "inst25x25_15_0": {"BKS": 0, "optimal": 0},
-        "inst25x25_20_0": {"BKS": 0, "optimal": 0},
+        "inst9x9_5_0": {"BKS": 0, "optimal": 1},
+        "inst9x9_5_1": {"BKS": 0, "optimal": 1},
+        "inst9x9_5_2": {"BKS": 0, "optimal": 1},
+        "inst16x16_5_0": {"BKS": 0, "optimal": 1},
+        "inst16x16_10_0": {"BKS": 0, "optimal": 1},
+        "inst16x16_15_1": {"BKS": 0, "optimal": 1},
+        "inst25x25_5_0": {"BKS": 0, "optimal": 1},
+        "inst25x25_10_0": {"BKS": 0, "optimal": 1},
+        "inst25x25_15_0": {"BKS": 0, "optimal": 1},
+        "inst25x25_20_0": {"BKS": 0, "optimal": 1},
     },
 }
 
@@ -87,7 +87,7 @@ def printLatex(data):
                 GAP_BKS = 100 * (fitness - BKS)/BKS
             else:
                 GAP_BKS = -1000
-            print("%s & %d & %d & %.2f \\\\" % (instance, fitness, LB, GAP_BKS))
+            print("%s & %d & %d & %.2f%% \\\\" % (instance, fitness, LB, GAP_BKS))
         else:
             print("%s & & &  \\\\" % instance)
 
