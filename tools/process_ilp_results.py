@@ -1,8 +1,8 @@
 # USAGE
-# python3 ./tools/process_ilp_results_v2.py ./log/cvrp-ilp/cvrp-10_results/ ./data/cvrp/cvrp-10_BKSs.json
-# python3 ./tools/process_ilp_results_v2.py ./log/npfs-ilp/npfs-10_results/ ./data/npfs-vfr/npfs-10_BKSs.json
-# python3 ./tools/process_ilp_results_v2.py ./log/qap-ilp/qap-10_results/ ./data/qap/qap-10_BKSs.json
-# python3 ./tools/process_ilp_results_v2.py ./log/sudoku-ilp/sudoku-10_results/ ./data/sudoku/sudoku-10_BKSs.json
+# python3 ./tools/process_ilp_results.py ./log/cvrp-ilp/cvrp-10_results/ ./data/cvrp/cvrp-10_BKSs.json
+# python3 ./tools/process_ilp_results.py ./log/npfs-ilp/npfs-10_results/ ./data/npfs-vfr/npfs-10_BKSs.json
+# python3 ./tools/process_ilp_results.py ./log/qap-ilp/qap-10_results/ ./data/qap/qap-10_BKSs.json
+# python3 ./tools/process_ilp_results.py ./log/sudoku-ilp/sudoku-10_results/ ./data/sudoku/sudoku-10_BKSs.json
 
 import os
 import sys
@@ -29,17 +29,24 @@ def processLog(log, dir, data):
 def printLatex(data):
     for instance in data:
         keys = data[instance].keys()
-        if "fitness" in keys and "LB" in keys and "BKS" in keys:
+        BKS = data[instance]["BKS"]
+        if "fitness" in keys and "LB" in keys:
             fitness = data[instance]["fitness"]
             LB = data[instance]["LB"]
-            BKS = data[instance]["BKS"]
+            runtime = data[instance]["runtime"]
             if BKS != 0:
                 GAP_BKS = 100 * (fitness - BKS)/BKS
             else:
                 GAP_BKS = -1000
-            print("%s\t\t& %d\t\t& %d\t\t& %.2f%%\t\t\\\\" % (instance, fitness, LB, GAP_BKS))
+            if data[instance]["optimal"]:
+                opt1 = "\\textbf{"
+                opt2 = '}'
+            else:
+                opt1 = ''
+                opt2 = ''
+            print("%s\t\t& %s%d%s\t\t& %d\t\t& %d\t\t& %d\t\t& %.2f\\%%\t\t\\\\" % (instance, opt1, BKS, opt2, runtime, LB, fitness, GAP_BKS))
         else:
-            print("%s & & &  \\\\" % instance)
+            print("%s\t\t& %d\t\t& -\t\t& -\t\t& -\t\t& -\t\t\\\\" % (instance, BKS))
 
 
 log_dir = sys.argv[1]

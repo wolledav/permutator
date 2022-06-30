@@ -1,5 +1,5 @@
 # USAGE
-# python3 ./tools/process_meta_results_v2.py ./log/cvrp-meta/test/ ./data/cvrp/cvrp-10_BKS_file.json
+# python3 ./tools/process_meta_results.py ./log/cvrp-meta/test/ ./data/cvrp/cvrp-10_BKSs.json
 
 import os
 import sys
@@ -22,6 +22,7 @@ def processInstance(log_dir, data):
     data[instance]["runtime"] = timeout
     data[instance]["mean_fitness"] = np.mean(fitness_all)
     data[instance]["stdev"] = np.std(fitness_all)
+    data[instance]["min"] = min(fitness_all)
 
 
 def printLatex(data):
@@ -31,11 +32,21 @@ def printLatex(data):
             mean_fitness = data[instance]["mean_fitness"]
             stdev = data[instance]["stdev"]
             BKS = data[instance]["BKS"]
+            runtime = data[instance]["runtime"]
+            min = data[instance]["min"]
             if BKS != 0:
-                GAP_BKS = 100 * (mean_fitness - BKS)/BKS
+                mean_gap = 100 * (mean_fitness - BKS)/BKS
+                min_gap = 100 * (min - BKS)/BKS
             else:
-                GAP_BKS = -1000
-            print("%s\t\t& %.2f\t\t& %.2f\t\t& %.2f%%\t\t\\\\" % (instance, mean_fitness, stdev, GAP_BKS))
+                mean_gap = -1000
+                min_gap = -1000
+            if data[instance]["optimal"]:
+                opt1 = "\\textbf{"
+                opt2 = '}'
+            else:
+                opt1 = ''
+                opt2 = ''
+            print("%s\t\t& %s%d%s\t\t& %d\t\t& %d\t\t& %.2f\t\t& %.2f\t\t& %.2f\\%%\t\t& %.2f\\%%\t\t \\\\" % (instance, opt1, BKS, opt2, runtime, min, mean_fitness, stdev, min_gap, mean_gap))
         else:
             print("%s & & & \\\\" % instance)
 
