@@ -12,18 +12,20 @@ def processInstance(log_dir, data):
     timeout = -1
     files = os.listdir(log_dir)
     instance = log_dir.split("/")[-2]
+    feasible = []
 
     for file in files:
         f = open(log_dir+file)
         results = json.load(f)
         fitness_all.append(results["solution"]["solution"]["fitness"])
         timeout = results["timeout"]
+        feasible.append(results["solution"]["solution"]["is_feasible"])
 
     data[instance]["runtime"] = timeout
     data[instance]["mean_fitness"] = np.mean(fitness_all)
     data[instance]["stdev"] = np.std(fitness_all)
     data[instance]["min"] = min(fitness_all)
-
+    data[instance]["feasible"] = np.sum(feasible)/len(files)
 
 def printLatex(data):
     for instance in data:
@@ -34,6 +36,7 @@ def printLatex(data):
             BKS = data[instance]["BKS"]
             runtime = data[instance]["runtime"]
             min = data[instance]["min"]
+            feasible = 100 * data[instance]["feasible"]
             if BKS != 0:
                 mean_gap = 100 * (mean_fitness - BKS)/BKS
                 min_gap = 100 * (min - BKS)/BKS
@@ -46,7 +49,7 @@ def printLatex(data):
             else:
                 opt1 = ''
                 opt2 = ''
-            print("%s\t\t& %s%d%s\t\t& %d\t\t& %d\t\t& %.2f\t\t& %.2f\t\t& %.2f\\%%\t\t& %.2f\\%%\t\t \\\\" % (instance, opt1, BKS, opt2, runtime, min, mean_fitness, stdev, min_gap, mean_gap))
+            print("%s\t\t& %s%d%s\t\t& %d\t\t& %d\t\t& %.2f\t\t& %.2f\t\t& %.2f\\%%\t\t& %.2f\\%%\t\t& %d\\%%\t\t \\\\" % (instance, opt1, BKS, opt2, runtime, min, mean_fitness, stdev, min_gap, mean_gap, feasible))
         else:
             print("%s & & & \\\\" % instance)
 
