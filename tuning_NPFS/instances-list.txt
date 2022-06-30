@@ -10,37 +10,37 @@
 # 100/100-1_100-3.tsp --time 2
 # 100/100-1_100-4.tsp --time 3
 
-# VFR20_5_1_Gap.txt   timeout 600
-# VFR20_15_1_Gap.txt  timeout 600
-# VFR40_5_1_Gap.txt   timeout 600
-# VFR100_20_1_Gap.txt timeout 1800
-# VFR100_20_2_Gap.txt timeout 1800
-# VFR200_20_1_Gap.txt timeout 1800
-# VFR400_40_1_Gap.txt timeout 3600
-# VFR400_60_1_Gap.txt timeout 3600
-# VFR600_40_1_Gap.txt timeout 3600
-# VFR600_60_1_Gap.txt timeout 3600
+# VFR20_5_1.txt   timeout 600
+# VFR20_15_1.txt  timeout 600
+# VFR40_5_1.txt   timeout 600
+# VFR100_20_1.txt timeout 1800
+# VFR100_20_2.txt timeout 1800
+# VFR200_20_1.txt timeout 1800
+# VFR400_40_1.txt timeout 3600
+# VFR400_60_1.txt timeout 3600
+# VFR600_40_1.txt timeout 3600
+# VFR600_60_1.txt timeout 3600
 
-VFR20_5_3_Gap.txt       timeout 300
-VFR20_10_3_Gap.txt      timeout 300
-VFR30_5_3_Gap.txt       timeout 300
-VFR30_10_3_Gap.txt      timeout 300
-VFR40_5_3_Gap.txt       timeout 300
-VFR40_10_3_Gap.txt      timeout 300
-VFR50_5_3_Gap.txt       timeout 300
-VFR50_10_3_Gap.txt      timeout 300
-VFR60_10_3_Gap.txt      timeout 300
-VFR60_20_3_Gap.txt      timeout 300
-VFR100_40_3_Gap.txt     timeout 900
-VFR100_60_3_Gap.txt     timeout 900
-VFR200_20_3_Gap.txt     timeout 900
-VFR200_60_3_Gap.txt     timeout 900
-VFR300_20_3_Gap.txt     timeout 900
-VFR400_20_3_Gap.txt     timeout 900
-VFR500_20_3_Gap.txt     timeout 1800
-VFR600_20_3_Gap.txt     timeout 1800
-VFR700_40_3_Gap.txt     timeout 3600
-VFR800_20_3_Gap.txt     timeout 3600
+VFR20_5_3.txt       timeout 300
+VFR20_10_3.txt      timeout 300
+VFR30_5_3.txt       timeout 300
+VFR30_10_3.txt      timeout 300
+VFR40_5_3.txt       timeout 300
+VFR40_10_3.txt      timeout 300
+VFR50_5_3.txt       timeout 300
+VFR50_10_3.txt      timeout 300
+VFR60_10_3.txt      timeout 300
+VFR60_20_3.txt      timeout 300
+VFR100_40_3.txt     timeout 900
+VFR100_60_3.txt     timeout 900
+VFR200_20_3.txt     timeout 900
+VFR200_60_3.txt     timeout 900
+VFR300_20_3.txt     timeout 900
+VFR400_20_3.txt     timeout 900
+VFR500_20_3.txt     timeout 1800
+VFR600_20_3.txt     timeout 1800
+VFR700_40_3.txt     timeout 3600
+VFR800_20_3.txt     timeout 3600
 
 
 
