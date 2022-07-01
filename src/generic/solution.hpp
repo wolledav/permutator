@@ -31,6 +31,7 @@ public:
     void copy(Solution const &sol);
     uint getSize() const {return this->permutation.size();}
     void save_to_json(json& obj);
+    void print();
 
     // operator overloads
     bool operator== (const Solution& other);
