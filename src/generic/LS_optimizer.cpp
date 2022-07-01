@@ -107,7 +107,9 @@ void LS_optimizer::run() {
 //**********************************************************************
 
 bool LS_optimizer::insert1() {
-//     std::cout << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << __func__ << std::endl;
+#endif
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
@@ -141,7 +143,9 @@ bool LS_optimizer::insert1() {
 }
 
 bool LS_optimizer::remove1() {
-//     std::cout << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << __func__ << std::endl;
+#endif
     if (this->solution.permutation.empty())
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -176,7 +180,9 @@ bool LS_optimizer::remove1() {
 }
 
 bool LS_optimizer::relocate(uint x, bool reverse) {
-//     std::cout << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << __func__ << std::endl;
+#endif
     if (x > this->solution.permutation.size())
         return false;
     fitness_t fitness;
@@ -215,7 +221,9 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
 }
 
 bool LS_optimizer::centered_exchange(uint x) {
-//     std::cout << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << __func__ << std::endl;
+#endif
     fitness_t fitness;
     if (x > this->solution.permutation.size())
         return false;
@@ -247,7 +255,9 @@ bool LS_optimizer::centered_exchange(uint x) {
 }
 
 bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
-//     std::cout << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << __func__ << std::endl;
+#endif
     if (x + y > this->solution.permutation.size())
         return false;
     fitness_t fitness;
@@ -299,31 +309,37 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
 }
 
 bool LS_optimizer::move_all(uint x) {
-//     std::cout << __func__ << std::endl;
-    if (this->solution.permutation.size() < 2)
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+     std::cout << __func__ << "_" << x << std::endl;
+#endif
+    if (this->solution.permutation.size() < x)
         return false;
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
-    for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++){
+    for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++){ // try for all nodes
         if (this->timeout()) continue;
-        vector<uint> positions;
+
+        vector<uint> positions; // all positions of node_id in perm
         for (uint i = 0; i < perm.size(); i++){
             if (perm[i] == node_id){
                 positions.push_back(i);
             }
         }
-        for (int i = -(int)x; i <= (int)x; i++){
+
+        for (int i = -(int)x; i <= (int)x; i++){ // attempt all shifts by i from [-x, x]\{0}
             vector<uint> new_perm = perm;
-            if (i == 0) continue;
-            for (auto pos : positions){
-                int new_pos = (int)pos + i;
+            if (i == 0) continue; // no shift
+            for (auto pos : positions){ // for all positions of node_id
+                int new_pos = (int)pos + i; // shift by i
+
                 if (new_pos < 0)
-                    new_pos = (int)new_perm.size() + new_pos;
+                    new_pos = (int)new_perm.size() + new_pos; // too far left -> overflow from right end
                 else if ((uint)new_pos > new_perm.size() - 1)
-                    new_pos = new_pos - (int)new_perm.size();
+                    new_pos = new_pos - (int)new_perm.size(); // too far right -> overflow from left end
+
                 new_perm.erase(new_perm.begin() + pos);
                 new_perm.insert(new_perm.begin() + new_pos, node_id);
             }
@@ -345,7 +361,9 @@ bool LS_optimizer::move_all(uint x) {
 }
 
 bool LS_optimizer::exchange_ids() {
-//     std::cout << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << __func__ << std::endl;
+#endif
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -390,7 +408,9 @@ bool LS_optimizer::exchange_ids() {
 }
 
 bool LS_optimizer::exchange_n_ids() {
-//     std::cout << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << __func__ << std::endl;
+#endif
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -438,7 +458,9 @@ bool LS_optimizer::exchange_n_ids() {
 }
 
 bool LS_optimizer::two_opt() {
-//     std::cout << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << __func__ << std::endl;
+#endif
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
     if (perm.size() < 2)
