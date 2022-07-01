@@ -95,6 +95,10 @@ void LS_optimizer::run() {
     this->start = std::chrono::steady_clock::now();
     this->last_improvement = this->start;
     this->construction();
+
+//    this->solution.print();
+//    this->best_known_solution.print();
+
     if (!this->timeout()) {
         this->metaheuristic();
     } else {
@@ -465,6 +469,7 @@ bool LS_optimizer::two_opt() {
     if (perm.size() < 2)
         return false;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
+this->solution.print();
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i <= perm.size() - 2; i++) {
@@ -478,11 +483,12 @@ bool LS_optimizer::two_opt() {
                     best_solution = make_solution(new_perm);
                 }
             }
-
     }
+    best_solution.print();
     if (best_solution < this->solution) {
         updated = true;
         this->solution.copy(best_solution);
+this->solution.print();
     }
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(updated, str(format("%1%") % __func__));
@@ -661,6 +667,8 @@ void LS_optimizer::basicVND() {
             if (this->timeout()) return;
             if (this->operation_call(operation)) { break; }
         }
+//        this->solution.print();
+//        this->best_known_solution.print();
         prev_fitness = current_fitness;
         current_fitness = this->solution.fitness;
     }
