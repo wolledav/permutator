@@ -130,7 +130,7 @@ bool LS_optimizer::insert1() {
                 this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
-                    best_solution = make_solution(new_perm);
+                    best_solution = make_solution(new_perm, best_solution.frequency);
                     inserted_node = j;
                 }
             }
@@ -168,7 +168,7 @@ bool LS_optimizer::remove1() {
         this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
         if (fitness < best_solution.fitness) {
-            best_solution = make_solution(new_perm);
+            best_solution = make_solution(new_perm, best_solution.frequency);
             removed_node = perm[i];
         }
     }
@@ -209,7 +209,7 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
             this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                best_solution = make_solution(new_perm, best_solution.frequency);
             }
         }
     }
@@ -245,7 +245,7 @@ bool LS_optimizer::centered_exchange(uint x) {
         this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
         if (fitness < best_solution.fitness) {
-            best_solution = make_solution(new_perm);
+            best_solution = make_solution(new_perm, best_solution.frequency);
         }
     }
     if (best_solution < this->solution) {
@@ -297,7 +297,7 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
             this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                best_solution = make_solution(new_perm, best_solution.frequency);
             }
         }
     }
@@ -349,7 +349,7 @@ bool LS_optimizer::move_all(uint x) {
             this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                best_solution = make_solution(new_perm, best_solution.frequency);
             }
         }
     }
@@ -392,7 +392,7 @@ bool LS_optimizer::exchange_ids() {
             this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                best_solution = make_solution(new_perm, best_solution.frequency);
                 id1 = i; id2 = j;
                 cnt_id1 = counter1; cnt_id2 = counter2;
             }
@@ -440,7 +440,7 @@ bool LS_optimizer::exchange_n_ids() {
                 this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
-                    best_solution = make_solution(new_perm);
+                    best_solution = make_solution(new_perm, best_solution.frequency);
                     id1 = i; id2 = j;
                     split = n;
                     cnt_id1 = counter1; cnt_id2 = counter2;
@@ -468,8 +468,8 @@ bool LS_optimizer::two_opt() {
     vector<uint> perm = this->solution.permutation;
     if (perm.size() < 2)
         return false;
+
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
-this->solution.print();
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i <= perm.size() - 2; i++) {
@@ -480,15 +480,13 @@ this->solution.print();
                 this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
-                    best_solution = make_solution(new_perm);
+                    best_solution = make_solution(new_perm, best_solution.frequency);
                 }
             }
     }
-    best_solution.print();
     if (best_solution < this->solution) {
         updated = true;
         this->solution.copy(best_solution);
-this->solution.print();
     }
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(updated, str(format("%1%") % __func__));
@@ -550,7 +548,7 @@ void LS_optimizer::random_swap(uint k) {
         perm[sel1] = perm[sel2];
         perm[sel2] = temp;
     }
-    this->solution = make_solution(perm);
+    this->solution = make_solution(perm, this->solution.frequency);
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(true, str(format("%1% %2%") % __func__ % k));
 #endif
@@ -568,7 +566,7 @@ void LS_optimizer::random_move(uint k) {
         perm.erase(perm.begin() + sel1);
         perm.insert(perm.begin() + sel2, temp);
     }
-    this->solution = make_solution(perm);
+    this->solution = make_solution(perm, this->solution.frequency);
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(true, str(format("%1% %2%") % __func__ % k));
 #endif
@@ -599,11 +597,11 @@ void LS_optimizer::reinsert(uint k) {
     for (uint j = 0; j < node_cnt.size(); j++) {
         for (uint i = 0; i < node_cnt[j]; i++) {
             node_id = idx_choice[j];
-            std::uniform_int_distribution<uint> uni(0, perm.size() - 1);
+            std::uniform_int_distribution<uint> uni(0, std::max((int)perm.size() - 1, 0));
             perm.insert(perm.begin() + uni(*this->rng), node_id);
         }
     }
-    this->solution = make_solution(perm);
+    this->solution = make_solution(perm, this->solution.frequency);
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(true, str(format("%1% %2%") % __func__ % k));
 #endif
@@ -642,7 +640,7 @@ void LS_optimizer::random_move_all(uint k) {
             counter++;
         }
     }
-    this->solution = make_solution(perm);
+    this->solution = make_solution(perm, this->solution.frequency);
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(true, str(format("%1% %2%") % __func__ % k));
 #endif
@@ -967,10 +965,12 @@ void LS_optimizer::random_reverse(std::vector<uint>::iterator it1, std::vector<u
         std::reverse(it1, it2);
 }
 
-Solution LS_optimizer::make_solution(const vector<uint> &permutation) {
+Solution LS_optimizer::make_solution(const vector<uint> &permutation, const vector<uint> &frequency) {
     Solution new_solution;
     new_solution.permutation = permutation;
+    new_solution.frequency = frequency;
     new_solution.is_feasible = this->instance->compute_fitness(permutation, &new_solution.fitness);
+    new_solution.node_cnt = permutation.size();
     return new_solution;
 }
 
