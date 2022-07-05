@@ -4,8 +4,9 @@ METAOPT_BIN="../cmake-build-release"
 TEST_TIMEOUT=600 # 10 minutes
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/qap-small/$TIMESTAMP"
+CONFIG="../configs/qap_final_2.json"
 
-DATASETS=( "../data/qap-taillard/tai20b.dat" "../data/qap-taillard/tai25a.dat" "../data/qap-taillard/tai30b.dat" )
+DATASETS=( "../data/qap/qap-10/tai20b.dat" "../data/qap/qap-10/tai25a.dat" "../data/qap/qap-10/tai30b.dat" )
 
 echo $LOGDIR
 # Create log directory
@@ -17,6 +18,7 @@ do
   for i in {1..50}
   do
     echo "[$i/50] Testing ${filename}..."
-    $METAOPT_BIN/qap_meta -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/$i-meta-${filename}.out" > /dev/null 2>&1
+    cmake -E make_directory "$LOGDIR"/"$filename"
+    $METAOPT_BIN/qap_meta -d $data -c $CONFIG -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}/$i-meta-${filename}.out"
   done
 done

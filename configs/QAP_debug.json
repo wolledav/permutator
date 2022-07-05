@@ -1,0 +1,16 @@
+{
+    "num_threads": 1,
+    "timeout": 5,
+    "metaheuristic": "BVNS",
+    "bvns_min_k": 8,
+    "bvns_max_k": 12,
+    "construction": "random_replicate",
+    "allow_infeasible": true,
+    "local_search": "BVND",
+    "operators": [
+        "two_opt"
+    ],
+    "perturbation": [
+        "reinsert"
+    ]
+}
