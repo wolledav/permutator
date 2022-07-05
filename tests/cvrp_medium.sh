@@ -4,8 +4,9 @@ METAOPT_BIN="../cmake-build-release"
 TEST_TIMEOUT=1800 # 30 minutes
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/cvrp-medium/$TIMESTAMP"
+CONFIG="../configs/cvrp_final_2.json"
 
-DATASETS=( "../data/cvrp/cvrp-uchoa/X-n148-k46.xml" "../data/cvrp/cvrp-uchoa/X-n204-k19.xml" "../data/cvrp/cvrp-uchoa/X-n251-k28.xml" )
+DATASETS=( "../data/cvrp/cvrp-10/X-n148-k46.xml" "../data/cvrp/cvrp-10/X-n204-k19.xml" "../data/cvrp/cvrp-10/X-n251-k28.xml" )
 
 echo $LOGDIR
 # Create log directory
@@ -17,7 +18,8 @@ do
   for i in {1..50}
   do
     echo "[$i/50] Testing ${filename}..."
-    $METAOPT_BIN/cvrp_meta -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/$i-meta-${filename}.out" > /dev/null 2>&1
+    cmake -E make_directory "$LOGDIR"/"$filename"
+    $METAOPT_BIN/cvrp_meta -d $data -c $CONFIG -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}/$i-meta-${filename}.out"
   done
-  $METAOPT_BIN/cvrp_ilp -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/ilp-${filename}.out" > /dev/null 2>&1
+#  $METAOPT_BIN/cvrp_ilp -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/ilp-${filename}.out" > /dev/null 2>&1
 done
