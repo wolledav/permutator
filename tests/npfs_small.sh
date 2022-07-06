@@ -19,7 +19,7 @@ do
   do
     echo "[$i/50] Testing ${filename}..."
     cmake -E make_directory "$LOGDIR"/"$filename"
-    $METAOPT_BIN/npfs_meta -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}/$i-meta-${filename}.out"
+    $METAOPT_BIN/npfs_meta -d $data -c $CONFIG -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}/$i-meta-${filename}.out"
   done
 #  $METAOPT_BIN/npfs_ilp -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/ilp-${filename}.out" > /dev/null 2>&1
 done

@@ -4,8 +4,9 @@ METAOPT_BIN="../cmake-build-release"
 TEST_TIMEOUT=3600 # 60 minutes
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/sudoku-large/$TIMESTAMP"
+CONFIG="../configs/SUDOKU_final_1.json"
 
-DATASETS=( "../data/sudoku/inst25x25_20_0.txt" "../data/sudoku/inst25x25_15_0.txt" "../data/sudoku/inst25x25_10_0.txt" "../data/sudoku/inst25x25_5_0.txt" )
+DATASETS=( "../data/sudoku/sudoku-10/inst25x25_20_0.txt" "../data/sudoku/sudoku-10/inst25x25_15_0.txt" "../data/sudoku/sudoku-10/inst25x25_10_0.txt" "../data/sudoku/sudoku-10/inst25x25_5_0.txt" )
 
 echo $LOGDIR
 # Create log directory
