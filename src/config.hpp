@@ -11,7 +11,7 @@
 
 // Compile time config macros
 #define GUROBI_THREAD_CNT 8
-#define STDOUT_ENABLED 1
+#define STDOUT_ENABLED 0
 namespace metaopt {
     typedef unsigned int uint;
 #ifdef FITNESS_TYPE

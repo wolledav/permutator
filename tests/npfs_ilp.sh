@@ -5,12 +5,13 @@ TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/npfs-ilp/$TIMESTAMP"
 
 DATASETS=(
-          "../data/npfs-vfr/Small/VFR20_5_1_Gap.txt" "../data/npfs-vfr/Small/VFR20_15_1_Gap.txt" "../data/npfs-vfr/Small/VFR40_5_1_Gap.txt"
-          "../data/npfs-vfr/Large/VFR100_20_1_Gap.txt" "../data/npfs-vfr/Large/VFR100_20_2_Gap.txt" "../data/npfs-vfr/Large/VFR200_20_1_Gap.txt"
-          "../data/npfs-vfr/Large/VFR600_40_1_Gap.txt" "../data/npfs-vfr/Large/VFR600_60_1_Gap.txt"
-          "../data/npfs-vfr/Large/VFR400_40_1_Gap.txt" "../data/npfs-vfr/Large/VFR400_60_1_Gap.txt"
+          "../data/npfs-vfr/Small/VFR20_5_1.txt" "../data/npfs-vfr/Small/VFR20_15_1.txt" "../data/npfs-vfr/Small/VFR40_5_1.txt"
+          "../data/npfs-vfr/Large/VFR100_20_1.txt" "../data/npfs-vfr/Large/VFR100_20_2.txt" "../data/npfs-vfr/Large/VFR200_20_1.txt"
+          "../data/npfs-vfr/Large/VFR600_40_1.txt" "../data/npfs-vfr/Large/VFR600_60_1.txt"
+          "../data/npfs-vfr/Large/VFR400_40_1.txt" "../data/npfs-vfr/Large/VFR400_60_1.txt"
            )
-TIMEOUTS=( 600 600 600 1800 1800 1800 3600 3600 3600 3600 )
+#TIMEOUTS=( 600 600 600 1800 1800 1800 3600 3600 3600 3600 )
+TIMEOUTS=( 6 6 6 6 6 6 6 6 6 6 )
 
 echo $LOGDIR
 # Create log directory
@@ -21,6 +22,6 @@ do
   echo ${TIMEOUTS[${ITER}]}
   filename=$(basename $data ".txt")
   echo "[gurobi] Testing ${filename}..."
-  $METAOPT_BIN/npfs_ilp -d $data -t ${TIMEOUTS[${ITER}]} -o "${LOGDIR}/ilp-${filename}.out" #> /dev/null 2>&1
+  $METAOPT_BIN/npfs_ilp -d $data -t ${TIMEOUTS[${ITER}]} -o "${LOGDIR}/ilp-${filename}.out" > "${LOGDIR}/ilp-${filename}.stdout" 2>&1
   ITER=$ITER+1
 done

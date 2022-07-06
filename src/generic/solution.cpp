@@ -1,6 +1,7 @@
 //
 // Created by honza on 21.11.21.
 //
+#include <iostream>
 #include "solution.hpp"
 
 Solution::Solution() = default;
@@ -56,6 +57,21 @@ void Solution::save_to_json(json& container) {
     container["solution"]["permutation"] = this->permutation;
 }
 
+void Solution::print() {
+    std::cout << "solution state" << std::endl;
+    std::cout << "\tnode_cnt: " << node_cnt << std::endl;
+    std::cout << "\tfitness: " << fitness << std::endl;
+    std::cout << "\tis_feasible: " << is_feasible << std::endl;
+
+    std::cout << "\tpermutation: ";
+    for (auto e:permutation) std::cout << e << " ";
+    std::cout << std::endl;
+
+    std::cout << "\tfrequency: ";
+    for (auto e:frequency) std::cout << e << " ";
+    std::cout << std::endl;
+}
+
 bool Solution::operator == (const Solution& other) {
     if (other.permutation.size() != this->permutation.size())
         return false;
@@ -85,4 +101,5 @@ bool Solution::operator >= (const Solution& other) const {
 bool Solution::operator[] (uint idx) {
     return this->permutation[idx];
 }
+
 

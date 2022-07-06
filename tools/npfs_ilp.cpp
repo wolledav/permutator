@@ -142,12 +142,12 @@ void ilp_minimize(NPFSInstance* inst, const string& model_filename = "", const s
             sout << "Best bound: " << (int) round(model->get(GRB_DoubleAttr_ObjBound)) << std::endl;
         }
         // Print solution
-        // vector<uint> perm = construct_permutation(x, inst->job_cnt, inst->machine_cnt);
-        // report_end_times(inst, x, perm);
-        // fitness_t fit;
-        // bool is_feasible = inst->compute_fitness(perm, &fit);
-        // Solution sol(inst->node_cnt, perm, fit, is_feasible);
-        // inst->print_solution(&sol, sout);
+//         vector<uint> perm = construct_permutation(x, inst->job_cnt, inst->machine_cnt);
+//         report_end_times(inst, x, perm);
+//         fitness_t fit;
+//         bool is_feasible = inst->compute_fitness(perm, &fit);
+//         Solution sol(inst->node_cnt, perm, fit, is_feasible);
+//         inst->print_solution(&sol, sout);
     } catch (GRBException e) {
         cout << "Error number: " << e.getErrorCode() << endl;
         cout << "Message: " << e.getMessage() << endl;
