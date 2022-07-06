@@ -18,6 +18,6 @@ do
   for i in {1..50}
   do
     echo "[$i/50] Testing ${filename}..."
-    $METAOPT_BIN/sudoku_meta -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/$i-meta-${filename}.out" > /dev/null 2>&1
+    $METAOPT_BIN/sudoku_meta -d $data -c $CONFIG -t $TEST_TIMEOUT -o "${LOGDIR}/$i-meta-${filename}.out" > /dev/null 2>&1
   done
 done
