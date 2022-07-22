@@ -1,0 +1,34 @@
+{
+    "num_threads": 1,
+    "timeout": 300,
+    "metaheuristic": "ILS",
+    "ils_k": 8,
+    "construction": "greedy",
+    "allow_infeasible": true,
+    "local_search": "CVND",
+    "operators": [
+        "remove_1",
+        "two_opt",
+        "exchange_ids",
+        "exchange_n_ids",
+        "exchange_1_1",
+        "exchange_2_3",
+        "exchange_3_3",
+        "exchange_3_4",
+        "exchange_4_4",
+        "rexchange_1_2",
+        "rexchange_2_4",
+        "rexchange_3_3",
+        "centered_exchange_3",
+        "centered_exchange_5",
+        "relocate_1",
+        "relocate_2",
+        "relocate_5",
+        "move_all_by_1",
+        "move_all_by_2",
+        "move_all_by_10"
+    ],
+    "perturbation": [
+        "random_move_all"
+    ]
+}
