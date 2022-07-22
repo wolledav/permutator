@@ -10,7 +10,7 @@
 #include "lib/nlohmann/json.hpp"
 
 // Compile time config macros
-#define GUROBI_THREAD_CNT 8
+#define GUROBI_THREAD_CNT 1
 #define STDOUT_ENABLED 0
 namespace metaopt {
     typedef unsigned int uint;
