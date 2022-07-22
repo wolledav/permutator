@@ -604,10 +604,13 @@ void LS_optimizer::reinsert(uint k) {
 }
 
 /*
- *
+ * randomly selects a node node_id from A.
+ * All occurrences of $a$ are randomly moved in X up to a maximal distance k from their original locations.
+ * This operation is performed k times.
  */
 void LS_optimizer::random_move_all(uint k) {
-    vector<string> log_args;
+//    vector<string> log_args;
+    // Structures init
     int move;
     uint node_id;
     vector<uint> perm = this->solution.permutation;
@@ -615,29 +618,44 @@ void LS_optimizer::random_move_all(uint k) {
     std::uniform_int_distribution<uint> node_uni(0, this->instance->node_cnt - 1);
     std::uniform_int_distribution<int> dist_uni(-(int)k, (int)k);
     for (uint i = 0; i < k; i++) {
+        // Select randomly a move distance and a node
         move = dist_uni(*this->rng);
-        while (move == 0)
-            move = dist_uni(*this->rng);
+        while (move == 0) move = dist_uni(*this->rng);
         node_id = node_uni(*this->rng);
+        // Get all positions of node_id in this->solution
         positions.clear();
         for (uint j = 0; j < this->solution.permutation.size(); j++) {
             if (this->solution.permutation[j] == node_id) {
                 positions.push_back(j);
             }
         }
-        std::uniform_int_distribution<uint> split_uni(0, positions.size());
-        uint split = split_uni(*this->rng);
-        uint counter = 0;
-        for (auto pos: positions) {
-            int new_pos = (int) pos + (counter >= split ? move : 0);
+        // Shift all positions by move
+        for (auto &pos:positions) {
+            int new_pos = (int) pos + move;
+            new_pos = new_pos % (int)perm.size();
             if (new_pos < 0)
                 new_pos = (int) perm.size() + new_pos;
             else if ((uint) new_pos > perm.size() - 1)
                 new_pos = new_pos - (int) perm.size();
-            perm.erase(perm.begin() + pos);
-            perm.insert(perm.begin() + new_pos, node_id);
-            counter++;
+            pos = new_pos;
         }
+        // Fill new_perm with node_id at new_pos
+        std::vector<uint> new_perm(perm.size(), -1);
+        for (auto pos:positions) {
+            new_perm[pos] = node_id;
+        }
+        // Fill the remaining nodes
+        for (auto node:perm) {
+            if (node != node_id) {
+                for (auto &elem:new_perm) {
+                    if (elem == -1) {
+                        elem = node;
+                        break;
+                    }
+                }
+            }
+        }
+        perm = new_perm;
     }
     this->solution = make_solution(perm);
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
