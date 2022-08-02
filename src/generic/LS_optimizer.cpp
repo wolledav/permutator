@@ -665,25 +665,23 @@ void LS_optimizer::random_move_all(uint k) {
 
 //**********************************************************************************************************************
 // LOCAL SEARCH HEURISTICS
-//**********************************************************************
+//**********************************************************************************************************************
 
 /*
  * Sequentially applies local search operators in fixed order.
- * Resets back to the first operator in case of improvement.
+ * Restarts from the first operator in case of improvement.
  * Terminates, when no operator improves the current solution.
  * Updates existing this->solution.
  */
 void LS_optimizer::basicVND() {
-    std::chrono::steady_clock::time_point now;
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+
     while (current_fitness < prev_fitness) {
         for (const auto &operation : this->operation_list) {
             if (this->timeout()) return;
-            if (this->operation_call(operation)) { break; }
+            if (this->operation_call(operation)) break;
         }
-//        this->solution.print();
-//        this->best_known_solution.print();
         prev_fitness = current_fitness;
         current_fitness = this->solution.fitness;
     }
@@ -691,7 +689,7 @@ void LS_optimizer::basicVND() {
 
 /*
  * Sequentially applies local search operators in fixed order.
- * Repeats the same operator in case of improvement.
+ * Reapplies the same operator in case of improvement.
  * Terminates, when no operator improves the current solution.
  * Updates existing this->solution.
  */
@@ -699,13 +697,14 @@ void LS_optimizer::pipeVND() {
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
     int last_improving_operator = -1;
+
     while (current_fitness < prev_fitness) {
         for (int i = 0; i < (int)this->operation_list.size(); i++) {
-            if (last_improving_operator == i) {return;} // won't help this time
+            if (last_improving_operator == i) return;
             string operation = this->operation_list[i];
             while (this->operation_call(operation)) {
                 last_improving_operator = i;
-                if (this->timeout()) {return;}
+                if (this->timeout()) return;
             }
         }
         prev_fitness = current_fitness;
@@ -717,47 +716,64 @@ void LS_optimizer::pipeVND() {
  * Sequentially applies local search operators in fixed order.
  * Terminates, when no operator improves the current solution.
  * Updates existing this->solution.
- * TODO termination could be sped up as in pipeVND
  */
 void LS_optimizer::cyclicVND() {
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+    int last_improving_operator = -1;
+
     while (current_fitness < prev_fitness) {
-        for (const auto &operation : this->operation_list) {
-            auto res = this->operation_call(operation);
-            if (this->timeout()) {return;}
+        for (int i = 0; i < (int)this->operation_list.size(); i++) {
+            if (last_improving_operator == i) return;
+            string operation = this->operation_list[i];
+            if (this->operation_call(operation)) {
+                last_improving_operator = i;
+            }
+            if (this->timeout()) return;
         }
         prev_fitness = current_fitness;
         current_fitness = this->solution.fitness;
     }
 }
 
+/*
+ * Sequentially applies local search operators in random order.
+ * Terminates, when no operator improves the current solution.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::randomVND() {
     std::uniform_int_distribution<uint> uni(0, this->operation_list.size() - 1);
-    vector<uint> order;
+    vector<uint> order; // order of local search operators
     for (uint i = 0; i < operation_list.size(); i++)
         order.push_back(i);
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+
     while (current_fitness < prev_fitness) {
-        std::shuffle(order.begin(), order.end(), *this->rng);
+        std::shuffle(order.begin(), order.end(), *this->rng); // shuffle order
         for (uint idx : order) {
             this->operation_call(this->operation_list[idx]);
-            if (this->timeout()) {return;}
+            if (this->timeout()) return;
         }
         prev_fitness = current_fitness;
         current_fitness = this->solution.fitness;
     }
 }
 
+/*
+ * Sequentially applies local search operators in random order.
+ * Repeats the same operator in case of improvement.
+ * Terminates, when no operator improves the current solution.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::randompipeVND() {
-//     std::cout << "\tentered " << __func__ << std::endl;
     std::uniform_int_distribution<uint> uni(0, this->operation_list.size() - 1);
     vector<uint> order;
     for (uint i = 0; i < operation_list.size(); i++)
         order.push_back(i);
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+
     while (current_fitness < prev_fitness) {
         std::shuffle(order.begin(), order.end(), *this->rng);
         for (uint idx : order) {

@@ -49,8 +49,8 @@ cp libgurobi_c++.a ../../lib/
 | basic VND       | none       | fixed              |
 | pipe VND        | none       | fixed              |
 | cyclic VND      | none       | fixed              |
-| random VND      |            |                    |
-| random pipe VND |            |                    |
+| random VND      | none       | random             |
+| random pipe VND | none       | random             |
 
 ### Local search operators
 | Name                    | Description |
