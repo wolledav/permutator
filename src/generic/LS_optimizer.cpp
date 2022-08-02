@@ -112,8 +112,9 @@ void LS_optimizer::run() {
  */
 bool LS_optimizer::insert1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("O: %1%") % __func__));
 #endif
+
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
@@ -138,8 +139,9 @@ bool LS_optimizer::insert1() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%") % __func__));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -150,8 +152,9 @@ bool LS_optimizer::insert1() {
  */
 bool LS_optimizer::remove1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("O: %1%") % __func__));
 #endif
+
     if (this->solution.permutation.empty()) return false;
     vector<uint> perm = this->solution.permutation;
     uint removed_node = -1;
@@ -178,8 +181,9 @@ bool LS_optimizer::remove1() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%") % __func__));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -191,8 +195,9 @@ bool LS_optimizer::remove1() {
  */
 bool LS_optimizer::relocate(uint x, bool reverse) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("O: %1%%2%_%3%") % (reverse ? "r" : "") % __func__ % x ));
 #endif
+
     if (x > this->solution.permutation.size()) return false;
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
@@ -223,9 +228,9 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%%2%_%3%")
-                                       % (reverse ? 'r' : ' ') % __func__ % x ));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -236,8 +241,9 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
  */
 bool LS_optimizer::centered_exchange(uint x) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("O: %1%_%2%") % __func__ % x));
 #endif
+
     fitness_t fitness;
     if (x > this->solution.permutation.size())
         return false;
@@ -263,8 +269,9 @@ bool LS_optimizer::centered_exchange(uint x) {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%_%2%") % __func__ % x));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -276,8 +283,9 @@ bool LS_optimizer::centered_exchange(uint x) {
  */
 bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("O: %1%%2%_%3%_%4%") % (reverse ? "r" : "")  % __func__ % x % y));
 #endif
+
     if (x + y > this->solution.permutation.size())
         return false;
     fitness_t fitness;
@@ -322,9 +330,9 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%%2%_%3%_%4%")
-        % (reverse ? 'r' : ' ')  % __func__ % x % y));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -335,8 +343,9 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
  */
 bool LS_optimizer::move_all(uint x) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-     std::cout << "\tentered " << __func__ << "_" << x << std::endl;
+     this->print_operation(str(format("O: %1%_%2%") % __func__ % x));
 #endif
+
     if (this->solution.permutation.size() < x)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -379,8 +388,9 @@ bool LS_optimizer::move_all(uint x) {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%_%2%") % __func__ % x));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -391,8 +401,9 @@ bool LS_optimizer::move_all(uint x) {
  */
 bool LS_optimizer::exchange_ids() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("O: %1%") % __func__));
 #endif
+
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -429,8 +440,9 @@ bool LS_optimizer::exchange_ids() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%") % __func__));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -441,8 +453,9 @@ bool LS_optimizer::exchange_ids() {
  */
 bool LS_optimizer::exchange_n_ids() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("O: %1%") % __func__));
 #endif
+
     if (this->solution.permutation.size() < 2)
         return false;
     // Init structures
@@ -481,8 +494,9 @@ bool LS_optimizer::exchange_n_ids() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1% %2%") % __func__ % best_n));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -493,8 +507,9 @@ bool LS_optimizer::exchange_n_ids() {
  */
 bool LS_optimizer::two_opt() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("O: %1%") % __func__));
 #endif
+
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
     if (perm.size() < 2)
@@ -519,8 +534,9 @@ bool LS_optimizer::two_opt() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%") % __func__));
+    this->print_result(updated);
 #endif
     return updated;
 }
@@ -536,8 +552,9 @@ bool LS_optimizer::two_opt() {
  */
 void LS_optimizer::double_bridge(uint k, bool reverse_all) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("P: %1% %2%") % __func__ % k));
 #endif
+
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
     std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt-1);
     std::vector<uint> idx;
@@ -567,8 +584,9 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
     new_solution.permutation = new_perm;
     new_solution.is_feasible = this->instance->compute_fitness(new_perm, &new_solution.fitness);
     this->solution.copy(new_solution);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
@@ -578,8 +596,9 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
  */
 void LS_optimizer::random_swap(uint k) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("%1% %2%") % __func__ % k));
 #endif
+
     uint sel1, sel2, temp;
     vector<uint> perm = this->solution.permutation;
     std::uniform_int_distribution<uint> uni_select(0, perm.size() - 1);
@@ -593,8 +612,9 @@ void LS_optimizer::random_swap(uint k) {
         perm[sel2] = temp;
     }
     this->solution = make_solution(perm);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
@@ -604,8 +624,9 @@ void LS_optimizer::random_swap(uint k) {
  */
 void LS_optimizer::random_move(uint k) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("%1% %2%") % __func__ % k));
 #endif
+
     uint sel1, sel2, temp;
     vector<uint> perm = this->solution.permutation;
     std::uniform_int_distribution<uint> uni_select(0, perm.size() - 1);
@@ -619,8 +640,9 @@ void LS_optimizer::random_move(uint k) {
         perm.insert(perm.begin() + sel2, temp);
     }
     this->solution = make_solution(perm);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
@@ -631,8 +653,9 @@ void LS_optimizer::random_move(uint k) {
  */
 void LS_optimizer::reinsert(uint k) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("%1% %2%") % __func__ % k));
 #endif
+
     vector<uint> idx_choice, node_cnt;
     vector<uint> perm = this->solution.permutation;
 
@@ -662,8 +685,9 @@ void LS_optimizer::reinsert(uint k) {
         }
     }
     this->solution = make_solution(perm);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
@@ -673,6 +697,10 @@ void LS_optimizer::reinsert(uint k) {
  * This operation is performed k times.
  */
 void LS_optimizer::random_move_all(uint k) {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("%1% %2%") % __func__ % k));
+#endif
+
     int move;
     uint node_id;
     vector<uint> perm = this->solution.permutation;
@@ -721,8 +749,9 @@ void LS_optimizer::random_move_all(uint k) {
         perm = new_perm;
     }
     this->solution = make_solution(perm);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
@@ -1086,14 +1115,21 @@ bool LS_optimizer::valid_solution(Solution *sol) {
 // Logging
 //**********************************************************************
 
-void LS_optimizer::print_operation(bool update, const string& msg) {
-    std::cout << (update ? "{*}" :  "{-}") << std::setw(6) << std::right << str(format("[%1%] ") % this->get_runtime());
+void LS_optimizer::print_operation(const string &msg) {
+    std::cout << str(format("[%1%] ") % this->get_runtime()) << " ";
     std::cout << std::setw(30) << std::left << msg;
-    std::cout << " --> Feasible:" << this->solution.is_feasible <<
+}
+
+void LS_optimizer::print_result(bool update) {
+//    std::cout << (update ? "{*}" :  "{-}") << std::setw(6) << std::right << str(format("[%1%] ") % this->get_runtime());
+//    std::cout << std::setw(30) << std::left << msg;
+    std::cout << str(format("-----> [%1%]") % this->get_runtime()) <<
+            "  Update: " << update <<
+            "  Feasible: " << this->solution.is_feasible <<
             "  Sol size: " << this->solution.permutation.size() <<
-            "  BKS Fitness:" << this->best_known_solution.fitness <<
-            "  Last update:" << std::chrono::duration_cast<std::chrono::seconds>(this->last_improvement - this->start).count() <<
-            "  Curr Fitness:" << this->solution.fitness << std::endl;
+            "  BKS Fitness: " << this->best_known_solution.fitness <<
+            "  Last update: " << std::chrono::duration_cast<std::chrono::seconds>(this->last_improvement - this->start).count() <<
+            "  Curr Fitness: " << this->solution.fitness << std::endl;
 }
 
 void LS_optimizer::save_to_json(json& container) {

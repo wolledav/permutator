@@ -125,7 +125,8 @@ class LS_optimizer
         void random_reverse(std::vector<uint>::iterator, std::vector<uint>::iterator);
         Solution make_solution(const vector<uint> &permutation);
         bool valid_solution(Solution *sol);
-        void print_operation(bool update, const string& msg);
+        void print_operation(const string& msg);
+        void print_result(bool update);
     public:
         std::map<string, std::pair<uint, uint>> operation_histogram = {};
         // Initialization
