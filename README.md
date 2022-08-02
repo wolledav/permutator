@@ -53,16 +53,16 @@ cp libgurobi_c++.a ../../lib/
 | random pipe VND | none       | random             |
 
 ### Local search operators
-| Name                    | Description |
-|-------------------------|-------------|
-| insert1                 |             |
-| remove1                 |             |
-| relocate(x, reverse)    |             |
-| exchange(x, y, reverse) |             |
-| centered exchange(x)    |             |
-| move_all(x)             |             |
-| exchange_ids            |             |
-| exchange_n_ids          |             |
+| Name              | Parameters    |
+|-------------------|---------------|
+| insert1           | none          |
+| remove1           | none          |
+| relocate          | x, reverse    |
+| exchange          | x, y, reverse |
+| centered exchange | x             |
+| move_all          | x             |
+| exchange_ids      | none          |
+| exchange_n_ids    | none          |
 
 ### Construction procedures
 | Name             | Parameters |

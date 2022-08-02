@@ -2,9 +2,9 @@
 
 #include <utility>
 
-//**********************************************************************
+//**********************************************************************************************************************
 // INITIALIZATION
-//**********************************************************************
+//**********************************************************************************************************************
 
 LS_optimizer::LS_optimizer(Instance *inst, json config, uint seed) {
     this->instance = inst;
@@ -106,6 +106,10 @@ void LS_optimizer::run() {
 // LOCAL SEARCH OPERATORS
 //**********************************************************************************************************************
 
+/*
+ * Attempts to insert all nodes from A to X.
+ * Performs the most-improving insertion.
+ */
 bool LS_optimizer::insert1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << "\tentered " << __func__ << std::endl;
@@ -113,21 +117,20 @@ bool LS_optimizer::insert1() {
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
-    uint inserted_node = 0;
     bool updated = false;
-#pragma omp parallel for default(none) private(fitness) shared(best_solution, inserted_node, perm)
+
+#pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i <= perm.size(); i++) {
         if (this->timeout()) continue;
         vector<uint> new_perm = perm;
             new_perm.insert(new_perm.begin() + i, 0);
             for (uint j = 0; j < this->instance->node_cnt; j++){
-                if (this->solution.frequency[j] >= this->instance->ubs[j]) {continue;}
+                if (this->solution.frequency[j] >= this->instance->ubs[j]) continue;
                 new_perm[i] = j;
                 this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
                     best_solution = make_solution(new_perm);
-                    inserted_node = j;
                 }
             }
     }
@@ -141,17 +144,21 @@ bool LS_optimizer::insert1() {
     return updated;
 }
 
+/*
+ * Attempts to remove all nodes from X.
+ * Performs the most-improving or non-worsening insertion.
+ */
 bool LS_optimizer::remove1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << "\tentered " << __func__ << std::endl;
 #endif
-    if (this->solution.permutation.empty())
-        return false;
+    if (this->solution.permutation.empty()) return false;
     vector<uint> perm = this->solution.permutation;
     uint removed_node = -1;
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, removed_node, perm)
     for (uint i = 0; i < perm.size(); i++){
         if (this->timeout()) continue;
@@ -177,16 +184,21 @@ bool LS_optimizer::remove1() {
     return updated;
 }
 
+/*
+ * Attempts to relocate all substring length x in X.
+ * Performs the most improving relocation.
+ * If reverse = 1, reverts the substring before relocating.
+ */
 bool LS_optimizer::relocate(uint x, bool reverse) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << "\tentered " << __func__ << std::endl;
 #endif
-    if (x > this->solution.permutation.size())
-        return false;
+    if (x > this->solution.permutation.size()) return false;
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, reverse)
     for (uint i = 0; i < perm.size() - x; i++) {
         if (this->timeout()) continue;
@@ -218,6 +230,10 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
     return updated;
 }
 
+/*
+ * Attempts to revert the all possible substrings of length 2x + 1 around all nodes in X.
+ * Performs the most improving reverse.
+ */
 bool LS_optimizer::centered_exchange(uint x) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << "\tentered " << __func__ << std::endl;
@@ -228,6 +244,7 @@ bool LS_optimizer::centered_exchange(uint x) {
     vector<uint> perm = this->solution.permutation;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
     for (int i = (int)x; i < (int)perm.size() - (int)x; i++) {
         if (this->timeout()) continue;
@@ -252,6 +269,11 @@ bool LS_optimizer::centered_exchange(uint x) {
     return updated;
 }
 
+/*
+ * Attempts to exchange all substrings of lengths x and y.
+ * Performs the most improving exchange.
+ * If reverse = 1, reverts both substrings before exchange.
+ */
 bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << "\tentered " << __func__ << std::endl;
@@ -262,6 +284,7 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
     vector<uint> perm = this->solution.permutation;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, y, reverse)
     for (uint i = 0; i < perm.size() - x; i++) {
         if (this->timeout()) continue;
@@ -306,6 +329,10 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
     return updated;
 }
 
+/*
+ * Attempts to move all occurrences of all nodes from A in X by [-x, x]\{0}.
+ * Performs the most improving move.
+ */
 bool LS_optimizer::move_all(uint x) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
      std::cout << "\tentered " << __func__ << "_" << x << std::endl;
@@ -316,6 +343,7 @@ bool LS_optimizer::move_all(uint x) {
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++){ // try for all nodes
         if (this->timeout()) continue;
@@ -357,6 +385,10 @@ bool LS_optimizer::move_all(uint x) {
     return updated;
 }
 
+/*
+ * Attempts to exchange ids of all possible pairs of nodes X.
+ * Performs the most improving exchange.
+ */
 bool LS_optimizer::exchange_ids() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << "\tentered " << __func__ << std::endl;
@@ -368,6 +400,7 @@ bool LS_optimizer::exchange_ids() {
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, id1, cnt_id1, id2, cnt_id2, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) {
         if (this->timeout()) continue;
@@ -403,7 +436,8 @@ bool LS_optimizer::exchange_ids() {
 }
 
 /*
- * For all pairs of nodes i,j and for all numbers from {1,...,f_i} attempts to exchange first n occurrences of i and j.
+ * For all pairs of nodes i,j in A and for all numbers from {1,...,f_i} attempts to exchange first n occurrences of i and j.
+ * Performs the most improving exchange.
  */
 bool LS_optimizer::exchange_n_ids() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -417,6 +451,7 @@ bool LS_optimizer::exchange_n_ids() {
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, best_n, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) { // for all nodes i in A
         if (this->timeout()) continue;
@@ -452,6 +487,10 @@ bool LS_optimizer::exchange_n_ids() {
     return updated;
 }
 
+/*
+ * Attempts to revert all possible substrings of X.
+ * Performs the most improving reverse.
+ */
 bool LS_optimizer::two_opt() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << "\tentered " << __func__ << std::endl;
@@ -486,9 +525,9 @@ bool LS_optimizer::two_opt() {
     return updated;
 }
 
-// **********************************************************************
+// *********************************************************************************************************************
 // PERTURBATIONS
-// **********************************************************************
+// *********************************************************************************************************************
 
 /*
  * Generates k random distinct indices.
