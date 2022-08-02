@@ -35,13 +35,13 @@ cp libgurobi_c++.a ../../lib/
 | calibrating VNS | cvns_min_k, cvns_max_k, cvns_it_per_k |
 
 ### Perturbations
-| Name                          | Description |
-|-------------------------------|-------------|
-| double_bridge(k, reverse_all) |             |
-| reinsert(k)                   |             |
-| random_swap(k)                |             |
-| random_move(k)                |             |
-| random_move_all(k)            |             |
+| Name            | Parameters     |
+|-----------------|----------------|
+| double_bridge   | k, reverse_all |
+| reinsert        | k              |
+| random_swap     | k              |
+| random_move     | k              |
+| random_move_all | k              |
 
 ### Local search heuristics
 | Name            | Parameters | Neighborhood order |
