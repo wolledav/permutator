@@ -24,11 +24,10 @@ LS_optimizer::LS_optimizer(Instance *inst, json config, uint seed) {
 
 std::mt19937* LS_optimizer::init_rng(uint seed) {
     if (seed == 0) {
-        std::random_device rd;     // only used once to initialise (seed) engine
+        std::random_device rd;
         seed = rd();
     }
     return new std::mt19937(seed);
-
 }
 
 void LS_optimizer::setConstruction(const string& constr) {
@@ -96,9 +95,6 @@ void LS_optimizer::run() {
     this->last_improvement = this->start;
     this->construction();
 
-//    this->solution.print();
-//    this->best_known_solution.print();
-
     if (!this->timeout()) {
         this->metaheuristic();
     } else {
@@ -106,9 +102,9 @@ void LS_optimizer::run() {
     }
 }
 
-//**********************************************************************
-// OPERATORS
-//**********************************************************************
+//**********************************************************************************************************************
+// LOCAL SEARCH OPERATORS
+//**********************************************************************************************************************
 
 bool LS_optimizer::insert1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -494,28 +490,33 @@ bool LS_optimizer::two_opt() {
 // PERTURBATIONS
 // **********************************************************************
 
+/*
+ * Generates k random distinct indices.
+ * Splits this->solution into k+1 substrings and reverts all of them, if reverse_all = 1,
+ * otherwise reverts each one randomly with p = 0.5.
+ */
 void LS_optimizer::double_bridge(uint k, bool reverse_all) {
-//     std::cout << "\tentered " << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << "\tentered " << __func__ << std::endl;
+#endif
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
-    string log_args[k];
     std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt-1);
     std::vector<uint> idx;
     vector<uint> perm = this->solution.permutation;
     Solution new_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> new_perm = perm;
-    // generate random sorted indices
-    for (auto & i : log_args) {
+
+    // generate random indices
+    for (int i = 0; i < k; i++) {
         idx.push_back(uni(*rng));
-        i = uitos(idx.back());
     }
     std::sort(std::begin(idx), std::end(idx));
     // reverse subpermutations
     if (!reverse_all) {
         this->random_reverse(new_perm.begin(), new_perm.begin() + idx[0]); // half closed interval [i, j)
-        for (uint i = 0; i + 1 < k; i++)
-            this->random_reverse(new_perm.begin() + idx[i],
+        for (uint i = 0; i + 1 < k; i++) this->random_reverse(new_perm.begin() + idx[i],
                                  new_perm.begin() + idx[i + 1]); // half closed interval [i, j)
-        this->random_reverse(new_perm.begin() + idx[k - 1], new_perm.end()); // half closed interval [i, j)
+            this->random_reverse(new_perm.begin() + idx[k - 1], new_perm.end()); // half closed interval [i, j)
     } else {
         reverse(new_perm.begin(), new_perm.begin() + idx[0]); // half closed interval [i, j)
         for (uint i = 0; i + 1 < k; i++)
@@ -532,10 +533,18 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
 #endif
 }
 
+/*
+ * Randomly selects two nodes in X and swaps them.
+ * Repeats k times.
+ */
 void LS_optimizer::random_swap(uint k) {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << "\tentered " << __func__ << std::endl;
+#endif
     uint sel1, sel2, temp;
     vector<uint> perm = this->solution.permutation;
     std::uniform_int_distribution<uint> uni_select(0, perm.size() - 1);
+
     for (uint i = 0; i < k; i++) {
         sel1 = uni_select(*this->rng);
         sel2 = uni_select(*this->rng);
@@ -550,10 +559,18 @@ void LS_optimizer::random_swap(uint k) {
 #endif
 }
 
+/*
+ * Randomly selects a node in X and moves it to a random location.
+ * Repeats k times.
+ */
 void LS_optimizer::random_move(uint k) {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << "\tentered " << __func__ << std::endl;
+#endif
     uint sel1, sel2, temp;
     vector<uint> perm = this->solution.permutation;
     std::uniform_int_distribution<uint> uni_select(0, perm.size() - 1);
+
     for (uint i = 0; i < k; i++) {
         sel1 = uni_select(*this->rng);
         sel2 = uni_select(*this->rng);
@@ -568,15 +585,22 @@ void LS_optimizer::random_move(uint k) {
 #endif
 }
 
+/*
+ * Selects k distinct nodes from A.
+ * Removes all their occurrences from X.
+ * Reinserts them to randomly selected locations.
+ */
 void LS_optimizer::reinsert(uint k) {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    std::cout << "\tentered " << __func__ << std::endl;
+#endif
     vector<uint> idx_choice, node_cnt;
-    vector<string> log_args;
     vector<uint> perm = this->solution.permutation;
+
     // get nodes randomly
     std::uniform_int_distribution<uint> uni_select(0, this->instance->node_cnt-1);
     for (uint i = 0; i < k; i++) {
         idx_choice.push_back(uni_select(*this->rng));
-        log_args.push_back(uitos(idx_choice.back()));
         node_cnt.push_back(0);
     }
     // remove all selected nodes
@@ -585,6 +609,7 @@ void LS_optimizer::reinsert(uint k) {
             if (idx_choice[j] == perm[i]) {
                 perm.erase(perm.begin() + i);
                 node_cnt[j]++;
+                i--; // prevents skipping neighboring occurrences
             }
         }
     }
@@ -605,18 +630,17 @@ void LS_optimizer::reinsert(uint k) {
 
 /*
  * randomly selects a node node_id from A.
- * All occurrences of $a$ are randomly moved in X up to a maximal distance k from their original locations.
+ * All occurrences of node_id are randomly moved in X up to a maximal distance k from their original locations.
  * This operation is performed k times.
  */
 void LS_optimizer::random_move_all(uint k) {
-//    vector<string> log_args;
-    // Structures init
     int move;
     uint node_id;
     vector<uint> perm = this->solution.permutation;
     vector<uint> positions;
     std::uniform_int_distribution<uint> node_uni(0, this->instance->node_cnt - 1);
     std::uniform_int_distribution<int> dist_uni(-(int)k, (int)k);
+
     for (uint i = 0; i < k; i++) {
         // Select randomly a move distance and a node
         move = dist_uni(*this->rng);
