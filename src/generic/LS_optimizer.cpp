@@ -2,9 +2,9 @@
 
 #include <utility>
 
-//**********************************************************************
+//**********************************************************************************************************************
 // INITIALIZATION
-//**********************************************************************
+//**********************************************************************************************************************
 
 LS_optimizer::LS_optimizer(Instance *inst, json config, uint seed) {
     this->instance = inst;
@@ -24,11 +24,10 @@ LS_optimizer::LS_optimizer(Instance *inst, json config, uint seed) {
 
 std::mt19937* LS_optimizer::init_rng(uint seed) {
     if (seed == 0) {
-        std::random_device rd;     // only used once to initialise (seed) engine
+        std::random_device rd;
         seed = rd();
     }
     return new std::mt19937(seed);
-
 }
 
 void LS_optimizer::setConstruction(const string& constr) {
@@ -96,9 +95,6 @@ void LS_optimizer::run() {
     this->last_improvement = this->start;
     this->construction();
 
-//    this->solution.print();
-//    this->best_known_solution.print();
-
     if (!this->timeout()) {
         this->metaheuristic();
     } else {
@@ -106,32 +102,36 @@ void LS_optimizer::run() {
     }
 }
 
-//**********************************************************************
-// OPERATORS
-//**********************************************************************
+//**********************************************************************************************************************
+// LOCAL SEARCH OPERATORS
+//**********************************************************************************************************************
 
+/*
+ * Attempts to insert all nodes from A to X.
+ * Performs the most-improving insertion.
+ */
 bool LS_optimizer::insert1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("\t\tO: %1%") % __func__));
 #endif
+
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
-    uint inserted_node = 0;
     bool updated = false;
-#pragma omp parallel for default(none) private(fitness) shared(best_solution, inserted_node, perm)
+
+#pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i <= perm.size(); i++) {
         if (this->timeout()) continue;
         vector<uint> new_perm = perm;
             new_perm.insert(new_perm.begin() + i, 0);
             for (uint j = 0; j < this->instance->node_cnt; j++){
-                if (this->solution.frequency[j] >= this->instance->ubs[j]) {continue;}
+                if (this->solution.frequency[j] >= this->instance->ubs[j]) continue;
                 new_perm[i] = j;
                 this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
                     best_solution = make_solution(new_perm);
-                    inserted_node = j;
                 }
             }
     }
@@ -139,23 +139,29 @@ bool LS_optimizer::insert1() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%") % __func__));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
+/*
+ * Attempts to remove all nodes from X.
+ * Performs the most-improving or non-worsening insertion.
+ */
 bool LS_optimizer::remove1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("\t\tO: %1%") % __func__));
 #endif
-    if (this->solution.permutation.empty())
-        return false;
+
+    if (this->solution.permutation.empty()) return false;
     vector<uint> perm = this->solution.permutation;
     uint removed_node = -1;
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, removed_node, perm)
     for (uint i = 0; i < perm.size(); i++){
         if (this->timeout()) continue;
@@ -175,22 +181,29 @@ bool LS_optimizer::remove1() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%") % __func__));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
+/*
+ * Attempts to relocate all substring length x in X.
+ * Performs the most improving relocation.
+ * If reverse = 1, reverts the substring before relocating.
+ */
 bool LS_optimizer::relocate(uint x, bool reverse) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("\t\tO: %1%%2%_%3%") % (reverse ? "r" : "") % __func__ % x ));
 #endif
-    if (x > this->solution.permutation.size())
-        return false;
+
+    if (x > this->solution.permutation.size()) return false;
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, reverse)
     for (uint i = 0; i < perm.size() - x; i++) {
         if (this->timeout()) continue;
@@ -215,23 +228,29 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%%2%_%3%")
-                                       % (reverse ? 'r' : ' ') % __func__ % x ));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
+/*
+ * Attempts to revert the all possible substrings of length 2x + 1 around all nodes in X.
+ * Performs the most improving reverse.
+ */
 bool LS_optimizer::centered_exchange(uint x) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("\t\tO: %1%_%2%") % __func__ % x));
 #endif
+
     fitness_t fitness;
     if (x > this->solution.permutation.size())
         return false;
     vector<uint> perm = this->solution.permutation;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
     for (int i = (int)x; i < (int)perm.size() - (int)x; i++) {
         if (this->timeout()) continue;
@@ -250,22 +269,30 @@ bool LS_optimizer::centered_exchange(uint x) {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%_%2%") % __func__ % x));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
+/*
+ * Attempts to exchange all substrings of lengths x and y.
+ * Performs the most improving exchange.
+ * If reverse = 1, reverts both substrings before exchange.
+ */
 bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("\t\tO: %1%%2%_%3%_%4%") % (reverse ? "r" : "")  % __func__ % x % y));
 #endif
+
     if (x + y > this->solution.permutation.size())
         return false;
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, y, reverse)
     for (uint i = 0; i < perm.size() - x; i++) {
         if (this->timeout()) continue;
@@ -303,23 +330,29 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%%2%_%3%_%4%")
-        % (reverse ? 'r' : ' ')  % __func__ % x % y));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
+/*
+ * Attempts to move all occurrences of all nodes from A in X by [-x, x]\{0}.
+ * Performs the most improving move.
+ */
 bool LS_optimizer::move_all(uint x) {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-     std::cout << "\tentered " << __func__ << "_" << x << std::endl;
+     this->print_operation(str(format("\t\tO: %1%_%2%") % __func__ % x));
 #endif
+
     if (this->solution.permutation.size() < x)
         return false;
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++){ // try for all nodes
         if (this->timeout()) continue;
@@ -355,16 +388,22 @@ bool LS_optimizer::move_all(uint x) {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%_%2%") % __func__ % x));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
+/*
+ * Attempts to exchange ids of all possible pairs of nodes X.
+ * Performs the most improving exchange.
+ */
 bool LS_optimizer::exchange_ids() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("\t\tO: %1%") % __func__));
 #endif
+
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
@@ -372,6 +411,7 @@ bool LS_optimizer::exchange_ids() {
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, id1, cnt_id1, id2, cnt_id2, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) {
         if (this->timeout()) continue;
@@ -400,19 +440,22 @@ bool LS_optimizer::exchange_ids() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%") % __func__));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
 /*
- * For all pairs of nodes i,j and for all numbers from {1,...,f_i} attempts to exchange first n occurrences of i and j.
+ * For all pairs of nodes i,j in A and for all numbers from {1,...,f_i} attempts to exchange first n occurrences of i and j.
+ * Performs the most improving exchange.
  */
 bool LS_optimizer::exchange_n_ids() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("\t\tO: %1%") % __func__));
 #endif
+
     if (this->solution.permutation.size() < 2)
         return false;
     // Init structures
@@ -421,6 +464,7 @@ bool LS_optimizer::exchange_n_ids() {
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
+
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, best_n, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) { // for all nodes i in A
         if (this->timeout()) continue;
@@ -450,16 +494,22 @@ bool LS_optimizer::exchange_n_ids() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1% %2%") % __func__ % best_n));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
+/*
+ * Attempts to revert all possible substrings of X.
+ * Performs the most improving reverse.
+ */
 bool LS_optimizer::two_opt() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    std::cout << "\tentered " << __func__ << std::endl;
+    this->print_operation(str(format("\t\tO: %1%") % __func__));
 #endif
+
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
     if (perm.size() < 2)
@@ -484,38 +534,45 @@ bool LS_optimizer::two_opt() {
         updated = true;
         this->solution.copy(best_solution);
     }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(updated, str(format("%1%") % __func__));
+    this->print_result(updated);
 #endif
     return updated;
 }
 
-// **********************************************************************
+// *********************************************************************************************************************
 // PERTURBATIONS
-// **********************************************************************
+// *********************************************************************************************************************
 
+/*
+ * Generates k random distinct indices.
+ * Splits this->solution into k+1 substrings and reverts all of them, if reverse_all = 1,
+ * otherwise reverts each one randomly with p = 0.5.
+ */
 void LS_optimizer::double_bridge(uint k, bool reverse_all) {
-//     std::cout << "\tentered " << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tP: %1% %2%") % __func__ % k));
+#endif
+
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
-    string log_args[k];
     std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt-1);
     std::vector<uint> idx;
     vector<uint> perm = this->solution.permutation;
     Solution new_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> new_perm = perm;
-    // generate random sorted indices
-    for (auto & i : log_args) {
+
+    // generate random indices
+    for (int i = 0; i < k; i++) {
         idx.push_back(uni(*rng));
-        i = uitos(idx.back());
     }
     std::sort(std::begin(idx), std::end(idx));
     // reverse subpermutations
     if (!reverse_all) {
         this->random_reverse(new_perm.begin(), new_perm.begin() + idx[0]); // half closed interval [i, j)
-        for (uint i = 0; i + 1 < k; i++)
-            this->random_reverse(new_perm.begin() + idx[i],
+        for (uint i = 0; i + 1 < k; i++) this->random_reverse(new_perm.begin() + idx[i],
                                  new_perm.begin() + idx[i + 1]); // half closed interval [i, j)
-        this->random_reverse(new_perm.begin() + idx[k - 1], new_perm.end()); // half closed interval [i, j)
+            this->random_reverse(new_perm.begin() + idx[k - 1], new_perm.end()); // half closed interval [i, j)
     } else {
         reverse(new_perm.begin(), new_perm.begin() + idx[0]); // half closed interval [i, j)
         for (uint i = 0; i + 1 < k; i++)
@@ -527,15 +584,25 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
     new_solution.permutation = new_perm;
     new_solution.is_feasible = this->instance->compute_fitness(new_perm, &new_solution.fitness);
     this->solution.copy(new_solution);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
+/*
+ * Randomly selects two nodes in X and swaps them.
+ * Repeats k times.
+ */
 void LS_optimizer::random_swap(uint k) {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tP: %1% %2%") % __func__ % k));
+#endif
+
     uint sel1, sel2, temp;
     vector<uint> perm = this->solution.permutation;
     std::uniform_int_distribution<uint> uni_select(0, perm.size() - 1);
+
     for (uint i = 0; i < k; i++) {
         sel1 = uni_select(*this->rng);
         sel2 = uni_select(*this->rng);
@@ -545,15 +612,25 @@ void LS_optimizer::random_swap(uint k) {
         perm[sel2] = temp;
     }
     this->solution = make_solution(perm);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
+/*
+ * Randomly selects a node in X and moves it to a random location.
+ * Repeats k times.
+ */
 void LS_optimizer::random_move(uint k) {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tP: %1% %2%") % __func__ % k));
+#endif
+
     uint sel1, sel2, temp;
     vector<uint> perm = this->solution.permutation;
     std::uniform_int_distribution<uint> uni_select(0, perm.size() - 1);
+
     for (uint i = 0; i < k; i++) {
         sel1 = uni_select(*this->rng);
         sel2 = uni_select(*this->rng);
@@ -563,20 +640,29 @@ void LS_optimizer::random_move(uint k) {
         perm.insert(perm.begin() + sel2, temp);
     }
     this->solution = make_solution(perm);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
+/*
+ * Selects k distinct nodes from A.
+ * Removes all their occurrences from X.
+ * Reinserts them to randomly selected locations.
+ */
 void LS_optimizer::reinsert(uint k) {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tP: %1% %2%") % __func__ % k));
+#endif
+
     vector<uint> idx_choice, node_cnt;
-    vector<string> log_args;
     vector<uint> perm = this->solution.permutation;
+
     // get nodes randomly
     std::uniform_int_distribution<uint> uni_select(0, this->instance->node_cnt-1);
     for (uint i = 0; i < k; i++) {
         idx_choice.push_back(uni_select(*this->rng));
-        log_args.push_back(uitos(idx_choice.back()));
         node_cnt.push_back(0);
     }
     // remove all selected nodes
@@ -585,6 +671,7 @@ void LS_optimizer::reinsert(uint k) {
             if (idx_choice[j] == perm[i]) {
                 perm.erase(perm.begin() + i);
                 node_cnt[j]++;
+                i--; // prevents skipping neighboring occurrences
             }
         }
     }
@@ -598,25 +685,29 @@ void LS_optimizer::reinsert(uint k) {
         }
     }
     this->solution = make_solution(perm);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
 /*
  * randomly selects a node node_id from A.
- * All occurrences of $a$ are randomly moved in X up to a maximal distance k from their original locations.
+ * All occurrences of node_id are randomly moved in X up to a maximal distance k from their original locations.
  * This operation is performed k times.
  */
 void LS_optimizer::random_move_all(uint k) {
-//    vector<string> log_args;
-    // Structures init
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tP: %1% %2%") % __func__ % k));
+#endif
+
     int move;
     uint node_id;
     vector<uint> perm = this->solution.permutation;
     vector<uint> positions;
     std::uniform_int_distribution<uint> node_uni(0, this->instance->node_cnt - 1);
     std::uniform_int_distribution<int> dist_uni(-(int)k, (int)k);
+
     for (uint i = 0; i < k; i++) {
         // Select randomly a move distance and a node
         move = dist_uni(*this->rng);
@@ -658,32 +749,36 @@ void LS_optimizer::random_move_all(uint k) {
         perm = new_perm;
     }
     this->solution = make_solution(perm);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->print_operation(true, str(format("%1% %2%") % __func__ % k));
+    this->print_result(true);
 #endif
 }
 
 //**********************************************************************************************************************
 // LOCAL SEARCH HEURISTICS
-//**********************************************************************
+//**********************************************************************************************************************
 
 /*
  * Sequentially applies local search operators in fixed order.
- * Resets back to the first operator in case of improvement.
+ * Restarts from the first operator in case of improvement.
  * Terminates, when no operator improves the current solution.
  * Updates existing this->solution.
  */
 void LS_optimizer::basicVND() {
-    std::chrono::steady_clock::time_point now;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tLS: %1%") % __func__ ));
+    std::cout << std::endl;
+#endif
+
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+
     while (current_fitness < prev_fitness) {
         for (const auto &operation : this->operation_list) {
             if (this->timeout()) return;
-            if (this->operation_call(operation)) { break; }
+            if (this->operation_call(operation)) break;
         }
-//        this->solution.print();
-//        this->best_known_solution.print();
         prev_fitness = current_fitness;
         current_fitness = this->solution.fitness;
     }
@@ -691,21 +786,27 @@ void LS_optimizer::basicVND() {
 
 /*
  * Sequentially applies local search operators in fixed order.
- * Repeats the same operator in case of improvement.
+ * Reapplies the same operator in case of improvement.
  * Terminates, when no operator improves the current solution.
  * Updates existing this->solution.
  */
 void LS_optimizer::pipeVND() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tLS: %1%") % __func__ ));
+    std::cout << std::endl;
+#endif
+
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
     int last_improving_operator = -1;
+
     while (current_fitness < prev_fitness) {
         for (int i = 0; i < (int)this->operation_list.size(); i++) {
-            if (last_improving_operator == i) {return;} // won't help this time
+            if (last_improving_operator == i) return;
             string operation = this->operation_list[i];
             while (this->operation_call(operation)) {
                 last_improving_operator = i;
-                if (this->timeout()) {return;}
+                if (this->timeout()) return;
             }
         }
         prev_fitness = current_fitness;
@@ -717,47 +818,79 @@ void LS_optimizer::pipeVND() {
  * Sequentially applies local search operators in fixed order.
  * Terminates, when no operator improves the current solution.
  * Updates existing this->solution.
- * TODO termination could be sped up as in pipeVND
  */
 void LS_optimizer::cyclicVND() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tLS: %1%") % __func__ ));
+    std::cout << std::endl;
+#endif
+
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+    int last_improving_operator = -1;
+
     while (current_fitness < prev_fitness) {
-        for (const auto &operation : this->operation_list) {
-            auto res = this->operation_call(operation);
-            if (this->timeout()) {return;}
+        for (int i = 0; i < (int)this->operation_list.size(); i++) {
+            if (last_improving_operator == i) return;
+            string operation = this->operation_list[i];
+            if (this->operation_call(operation)) {
+                last_improving_operator = i;
+            }
+            if (this->timeout()) return;
         }
         prev_fitness = current_fitness;
         current_fitness = this->solution.fitness;
     }
 }
 
+/*
+ * Sequentially applies local search operators in random order.
+ * Terminates, when no operator improves the current solution.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::randomVND() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tLS: %1%") % __func__ ));
+    std::cout << std::endl;
+#endif
+
     std::uniform_int_distribution<uint> uni(0, this->operation_list.size() - 1);
-    vector<uint> order;
+    vector<uint> order; // order of local search operators
     for (uint i = 0; i < operation_list.size(); i++)
         order.push_back(i);
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+
     while (current_fitness < prev_fitness) {
-        std::shuffle(order.begin(), order.end(), *this->rng);
+        std::shuffle(order.begin(), order.end(), *this->rng); // shuffle order
         for (uint idx : order) {
             this->operation_call(this->operation_list[idx]);
-            if (this->timeout()) {return;}
+            if (this->timeout()) return;
         }
         prev_fitness = current_fitness;
         current_fitness = this->solution.fitness;
     }
 }
 
+/*
+ * Sequentially applies local search operators in random order.
+ * Repeats the same operator in case of improvement.
+ * Terminates, when no operator improves the current solution.
+ * Updates existing this->solution.
+ */
 void LS_optimizer::randompipeVND() {
-//     std::cout << "\tentered " << __func__ << std::endl;
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("\tLS: %1%") % __func__ ));
+    std::cout << std::endl;
+#endif
+
     std::uniform_int_distribution<uint> uni(0, this->operation_list.size() - 1);
     vector<uint> order;
     for (uint i = 0; i < operation_list.size(); i++)
         order.push_back(i);
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
     fitness_t current_fitness = prev_fitness - 1;
+
     while (current_fitness < prev_fitness) {
         std::shuffle(order.begin(), order.end(), *this->rng);
         for (uint idx : order) {
@@ -781,6 +914,11 @@ void LS_optimizer::randompipeVND() {
  * ils_k . . . perturbation parameter
  */
 void LS_optimizer::ILS() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("MH: %1%") % __func__ ));
+    std::cout << std::endl;
+#endif
+
     this->local_search();
     while (!this->timeout()) {
         // Apply perturbation to this->solution
@@ -806,6 +944,11 @@ void LS_optimizer::ILS() {
  * bvns_max_k . . . max value of k
  */
 void LS_optimizer::basicVNS() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("MH: %1%") % __func__ ));
+    std::cout << std::endl;
+#endif
+
     uint min_k = config["bvns_min_k"].get<uint>();
     uint max_k = config["bvns_max_k"].get<uint>();
     uint k = min_k;
@@ -844,6 +987,11 @@ void LS_optimizer::basicVNS() {
  * cvns_it_per_k . . . ???
  */
 void LS_optimizer::calibratedVNS() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("MH: %1%") % __func__ ));
+    std::cout << std::endl;
+#endif
+
     uint min_k = config["cvns_min_k"].get<uint>();
     uint max_k = config["cvns_max_k"].get<uint>();
     uint it_per_k = config["cvns_it_per_k"].get<uint>();
@@ -894,11 +1042,19 @@ void LS_optimizer::calibratedVNS() {
  * Updates existing this->solution.
  */
 void LS_optimizer::construct_greedy() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("C: %1%") % __func__ ));
+#endif
+
     bool updated, valid;
     do {
         updated = insert1();
         valid = this->valid_solution(&this->solution);
     } while((!valid || updated) && !this->timeout());
+
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_result(true);
+#endif
 }
 
 /*
@@ -906,6 +1062,10 @@ void LS_optimizer::construct_greedy() {
  * Updates existing this->solution.
  */
 void LS_optimizer::construct_random() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("C: %1%") % __func__ ));
+#endif
+
     uint rnd_idx;
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++) {
         for (uint counter = 0; counter < this->instance->lbs[node_id]; counter++) {
@@ -915,6 +1075,10 @@ void LS_optimizer::construct_random() {
             this->solution.frequency[node_id]++;
         }
     }
+
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_result(true);
+#endif
 }
 
 /*
@@ -923,6 +1087,10 @@ void LS_optimizer::construct_random() {
  * Updates existing this->solution.
  */
 void LS_optimizer::construct_random_replicate() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("C: %1%") % __func__ ));
+#endif
+
     vector<uint> perm;
     for (uint i = 0; i < this->instance->node_cnt; i++)
         perm.push_back(i);
@@ -935,6 +1103,10 @@ void LS_optimizer::construct_random_replicate() {
             }
         }
     } while(!this->valid_solution(&this->solution) && !this->timeout());
+
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_result(true);
+#endif
 }
 
 //**********************************************************************
@@ -1007,14 +1179,24 @@ bool LS_optimizer::valid_solution(Solution *sol) {
 // Logging
 //**********************************************************************
 
-void LS_optimizer::print_operation(bool update, const string& msg) {
-    std::cout << (update ? "{*}" :  "{-}") << std::setw(6) << std::right << str(format("[%1%] ") % this->get_runtime());
+void LS_optimizer::print_operation(const string &msg) {
+    std::cout << str(format("[%1%s] ") % this->get_runtime()) << " ";
     std::cout << std::setw(30) << std::left << msg;
-    std::cout << " --> Feasible:" << this->solution.is_feasible <<
-            "  Sol size: " << this->solution.permutation.size() <<
-            "  BKS Fitness:" << this->best_known_solution.fitness <<
-            "  Last update:" << std::chrono::duration_cast<std::chrono::seconds>(this->last_improvement - this->start).count() <<
-            "  Curr Fitness:" << this->solution.fitness << std::endl;
+}
+
+void LS_optimizer::print_result(bool update) {
+    std::cout << str(format("-----> [%1%s]") % this->get_runtime()) <<
+                "  Current: [" <<
+                "fitness: " << this->solution.fitness <<
+                "  updated: " << update <<
+                "  feasible: " << this->solution.is_feasible <<
+                "  size: " << this->solution.permutation.size() <<
+                "]    BKS: [" <<
+                "fitness: " << this->best_known_solution.fitness <<
+                "  last updated: " << std::chrono::duration_cast<std::chrono::seconds>(this->last_improvement - this->start).count() << "s" <<
+                "  feasible: " << this->best_known_solution.is_feasible <<
+                "  size: " << this->best_known_solution.permutation.size() <<
+                "]" << std::endl;
 }
 
 void LS_optimizer::save_to_json(json& container) {
