@@ -4,7 +4,7 @@ METAOPT_BIN="../cmake-build-release"
 TEST_TIMEOUT=600 # 10 minutes
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/qap-small/$TIMESTAMP"
-CONFIG="../configs/qap_final_2.json"
+CONFIG="../configs/QAP_final_3.json"
 
 DATASETS=( "../data/qap/qap-10/tai20b.dat" "../data/qap/qap-10/tai25a.dat" "../data/qap/qap-10/tai30b.dat" )
 

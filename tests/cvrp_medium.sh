@@ -4,7 +4,7 @@ METAOPT_BIN="../cmake-build-release"
 TEST_TIMEOUT=1800 # 30 minutes
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/cvrp-medium/$TIMESTAMP"
-CONFIG="../configs/cvrp_final_2.json"
+CONFIG="../configs/CVRP_final_3.json"
 
 DATASETS=( "../data/cvrp/cvrp-10/X-n148-k46.xml" "../data/cvrp/cvrp-10/X-n204-k19.xml" "../data/cvrp/cvrp-10/X-n251-k28.xml" )
 

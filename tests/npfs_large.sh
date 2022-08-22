@@ -4,7 +4,7 @@ METAOPT_BIN="../cmake-build-release"
 TEST_TIMEOUT=3600 # 60 minutes
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/npfs-large/$TIMESTAMP"
-CONFIG="../configs/NPFS_final_1.json"
+CONFIG="../configs/NPFS_final_2.json"
 
 DATASETS=( "../data/npfs-vfr/npfs-10/VFR400_40_1.txt" "../data/npfs-vfr/npfs-10/VFR400_60_1.txt" "../data/npfs-vfr/npfs-10/VFR600_40_1.txt" "../data/npfs-vfr/npfs-10/VFR600_60_1.txt")
 
