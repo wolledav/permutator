@@ -35,13 +35,13 @@ cp libgurobi_c++.a ../../lib/
 | calibrating VNS | cvns_min_k, cvns_max_k, cvns_it_per_k |
 
 ### Perturbations
-| Name                          | Description |
-|-------------------------------|-------------|
-| double_bridge(k, reverse_all) |             |
-| reinsert(k)                   |             |
-| random_swap(k)                |             |
-| random_move(k)                |             |
-| random_move_all(k)            |             |
+| Name            | Parameters     |
+|-----------------|----------------|
+| double_bridge   | k, reverse_all |
+| reinsert        | k              |
+| random_swap     | k              |
+| random_move     | k              |
+| random_move_all | k              |
 
 ### Local search heuristics
 | Name            | Parameters | Neighborhood order |
@@ -49,20 +49,20 @@ cp libgurobi_c++.a ../../lib/
 | basic VND       | none       | fixed              |
 | pipe VND        | none       | fixed              |
 | cyclic VND      | none       | fixed              |
-| random VND      |            |                    |
-| random pipe VND |            |                    |
+| random VND      | none       | random             |
+| random pipe VND | none       | random             |
 
 ### Local search operators
-| Name                    | Description |
-|-------------------------|-------------|
-| insert1                 |             |
-| remove1                 |             |
-| relocate(x, reverse)    |             |
-| exchange(x, y, reverse) |             |
-| centered exchange(x)    |             |
-| move_all(x)             |             |
-| exchange_ids            |             |
-| exchange_n_ids          |             |
+| Name              | Parameters    |
+|-------------------|---------------|
+| insert1           | none          |
+| remove1           | none          |
+| relocate          | x, reverse    |
+| exchange          | x, y, reverse |
+| centered exchange | x             |
+| move_all          | x             |
+| exchange_ids      | none          |
+| exchange_n_ids    | none          |
 
 ### Construction procedures
 | Name             | Parameters |

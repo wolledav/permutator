@@ -22,7 +22,6 @@ using std::pair;
 using std::vector;
 using std::string;
 
-// Metaheuristical optimizer for problems definable as Permutations With Repetitions
 class LS_optimizer
 {
     private:
@@ -31,7 +30,7 @@ class LS_optimizer
         std::chrono::steady_clock::time_point start, last_improvement;
         Instance* instance;
         Solution solution, best_known_solution;
-        std::mt19937 *rng;    // random-number engine used (Mersenne-Twister)
+        std::mt19937 *rng;
         vector<string> operation_list;
         vector<string> perturbation_list;
         std::function<void()> construction;
@@ -88,11 +87,11 @@ class LS_optimizer
             {"random_move",          [this](uint k){this->random_move(k);}},
             {"random_swap",          [this](uint k){this->random_swap(k);}}
         };
-        // Initial solution
+        // Initial solution constructions
         void construct_greedy();
         void construct_random();
         void construct_random_replicate();
-        // Operations
+        // Local search operators
         bool insert1();
         bool remove1();
         bool relocate(uint x, bool reverse=false);
@@ -108,7 +107,7 @@ class LS_optimizer
         void random_swap(uint k);
         void random_move(uint k);
         void random_move_all(uint k);
-        // Local Search
+        // Local search heuristics
         void basicVND();
         void pipeVND();
         void cyclicVND();
@@ -118,7 +117,7 @@ class LS_optimizer
         void ILS();
         void basicVNS();
         void calibratedVNS();
-        // utils
+        // Utils
         void perturbation_call(const string &perturbation_name, uint k);
         bool operation_call(const string &operation_name);
         long get_runtime();
@@ -126,7 +125,8 @@ class LS_optimizer
         void random_reverse(std::vector<uint>::iterator, std::vector<uint>::iterator);
         Solution make_solution(const vector<uint> &permutation);
         bool valid_solution(Solution *sol);
-        void print_operation(bool update, const string& msg);
+        void print_operation(const string& msg);
+        void print_result(bool update);
     public:
         std::map<string, std::pair<uint, uint>> operation_histogram = {};
         // Initialization
@@ -140,7 +140,7 @@ class LS_optimizer
         void setOperators(const vector<string>& operations);
         void setPerturbations(const vector<string>& perturbations);
         void run();
-        // output
+        // Output
         Solution getSolution() {return this->best_known_solution;}
         void save_to_json(json& container);
 };
