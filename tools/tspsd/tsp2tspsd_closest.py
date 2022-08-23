@@ -24,7 +24,7 @@ for node1 in data['NODE_COORDS']:
         if node1 != node2:
             dist = np.linalg.norm(np.array(data['NODE_COORDS'][node1]) - np.array(data['NODE_COORDS'][node2]))
             dists[dist] = node2
-    for dist in sorted(dists.keys())[:5]:
+    for dist in sorted(dists.keys())[:k]:
         data['DELETE'][node1].append(dists[dist])
 
 # Export
