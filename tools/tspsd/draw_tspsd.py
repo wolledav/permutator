@@ -37,13 +37,13 @@ for node1 in data['NODE_COORDS']:
 #        plt.plot(x1 + (x2 - x1)/4, y1 + (y2 - y1)/4, color='red', alpha=0.5, marker='x')
         arrow = plt.arrow(x1, y1, (x2 - x1)/4, (y2 - y1)/4, color='red', alpha=0.5, head_width=5, linewidth=1)
 
-plt.title('/'.join(inp.split('/')[-2:]))
+plt.title(inp.split('/')[-1])
 plt.legend([arrow, ], ['deleted edges'])
 
 plt.gca().set_aspect('equal', adjustable='box')
 
 if len(sys.argv) > 2:
-    fig_output = sys.argv[2]
+    fig_output = sys.argv[2] + inp.split('/')[-1].split('.')[0]
     plt.savefig(fig_output + '.pdf')
 else:
     plt.show()

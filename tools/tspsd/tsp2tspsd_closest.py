@@ -29,7 +29,7 @@ for node1 in data['NODE_COORDS']:
 
 # Export
 name = inp.split('/')[-1][:-5]
-output = output_dir + name + "_sd" + str(k) + ".json"
+output = output_dir + name + "_sd" + str(k) + "_cl.json"
 data['TYPE'] = "TSPSD"
 
 with open(output, "w") as output_file:
