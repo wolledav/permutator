@@ -16,11 +16,12 @@ class Instance
     protected:
         Instance(const string& name, uint node_count);
         Instance(const string& name, uint node_count, uint common_lb, uint common_ub);
-        //explicit Instance(uint node_count);
+        Instance() = default;
+    //explicit Instance(uint node_count);
         ~Instance() = default;
     public:
         vector<uint> lbs, ubs;
-        uint node_cnt;
+        uint node_cnt{};
         string name, type = "no-type";
         virtual bool compute_fitness(const vector<uint> &permutation, fitness_t* fitness) = 0;
 };
