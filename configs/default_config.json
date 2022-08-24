@@ -57,5 +57,16 @@
     "local_search": "PVND",
     "operators": ["relocate_1", "two_opt", "exchange_1_1"],
     "perturbation" : ["random_move"]
+  },
+  "tspsd" : {
+    "timeout": 60,
+    "num_threads": 8,
+    "allow_infeasible": true,
+    "ils_k": 6,
+    "construction": "greedy",
+    "metaheuristic": "ILS",
+    "local_search": "PVND",
+    "operators": ["two_opt", "relocate_1"],
+    "perturbation" : ["random_double_bridge"]
   }
 }

@@ -62,7 +62,7 @@ int main (int argc, char *argv[])
     }
 
     if (!conf_path.empty()) {
-        config = Config::read_config(conf_path);
+        config = read_json(conf_path);
     } else {
         config = Config::read_default_config("sudoku");
     }
