@@ -65,5 +65,14 @@ int main (int argc, char *argv[]) {
     // Load instance
     TSPSDInstance inst = TSPSDInstance(data_path.c_str());
 
+    vector<uint> perm(inst.node_cnt);
+    std::iota(perm.begin(), perm.end(), 0);
+
+    auto *fitness = new fitness_t(0);
+    std::cout << *fitness << std::endl;
+
+    inst.compute_fitness(perm, fitness);
+
+    std::cout << *fitness << std::endl;
 
 }

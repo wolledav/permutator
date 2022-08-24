@@ -41,6 +41,15 @@ TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
 }
 
 bool TSPSDInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fitness) {
+    *fitness = 0;
+    // Initialize matrix for deleted edges
+    boost::numeric::ublas::matrix<bool> deleted_mat(this->node_cnt, this->node_cnt, false);
+
+    //
+    for (uint i = 0; i < permutation.size(); i++) {
+        *fitness += dist_mat(permutation[i], permutation[(i + 1) % permutation.size()]);
+    }
+
     return false;
 }
 
