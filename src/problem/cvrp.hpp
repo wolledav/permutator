@@ -9,11 +9,6 @@
 
 #define JOB_MISSING_PENALTY 100000000
 
-struct coords {
-    int x;
-    int y;
-};
-
 class CVRPInstance: public Instance
 {
     private:

@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "lib/nlohmann/json.hpp"
+#include "src/utils.hpp"
 
 // Compile time config macros
 #define GUROBI_THREAD_CNT 1
@@ -30,6 +31,5 @@ class Config {
 private:
 public:
     explicit Config() = default;
-    static json read_config(const string& path);
     static json read_default_config(const string& problem_type);
 };
