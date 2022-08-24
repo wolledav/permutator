@@ -64,6 +64,15 @@ add_executable(sudoku_meta
         src/problem/sudoku.cpp
         )
 
+add_executable(tspsd_meta
+        tools/tspsd_meta.cpp
+        src/config.cpp
+        src/generic/LS_optimizer.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+#        src/problem/tspsd.cpp
+        src/problem/tspsd.cpp src/problem/tspsd.hpp)
+
 target_include_directories(cvrp_meta PUBLIC
                            "${PROJECT_BINARY_DIR}/../"
                            "${PROJECT_BINARY_DIR}/../src"
@@ -83,6 +92,12 @@ target_include_directories(npfs_meta PUBLIC
         )
 
 target_include_directories(sudoku_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+target_include_directories(tspsd_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
