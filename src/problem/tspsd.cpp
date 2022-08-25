@@ -42,15 +42,25 @@ TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
 
 bool TSPSDInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fitness) {
     *fitness = 0;
-    // Initialize matrix for deleted edges
-    boost::numeric::ublas::matrix<bool> deleted_mat(this->node_cnt, this->node_cnt, false);
+    bool valid = true;
 
-    //
+    // Initialize matrix for deleted edges
+    boost::numeric::ublas::matrix<bool> del_mat(this->node_cnt, this->node_cnt, false);
+
     for (uint i = 0; i < permutation.size(); i++) {
-        *fitness += dist_mat(permutation[i], permutation[(i + 1) % permutation.size()]);
+        uint node1 = permutation[i];
+        uint node2 = permutation[(i + 1) % permutation.size()];
+        // Process node1
+        for(auto del:this->f_delete[node1]) {
+            del_mat(node1, del) = true;
+            del_mat(del, node1) = true;
+        }
+        // Update fitness and validity
+        *fitness += del_mat(node1, node2) * DELETED_EDGE_PENALTY + (1 - del_mat(node1, node2)) * dist_mat(node1, node2);
+        valid = valid && !del_mat(node1, node2);
     }
 
-    return false;
+    return valid;
 }
 
 uint TSPSDInstance::compute_dist(uint id1, uint id2) {

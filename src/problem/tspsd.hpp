@@ -10,6 +10,8 @@
 #include "generic/instance.hpp"
 #include "lib/nlohmann/json.hpp"
 
+#define DELETED_EDGE_PENALTY 1000000
+
 using json = nlohmann::json;
 
 class TSPSDInstance : public Instance {
