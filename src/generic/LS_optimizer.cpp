@@ -1212,7 +1212,7 @@ void LS_optimizer::save_to_json(json& container) {
     for (auto s : this->steps) {
         container["steps"][itos(s.first)] = s.second;
     }
-    this->best_known_solution.save_to_json(container["solution"]);
+    this->best_known_solution.save_to_json(container);
     container["config"] = this->config;
 }
 

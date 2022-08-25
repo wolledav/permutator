@@ -26,6 +26,7 @@ public:
 
     static uint get_internal_id(const string& id);
     static string get_original_id(uint id);
+    static void export_perm_orig_ids(vector<uint>& perm, json& container);
 
     explicit TSPSDInstance(const char* path);
     bool compute_fitness(const vector<uint> &permutation, fitness_t* fitness) override;

@@ -12,6 +12,14 @@ string TSPSDInstance::get_original_id(uint id) {
     return std::to_string(id + 1);
 }
 
+void TSPSDInstance::export_perm_orig_ids(vector<uint> &perm, json &container) {
+    vector<string> perm_orig_ids;
+    for (auto node:perm) {
+        perm_orig_ids.push_back(get_original_id(node));
+    }
+    container["solution"]["permutation_orig_ids"] = perm_orig_ids;
+}
+
 TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
     json data = read_json(path);
 
@@ -79,4 +87,7 @@ void TSPSDInstance::compute_dist_mat() {
         }
     }
 }
+
+
+
 

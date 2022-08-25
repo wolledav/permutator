@@ -69,18 +69,14 @@ int main (int argc, char *argv[]) {
     LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
     optimizer.run();
     Solution sol = optimizer.getSolution();
-    sol.print();
-
-//    vector<uint> perm(inst.node_cnt);
-//    std::iota(perm.begin(), perm.end(), 0);
-
-//    vector<uint> perm{32, 9, 40, 2, 21, 22, 0, 30, 49, 29, 41, 1, 6, 16, 18, 8, 7, 42, 23, 36, 35, 31, 44, 17, 20, 19, 28, 45, 4, 3, 47, 14, 39, 34, 43, 15, 33, 48, 38, 37, 5, 24, 11, 25, 26, 12, 46, 13, 51, 10, 27, 50 };
-    auto *fitness = new fitness_t(0);
-    bool valid = inst.compute_fitness(sol.permutation, fitness);
-//    bool valid = inst.compute_fitness(perm, fitness);
-    std::cout << valid << std::endl;
-    std::cout << *fitness << std::endl;
-
-//    std::cout << std::numeric_limits<fitness_t>::max() << std::endl;
-
+    if (!output_path.empty()) {
+        output_file.open(output_path);
+        optimizer.save_to_json(output);
+        TSPSDInstance::export_perm_orig_ids(sol.permutation, output);
+        output_file << output.dump(4);
+    } else {
+        sol.print();
+        std::cout << sol.fitness << std::endl;
+    }
+    return 0;
 }
