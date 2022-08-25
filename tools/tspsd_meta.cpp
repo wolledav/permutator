@@ -69,6 +69,8 @@ int main (int argc, char *argv[]) {
     LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
     optimizer.run();
     Solution sol = optimizer.getSolution();
+
+    // Export
     if (!output_path.empty()) {
         output_file.open(output_path);
         optimizer.save_to_json(output);
