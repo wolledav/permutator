@@ -2,17 +2,17 @@
 // Created by wolledav on 24.8.22.
 //
 
-#include "tspsd.hpp"
+#include "scp.hpp"
 
-uint TSPSDInstance::get_internal_id(const string& id) {
+uint SCPInstance::get_internal_id(const string& id) {
     return std::stoi(id) - 1;
 }
 
-string TSPSDInstance::get_original_id(uint id) {
+string SCPInstance::get_original_id(uint id) {
     return std::to_string(id + 1);
 }
 
-void TSPSDInstance::export_perm_orig_ids(vector<uint> &perm, json &container) {
+void SCPInstance::export_perm_orig_ids(vector<uint> &perm, json &container) {
     vector<string> perm_orig_ids;
     for (auto node:perm) {
         perm_orig_ids.push_back(get_original_id(node));
@@ -20,17 +20,17 @@ void TSPSDInstance::export_perm_orig_ids(vector<uint> &perm, json &container) {
     container["solution"]["permutation_orig_ids"] = perm_orig_ids;
 }
 
-TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
+SCPInstance::SCPInstance(const char *path) : Instance() {
     json data = read_json(path);
 
     // Fill Instance attributes
-    this->type = data["TYPE"];
+    this->type = "scp";
     this->name = data["NAME"];
     this->node_cnt = data["DIMENSION"];
     this->lbs = vector<uint>(this->node_cnt, 1);
     this->ubs = vector<uint>(this->node_cnt, 1);
 
-    // Fill TSPSDInstance attributes
+    // Fill SCPInstance attributes
     this->positions.resize(this->node_cnt);                // coords
     for (const auto& item:data["NODE_COORDS"].items()) {
         uint id = get_internal_id(item.key());
@@ -48,7 +48,7 @@ TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
     }
 }
 
-bool TSPSDInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fitness) {
+bool SCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fitness) {
     *fitness = 0;
     bool valid = true;
 
@@ -71,7 +71,7 @@ bool TSPSDInstance::compute_fitness(const vector<uint> &permutation, fitness_t *
     return valid;
 }
 
-uint TSPSDInstance::compute_dist(uint id1, uint id2) {
+uint SCPInstance::compute_dist(uint id1, uint id2) {
     if (id1 == id2) { return 0; }
     uint xdiff = this->positions[id1].x - this->positions[id2].x;
     uint ydiff = this->positions[id1].y - this->positions[id2].y;
@@ -79,7 +79,7 @@ uint TSPSDInstance::compute_dist(uint id1, uint id2) {
     return (uint)round(distance);
 }
 
-void TSPSDInstance::compute_dist_mat() {
+void SCPInstance::compute_dist_mat() {
     for (uint i = 0; i < this->node_cnt; i++){
         for (uint j = 0; j <= i; j++){
             this->dist_mat(i, j) = this->compute_dist(i, j);

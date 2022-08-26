@@ -14,7 +14,7 @@
 
 using json = nlohmann::json;
 
-class TSPSDInstance : public Instance {
+class SCPInstance : public Instance {
 private:
     uint compute_dist(uint id1, uint id2);
     void compute_dist_mat();
@@ -28,7 +28,7 @@ public:
     static string get_original_id(uint id);
     static void export_perm_orig_ids(vector<uint>& perm, json& container);
 
-    explicit TSPSDInstance(const char* path);
+    explicit SCPInstance(const char* path);
     bool compute_fitness(const vector<uint> &permutation, fitness_t* fitness) override;
 
 };

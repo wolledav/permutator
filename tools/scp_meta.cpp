@@ -6,12 +6,12 @@
 #include <string>
 
 #include "generic/LS_optimizer.hpp"
-#include "problem/tspsd.hpp"
+#include "problem/scp.hpp"
 
 using std::string;
 
 void show_usage(){
-    std::cout << "Usage: tspsd_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
+    std::cout << "Usage: scp_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
 }
 
 int main (int argc, char *argv[]) {
@@ -55,7 +55,7 @@ int main (int argc, char *argv[]) {
     if (!conf_path.empty()) {
         config = read_json(conf_path);
     } else {
-        config = Config::read_default_config("tspsd");
+        config = Config::read_default_config("scp");
     }
 
     if (timeout_s != 0) {
@@ -63,7 +63,7 @@ int main (int argc, char *argv[]) {
     }
 
     // Load instance
-    TSPSDInstance inst = TSPSDInstance(data_path.c_str());
+    SCPInstance inst = SCPInstance(data_path.c_str());
 
     std::cout << "Solving " << inst.name << std::endl;
     LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
@@ -74,7 +74,7 @@ int main (int argc, char *argv[]) {
     if (!output_path.empty()) {
         output_file.open(output_path);
         optimizer.save_to_json(output);
-        TSPSDInstance::export_perm_orig_ids(sol.permutation, output);
+        SCPInstance::export_perm_orig_ids(sol.permutation, output);
         output_file << output.dump(4);
     } else {
         sol.print();

@@ -58,7 +58,7 @@
     "operators": ["relocate_1", "two_opt", "exchange_1_1"],
     "perturbation" : ["random_move"]
   },
-  "tspsd" : {
+  "scp" : {
     "timeout": 10,
     "num_threads": 8,
     "metaheuristic": "ILS",
