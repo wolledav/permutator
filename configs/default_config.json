@@ -59,7 +59,40 @@
     "perturbation" : ["random_move"]
   },
   "scp" : {
-    "timeout": 10,
+    "timeout": 60,
+    "num_threads": 8,
+    "metaheuristic": "ILS",
+    "ils_k": 6,
+    "construction": "random_replicate",
+    "allow_infeasible": true,
+    "local_search": "CVND",
+    "operators": [
+      "insert_1",
+      "remove_1",
+      "two_opt",
+      "exchange_ids",
+      "exchange_1_2",
+      "exchange_2_2",
+      "exchange_3_3",
+      "exchange_3_4",
+      "exchange_4_4",
+      "rexchange_2_2",
+      "rexchange_2_3",
+      "rexchange_4_4",
+      "centered_exchange_1",
+      "relocate_1",
+      "relocate_5",
+      "rrelocate_3",
+      "rrelocate_4",
+      "move_all_by_1",
+      "move_all_by_2"
+    ],
+    "perturbation": [
+      "random_double_bridge"
+    ]
+  },
+  "wcp" : {
+    "timeout": 600,
     "num_threads": 8,
     "metaheuristic": "ILS",
     "ils_k": 6,

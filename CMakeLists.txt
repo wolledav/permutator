@@ -70,8 +70,15 @@ add_executable(scp_meta
         src/generic/LS_optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-#        src/problem/scp.cpp
-        src/problem/scp.cpp src/problem/scp.hpp)
+        src/problem/scp.cpp)
+
+add_executable(wcp_meta
+        tools/wcp_meta.cpp
+        src/config.cpp
+        src/generic/LS_optimizer.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/problem/wcp.cpp)
 
 target_include_directories(cvrp_meta PUBLIC
                            "${PROJECT_BINARY_DIR}/../"
@@ -98,6 +105,12 @@ target_include_directories(sudoku_meta PUBLIC
         )
 
 target_include_directories(scp_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+target_include_directories(wcp_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"

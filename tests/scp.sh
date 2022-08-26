@@ -1,12 +1,12 @@
 #!/bin/bash
 
 METAOPT_BIN="../cmake-build-release"
-TEST_TIMEOUT=6 # 1 minute
+TEST_TIMEOUT=600 # 1 minute
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/scp-meta/$TIMESTAMP"
 # CONFIG="../configs/.json" # default config used
 
-DATASET=("../data/tspsd/berlin52_random/")
+DATASET=("../data/tspsd/berlin52_closest/")
 
 echo $LOGDIR
 # Create log directory
