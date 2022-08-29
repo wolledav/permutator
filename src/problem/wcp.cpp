@@ -71,7 +71,7 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
         // Update fitness and validity
         vector<uint> path{};
         *fitness += dijkstra(dist_mat_updated, node1, node2, path);
-        for (int j = 0; j < path.size() - 1; j++) {
+        for (uint j = 0; j < path.size() - 1; j++) {
             valid = valid && !del_mat(path[j], path[j + 1]);
         }
     }
@@ -161,7 +161,7 @@ void WCPInstance::export_walk_orig_ids(vector<uint> &permutation, json &containe
         vector<uint> path{};
         dijkstra(dist_mat_updated, node1, node2, path);
 
-        for (int j = 0; j < path.size() - 1; j++) {
+        for (uint j = 0; j < path.size() - 1; j++) {
             walk_orig_ids.push_back(get_original_id(path[j]));
             j == 0 ? walk_processing.push_back(true) : walk_processing.push_back(false);
         }

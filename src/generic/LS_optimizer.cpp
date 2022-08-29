@@ -157,7 +157,7 @@ bool LS_optimizer::remove1() {
 
     if (this->solution.permutation.empty()) return false;
     vector<uint> perm = this->solution.permutation;
-    uint removed_node = -1;
+    uint removed_node = std::numeric_limits<uint>::max();
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
@@ -177,7 +177,7 @@ bool LS_optimizer::remove1() {
             removed_node = perm[i];
         }
     }
-    if (best_solution <= this->solution && removed_node != -1) {
+    if (best_solution <= this->solution && removed_node != std::numeric_limits<uint>::max()) {
         updated = true;
         this->solution.copy(best_solution);
     }
@@ -407,23 +407,19 @@ bool LS_optimizer::exchange_ids() {
     if (this->solution.permutation.size() < 2)
         return false;
     vector<uint> perm = this->solution.permutation;
-    uint id1, id2, cnt_id1=0, cnt_id2=0;
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
 
-#pragma omp parallel for default(none) private(fitness) shared(best_solution, id1, cnt_id1, id2, cnt_id2, perm)
+#pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) {
         if (this->timeout()) continue;
         for (uint j = 0; j < i; j++) {
-            uint counter1 = 0, counter2 = 0;
             vector<uint> new_perm = perm;
             for (unsigned int & node : new_perm){
                 if (node == i) {
-                    counter1++;
                     node = j;
                 } else if (node == j) {
-                    counter2++;
                     node = i;
                 }
             }
@@ -431,8 +427,6 @@ bool LS_optimizer::exchange_ids() {
 #pragma omp critical
             if (fitness < best_solution.fitness) {
                 best_solution = make_solution(new_perm);
-                id1 = i; id2 = j;
-                cnt_id1 = counter1; cnt_id2 = counter2;
             }
         }
     }
@@ -460,12 +454,11 @@ bool LS_optimizer::exchange_n_ids() {
         return false;
     // Init structures
     vector<uint> perm = this->solution.permutation;
-    uint best_n;
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
 
-#pragma omp parallel for default(none) private(fitness) shared(best_solution, best_n, perm)
+#pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) { // for all nodes i in A
         if (this->timeout()) continue;
         for (uint j = 0; j < i; j++) { // for all pairs of nodes i,j in A
@@ -485,7 +478,6 @@ bool LS_optimizer::exchange_n_ids() {
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
                     best_solution = make_solution(new_perm);
-                    best_n = n;
                 }
             }
         }
@@ -563,7 +555,7 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
     vector<uint> new_perm = perm;
 
     // generate random indices
-    for (int i = 0; i < k; i++) {
+    for (uint i = 0; i < k; i++) {
         idx.push_back(uni(*rng));
     }
     std::sort(std::begin(idx), std::end(idx));
@@ -731,7 +723,7 @@ void LS_optimizer::random_move_all(uint k) {
             pos = new_pos;
         }
         // Fill new_perm with node_id at new_pos
-        std::vector<uint> new_perm(perm.size(), -1);
+        std::vector<uint> new_perm(perm.size(), std::numeric_limits<uint>::max());
         for (auto pos:positions) {
             new_perm[pos] = node_id;
         }
@@ -739,7 +731,7 @@ void LS_optimizer::random_move_all(uint k) {
         for (auto node:perm) {
             if (node != node_id) {
                 for (auto &elem:new_perm) {
-                    if (elem == -1) {
+                    if (elem == std::numeric_limits<uint>::max()) {
                         elem = node;
                         break;
                     }
