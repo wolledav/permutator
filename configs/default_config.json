@@ -92,7 +92,7 @@
     ]
   },
   "wcp" : {
-    "timeout": 600,
+    "timeout": 60,
     "num_threads": 8,
     "metaheuristic": "ILS",
     "ils_k": 6,

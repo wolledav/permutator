@@ -1,7 +1,7 @@
 #!/bin/bash
 
 METAOPT_BIN="../cmake-build-release"
-TEST_TIMEOUT=600 # 1 minute
+TEST_TIMEOUT=600
 TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
 LOGDIR="../log/scp-meta/$TIMESTAMP"
 # CONFIG="../configs/.json" # default config used
