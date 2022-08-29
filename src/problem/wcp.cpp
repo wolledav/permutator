@@ -137,6 +137,42 @@ fitness_t WCPInstance::dijkstra(const boost::numeric::ublas::matrix<fitness_t>& 
     return dist[goal];
 }
 
+void WCPInstance::export_walk_orig_ids(vector<uint> &permutation, json &container) {
+    vector<string> walk_orig_ids;
+    vector<bool> walk_processing;
+
+    // Initialize matrix for deleted edges
+    boost::numeric::ublas::matrix<bool> del_mat(this->node_cnt, this->node_cnt, false);
+    boost::numeric::ublas::matrix<fitness_t> dist_mat_updated = dist_mat;
+
+    for (uint i = 0; i < permutation.size(); i++) {
+        uint node1 = permutation[i];
+        uint node2 = permutation[(i + 1) % permutation.size()];
+
+        // Process node1
+        for (auto del:this->f_delete[node1]) {
+            del_mat(node1, del) = true;
+            del_mat(del, node1) = true;
+            dist_mat_updated(node1, del) = DELETED_EDGE_PENALTY;
+            dist_mat_updated(del, node1) = DELETED_EDGE_PENALTY;
+        }
+
+        // Update fitness and validity
+        vector<uint> path{};
+        dijkstra(dist_mat_updated, node1, node2, path);
+
+        for (int j = 0; j < path.size() - 1; j++) {
+            walk_orig_ids.push_back(get_original_id(path[j]));
+            j == 0 ? walk_processing.push_back(true) : walk_processing.push_back(false);
+        }
+    }
+    walk_orig_ids.push_back(get_original_id(permutation.front()));
+    walk_processing.push_back(false);
+
+    container["solution"]["walk_orig_ids"] = walk_orig_ids;
+    container["solution"]["walk_processing"] = walk_processing;
+}
+
 
 
 

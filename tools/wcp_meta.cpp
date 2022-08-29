@@ -75,6 +75,7 @@ int main (int argc, char *argv[]) {
         output_file.open(output_path);
         optimizer.save_to_json(output);
         WCPInstance::export_perm_orig_ids(sol.permutation, output);
+        inst.export_walk_orig_ids(sol.permutation, output);
         output_file << output.dump(4);
     } else {
         sol.print();

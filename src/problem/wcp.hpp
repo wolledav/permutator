@@ -17,10 +17,10 @@ using json = nlohmann::json;
 
 class WCPInstance : public Instance {
 private:
-    uint compute_dist(uint id1, uint id2);
-    void compute_dist_mat();
     static uint closest_unused(const vector<fitness_t>& dist, const vector<bool>& sptSet);
     static fitness_t dijkstra(const boost::numeric::ublas::matrix<fitness_t>& graph, uint start, uint goal, vector<uint> &path);
+    uint compute_dist(uint id1, uint id2);
+    void compute_dist_mat();
 
 public:
     std::vector<coords> positions;
@@ -33,6 +33,7 @@ public:
 
     explicit WCPInstance(const char* path);
     bool compute_fitness(const vector<uint> &permutation, fitness_t* fitness) override;
+    void export_walk_orig_ids(vector<uint>& permutation, json& container);
 
 };
 
