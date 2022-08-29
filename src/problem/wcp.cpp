@@ -166,8 +166,6 @@ void WCPInstance::export_walk_orig_ids(vector<uint> &permutation, json &containe
             j == 0 ? walk_processing.push_back(true) : walk_processing.push_back(false);
         }
     }
-    walk_orig_ids.push_back(get_original_id(permutation.front()));
-    walk_processing.push_back(false);
 
     container["solution"]["walk_orig_ids"] = walk_orig_ids;
     container["solution"]["walk_processing"] = walk_processing;
