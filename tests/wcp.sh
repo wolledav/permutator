@@ -1,7 +1,7 @@
 #!/bin/bash
 
 METAOPT_BIN="../cmake-build-release"
-TEST_TIMEOUT=600
+TEST_TIMEOUT=60
 
 LOGDIR="../log/wcp-meta/berlin52_closest"
 # CONFIG="../configs/.json" # default config used
@@ -18,7 +18,7 @@ do
   for i in {1..1}
   do
     echo "[$i/1] Testing ${filename}..."
-    $METAOPT_BIN/scp_meta -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}.out"
+    $METAOPT_BIN/wcp_meta -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}.out"
   done
 done
 
@@ -37,6 +37,6 @@ do
   for i in {1..1}
   do
     echo "[$i/1] Testing ${filename}..."
-    $METAOPT_BIN/scp_meta -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}.out"
+    $METAOPT_BIN/wcp_meta -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}.out"
   done
 done

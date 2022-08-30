@@ -8,8 +8,9 @@ inp = ""
 output = ""
 solution = ""
 
-red_arrow = None
+orange_arrow = None
 green_arrow = None
+red_arrow = None
 
 for i in range(len(sys.argv)):
     if sys.argv[i] == '-i':
@@ -69,15 +70,24 @@ if solution != '':
 
         title += "\nfitness=" + str(sol_data["solution"]["fitness"]) + ", valid=" + str(sol_data["solution"]["is_feasible"])
 
-if orange_arrow is not None and green_arrow is not None:
-    plt.legend([orange_arrow, green_arrow], ['endpoint(s) not processed', 'endpoints processed'])
-elif orange_arrow is not None and green_arrow is None:
-    plt.legend([orange_arrow, ], ['endpoint(s) not processed', ])
-elif orange_arrow is None and green_arrow is not None:
-    plt.legend([green_arrow, ], ['endpoints processed', ])
+legend = []
+legend_text = []
+if orange_arrow is not None:
+    legend.append(orange_arrow)
+    legend_text.append('endpoint(s) not processed')
+if green_arrow is not None:
+    legend.append(green_arrow)
+    legend_text.append('endpoints processed')
+if red_arrow is not None:
+    legend.append(red_arrow)
+    legend_text.append('deleted edges')
+
+plt.legend(legend, legend_text)
 
 plt.title(title)
 plt.gca().set_aspect('equal', adjustable='box')
+plt.gcf().set_size_inches(2*6.4, 2*4.8)
+# print(plt.rcParams['figure.figsize'])
 
 if output != '':
     fig_output = output + inp.split('/')[-1].split('.')[0]
