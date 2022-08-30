@@ -1,9 +1,9 @@
 #!/bin/bash
 
 METAOPT_BIN="../cmake-build-release"
-TEST_TIMEOUT=60
+TEST_TIMEOUT=600
 
-LOGDIR="../log/wcp-meta/berlin52_closest"
+LOGDIR="../log/wcp-meta/berlin52_closest_10min"
 # CONFIG="../configs/.json" # default config used
 DATASET=("../data/tspsd/berlin52_closest/")
 
@@ -22,7 +22,7 @@ do
   done
 done
 
-LOGDIR="../log/wcp-meta/berlin52_random"
+LOGDIR="../log/wcp-meta/berlin52_random_10min"
 # CONFIG="../configs/.json" # default config used
 DATASET=("../data/tspsd/berlin52_random/")
 
