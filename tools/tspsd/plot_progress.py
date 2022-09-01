@@ -5,41 +5,54 @@ import os
 import json
 import matplotlib.pyplot as plt
 
-LOG_DIR = sys.argv[1]
+LOG = ""
+OUTPUT_DIR = ""
+TYPE = ""
 
-logs = os.listdir(LOG_DIR)
+for i in range(len(sys.argv)):
+    if sys.argv[i] == '-i':
+        LOG = sys.argv[i + 1]
+    elif sys.argv[i] == '-o':
+        OUTPUT_DIR = sys.argv[i + 1]
+    elif sys.argv[i] == '-t':
+        TYPE = sys.argv[i+1]
 
 Xs = []
 Ys = []
-Xs_inv = []
-Ys_inv = []
 
-for log in logs:
-    inp = LOG_DIR + log
-    sd = int(log.split('_')[-2][2:])
-    with open(inp) as input_file:
-        data = json.load(input_file)
-        timeout = data["config"]["timeout"]
-        steps = [int(i) for i in data["steps"]]
-        valid = data["solution"]["is_feasible"]
+with open(LOG) as input_file:
+    data = json.load(input_file)
+    steps = data["steps"]
+    timeout = data["timeout"]
+    valid = data["solution"]["is_feasible"]
+    for step in steps:
+        Xs.append(int(step))
+        Ys.append(int(steps[step]))
 
-        m = max(steps)
-        if valid:
-            Xs.append(m)
-            Ys.append(sd)
-        else:
-            Xs_inv.append(m)
-            Ys_inv.append(sd)
+best = min(Ys)
 
-        # for step in steps:
-        #     if valid:
-        #         Xs.append(int(step))
-        #         Ys.append(int(sd))
-        #     else:
-        #         Xs_inv.append(int(step))
-        #         Ys_inv.append(int(sd))
+Z = [x for _,x in sorted(zip(Xs,Ys))]
+Xs = sorted(Xs)
+Ys = Z
 
-plt.plot(Xs, Ys, '.', color='green')
-plt.plot(Xs_inv, Ys_inv, '.', color='red')
+plt.plot(Xs, Ys, linestyle='-', marker='.', color='green')
+plt.plot([timeout], [best], 'x', color='red')
+plt.grid()
+plt.title(TYPE + ": " + LOG.split('/')[-1] + '\n' + 'valid: ' + str(valid))
+plt.xlabel('time [s]')
+plt.ylabel('fitness')
+plt.gcf().set_size_inches(2*6.4, 2*4.8)
+plt.legend(['improving ILS iteration', 'timeout'])
 
-plt.show()
+current_values = plt.gca().get_yticks()
+plt.gca().set_yticklabels(['{:.0f}'.format(x) for x in current_values])
+
+
+if OUTPUT_DIR != '':
+    fig_output = OUTPUT_DIR + LOG.split('/')[-1].split('.')[0] + '_progress.pdf'
+    plt.savefig(fig_output)
+    print("Exported " + fig_output)
+else:
+    plt.show()
+
+
