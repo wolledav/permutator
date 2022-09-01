@@ -98,7 +98,7 @@ void WCPInstance::compute_dist_mat() {
 
 uint WCPInstance::closest_unused(const vector<fitness_t>& dist, const vector<bool>& sptSet) {
     fitness_t min = std::numeric_limits<fitness_t>::max();
-    uint min_index;
+    uint min_index = std::numeric_limits<uint>::max();
 
     for (uint v = 0; v < dist.size(); v++){
         if (!sptSet[v] && dist[v] <= min) {
