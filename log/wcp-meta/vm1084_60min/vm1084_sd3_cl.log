@@ -1,0 +1,8 @@
+Solving vm1084
+[0s]  C: construct_random_replicate -----> [0s]  Current: [fitness: 4294967295  updated: 1  feasible: 0  size: 1084]    BKS: [fitness: 4294967295  last updated: 0s  feasible: 0  size: 0]
+[0s]  MH: ILS                       
+[0s]  	LS: cyclicVND                
+[0s]  		O: insert1                  -----> [0s]  Current: [fitness: 4294967295  updated: 0  feasible: 0  size: 1084]    BKS: [fitness: 4294967295  last updated: 0s  feasible: 0  size: 0]
+[0s]  		O: remove1                  -----> [0s]  Current: [fitness: 4294967295  updated: 0  feasible: 0  size: 1084]    BKS: [fitness: 4294967295  last updated: 0s  feasible: 0  size: 0]
+[0s]  		O: two_opt                  -----> [6206s]  Current: [fitness: 8517321  updated: 1  feasible: 1  size: 1084]    BKS: [fitness: 4294967295  last updated: 0s  feasible: 0  size: 0]
+ILS Timeout: 3600 (sec)
