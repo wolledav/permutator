@@ -25,7 +25,7 @@ for node in data['NODE_COORDS']:
     i = 0
     while len(data['DELETE'][node]) < k:
         if nodes[i] != node:
-            data['DELETE'][node].append(str(nodes[i]))
+            data['DELETE'][node].append([str(node), str(nodes[i])])
         i += 1
 
 # Export

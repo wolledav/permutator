@@ -25,7 +25,7 @@ for node1 in data['NODE_COORDS']:
             dist = np.linalg.norm(np.array(data['NODE_COORDS'][node1]) - np.array(data['NODE_COORDS'][node2]))
             dists[dist] = node2
     for dist in sorted(dists.keys())[:k]:
-        data['DELETE'][node1].append(dists[dist])
+        data['DELETE'][node1].append([node1, dists[dist]])
 
 # Export
 name = inp.split('/')[-1][:-5]
