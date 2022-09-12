@@ -43,7 +43,8 @@ SCPInstance::SCPInstance(const char *path) : Instance() {
     for (const auto& item:data["DELETE"].items()) {
         uint id = get_internal_id(item.key());
         for (const auto& val:item.value()) {
-            f_delete[id].push_back(get_internal_id(val));
+            auto del_edge = std::make_pair(get_internal_id(val[0]), get_internal_id(val[1]));
+            f_delete[id].push_back(del_edge);
         }
     }
 }
@@ -60,8 +61,8 @@ bool SCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
         uint node2 = permutation[(i + 1) % permutation.size()];
         // Process node1
         for(auto del:this->f_delete[node1]) {
-            del_mat(node1, del) = true;
-            del_mat(del, node1) = true;
+            del_mat(del.first, del.second) = true;
+            del_mat(del.second, del.first) = true;
         }
         // Update fitness and validity
         *fitness += del_mat(node1, node2) * DELETED_EDGE_PENALTY + (1 - del_mat(node1, node2)) * dist_mat(node1, node2);

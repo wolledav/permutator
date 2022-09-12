@@ -43,7 +43,8 @@ WCPInstance::WCPInstance(const char *path) : Instance() {
     for (const auto& item:data["DELETE"].items()) {
         uint id = get_internal_id(item.key());
         for (const auto& val:item.value()) {
-            f_delete[id].push_back(get_internal_id(val));
+            auto del_edge = std::make_pair(get_internal_id(val[0]), get_internal_id(val[1]));
+            f_delete[id].push_back(del_edge);
         }
     }
 }
@@ -62,10 +63,10 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
 
         // Process node1
         for (auto del:this->f_delete[node1]) {
-            del_mat(node1, del) = true;
-            del_mat(del, node1) = true;
-            dist_mat_updated(node1, del) = DELETED_EDGE_PENALTY;
-            dist_mat_updated(del, node1) = DELETED_EDGE_PENALTY;
+            del_mat(del.first, del.second) = true;
+            del_mat(del.second, del.first) = true;
+            dist_mat_updated(del.first, del.second) = DELETED_EDGE_PENALTY;
+            dist_mat_updated(del.second, del.first) = DELETED_EDGE_PENALTY;
         }
 
         // Update fitness and validity
@@ -151,10 +152,10 @@ void WCPInstance::export_walk_orig_ids(vector<uint> &permutation, json &containe
 
         // Process node1
         for (auto del:this->f_delete[node1]) {
-            del_mat(node1, del) = true;
-            del_mat(del, node1) = true;
-            dist_mat_updated(node1, del) = DELETED_EDGE_PENALTY;
-            dist_mat_updated(del, node1) = DELETED_EDGE_PENALTY;
+            del_mat(del.first, del.second) = true;
+            del_mat(del.second, del.first) = true;
+            dist_mat_updated(del.first, del.second) = DELETED_EDGE_PENALTY;
+            dist_mat_updated(del.second, del.first) = DELETED_EDGE_PENALTY;
         }
 
         // Update fitness and validity
