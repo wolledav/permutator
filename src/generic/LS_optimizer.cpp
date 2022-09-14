@@ -94,7 +94,6 @@ void LS_optimizer::run() {
     this->start = std::chrono::steady_clock::now();
     this->last_improvement = this->start;
     this->construction();
-    this->best_known_solution = this->solution;
 
     return; // TODO run construction only
 
@@ -1059,14 +1058,23 @@ void LS_optimizer::construct_random() {
     this->print_operation(str(format("C: %1%") % __func__ ));
 #endif
 
+    // Construct
+    Solution sol(this->instance->node_cnt);
     uint rnd_idx;
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++) {
         for (uint counter = 0; counter < this->instance->lbs[node_id]; counter++) {
-            std::uniform_int_distribution<uint> uni(0, this->solution.getSize());
+            std::uniform_int_distribution<uint> uni(0, sol.getSize());
             rnd_idx = uni(*this->rng);
-            this->solution.permutation.insert(this->solution.permutation.begin() + rnd_idx, node_id);
-            this->solution.frequency[node_id]++;
+            sol.permutation.insert(sol.permutation.begin() + rnd_idx, node_id);
         }
+    }
+    this->solution = make_solution(sol.permutation);
+
+    // Evaluate
+    if (this->solution < this->best_known_solution) {
+        this->best_known_solution.copy(this->solution);
+        this->last_improvement = std::chrono::steady_clock::now();
+        this->steps.emplace_back(this->get_runtime(), this->solution.fitness);
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -1084,6 +1092,7 @@ void LS_optimizer::construct_random_replicate() {
     this->print_operation(str(format("C: %1%") % __func__ ));
 #endif
 
+    // Construct
     Solution sol(this->instance->node_cnt);
     vector<uint> perm;
     for (uint i = 0; i < this->instance->node_cnt; i++)
@@ -1097,8 +1106,14 @@ void LS_optimizer::construct_random_replicate() {
             }
         }
     } while(!this->valid_solution(&sol) && !this->timeout());
-
     this->solution = make_solution(sol.permutation);
+
+    // Evaluate
+    if (this->solution < this->best_known_solution) {
+        this->best_known_solution.copy(this->solution);
+        this->last_improvement = std::chrono::steady_clock::now();
+        this->steps.emplace_back(this->get_runtime(), this->solution.fitness);
+    }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
