@@ -60,7 +60,7 @@ if solution != '':
             x1, y1 = data['NODE_COORDS'][node1][0], data['NODE_COORDS'][node1][1]
             x2, y2 = data['NODE_COORDS'][node2][0], data['NODE_COORDS'][node2][1]
             green_label = plt.arrow(x1, y1, (x2 - x1), (y2 - y1), color='green', alpha=0.5, head_width=8, linewidth=2, length_includes_head=True)
-            if processing[i] and processing[(i + 1) % len(walk)]:
+            if processing[i]:
                 black_label = plt.arrow(x1, y1, (x2 - x1), (y2 - y1), color='black', alpha=1, head_width=0, linewidth=0, length_includes_head=True)
                 plt.text(x1 + 1, y1 + 1, str(i), color='black', fontsize=8)
             else:
