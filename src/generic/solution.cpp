@@ -59,7 +59,7 @@ void Solution::save_to_json(json& container) {
 
 void Solution::print() {
     std::cout << "solution state" << std::endl;
-    std::cout << "\tnode_cnt: " << node_cnt << std::endl;
+    std::cout << "\tlength: " << permutation.size() << std::endl;
     std::cout << "\tfitness: " << fitness << std::endl;
     std::cout << "\tis_feasible: " << is_feasible << std::endl;
 
