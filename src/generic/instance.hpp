@@ -24,4 +24,5 @@ class Instance
         uint node_cnt{};
         string name, type = "no-type";
         virtual bool compute_fitness(const vector<uint> &permutation, fitness_t* fitness) = 0;
+        uint sum_lb_violation(const vector<uint> &permutation);
 };

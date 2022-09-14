@@ -21,3 +21,9 @@ Instance::Instance(const string& name, uint node_count, uint common_lb, uint com
         this->ubs[i] = common_ub;
     }
 }
+
+uint Instance::sum_lb_violation(const vector<uint> &permutation) {
+    uint sum = 0;
+
+    return 0;
+}

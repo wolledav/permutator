@@ -121,20 +121,24 @@ bool LS_optimizer::insert1() {
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
-    for (uint i = 0; i <= perm.size(); i++) {
+    for (uint i = 0; i <= perm.size(); i++) {                       // for all positions
         if (this->timeout()) continue;
         vector<uint> new_perm = perm;
             new_perm.insert(new_perm.begin() + i, 0);
-            for (uint j = 0; j < this->instance->node_cnt; j++){
+
+            for (uint j = 0; j < this->instance->node_cnt; j++){    // for all nodes
                 if (this->solution.frequency[j] >= this->instance->ubs[j]) continue;
                 new_perm[i] = j;
                 this->instance->compute_fitness(new_perm, &fitness);
+
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
                     best_solution = make_solution(new_perm);
                 }
             }
     }
+
+    // Update this->solution
     if (best_solution < this->solution) {
         updated = true;
         this->solution.copy(best_solution);
@@ -1036,15 +1040,25 @@ void LS_optimizer::calibratedVNS() {
 void LS_optimizer::construct_greedy() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(str(format("C: %1%") % __func__ ));
+    std::cout << std::endl;
 #endif
 
+    // Construct TODO initialize empty this->solution
     bool updated, valid;
     do {
         updated = insert1();
         valid = this->valid_solution(&this->solution);
     } while((!valid || updated) && !this->timeout());
 
+    // Evaluate
+    if (this->solution < this->best_known_solution) {
+        this->best_known_solution.copy(this->solution);
+        this->last_improvement = std::chrono::steady_clock::now();
+        this->steps.emplace_back(this->get_runtime(), this->solution.fitness);
+    }
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->print_operation(str(format("C: %1%") % __func__ ));
     this->print_result(true);
 #endif
 }
