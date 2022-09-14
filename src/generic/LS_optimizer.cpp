@@ -94,11 +94,12 @@ void LS_optimizer::run() {
     this->start = std::chrono::steady_clock::now();
     this->last_improvement = this->start;
     this->construction();
+    this->best_known_solution = this->solution;
+
+    return; // TODO run construction only
 
     if (!this->timeout()) {
         this->metaheuristic();
-    } else {
-        this->best_known_solution = this->solution;
     }
 }
 
@@ -1083,18 +1084,21 @@ void LS_optimizer::construct_random_replicate() {
     this->print_operation(str(format("C: %1%") % __func__ ));
 #endif
 
+    Solution sol(this->instance->node_cnt);
     vector<uint> perm;
     for (uint i = 0; i < this->instance->node_cnt; i++)
         perm.push_back(i);
     std::shuffle(perm.begin(), perm.end(), *this->rng);
     do {
         for (auto elem : perm){
-            if (this->solution.frequency[elem] < this->instance->lbs[elem]) {
-                this->solution.frequency[elem]++;
-                this->solution.permutation.push_back(elem);
+            if (sol.frequency[elem] < this->instance->lbs[elem]) {
+                sol.frequency[elem]++;
+                sol.permutation.push_back(elem);
             }
         }
-    } while(!this->valid_solution(&this->solution) && !this->timeout());
+    } while(!this->valid_solution(&sol) && !this->timeout());
+
+    this->solution = make_solution(sol.permutation);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
@@ -1155,7 +1159,7 @@ Solution LS_optimizer::make_solution(const vector<uint> &permutation) {
     }
 //    new_solution.frequency = frequency;
     new_solution.is_feasible = this->instance->compute_fitness(permutation, &new_solution.fitness);
-    new_solution.node_cnt = permutation.size();
+    new_solution.node_cnt = this->instance->node_cnt;
     return new_solution;
 }
 
