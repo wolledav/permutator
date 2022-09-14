@@ -1,0 +1,16 @@
+{
+    "timeout": 1,
+    "num_threads": 1,
+    "metaheuristic": "ILS",
+    "ils_k": 6,
+    "construction": "greedy",
+    "allow_infeasible": true,
+    "local_search": "CVND",
+    "operators": [
+        "two_opt",
+        "relocate_1"
+    ],
+    "perturbation": [
+        "random_double_bridge"
+    ]
+}
