@@ -95,8 +95,6 @@ void LS_optimizer::run() {
     this->last_improvement = this->start;
     this->construction();
 
-    return; // TODO run construction only
-
     if (!this->timeout()) {
         this->metaheuristic();
     }
@@ -117,29 +115,37 @@ bool LS_optimizer::insert1() {
 
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     vector<uint> perm = this->solution.permutation;
-    fitness_t fitness;
+    vector<uint> freq = this->solution.frequency;
+    fitness_t new_fitness;
     bool updated = false;
 
-#pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
-    for (uint i = 0; i <= perm.size(); i++) {                       // for all positions
+#pragma omp parallel for default(none) private(new_fitness) shared(best_solution, perm, freq)
+    for (uint i = 0; i <= perm.size(); i++) {                       // for all positions i
         if (this->timeout()) continue;
         vector<uint> new_perm = perm;
-            new_perm.insert(new_perm.begin() + i, 0);
+        vector<uint> new_freq = freq;
+        new_perm.insert(new_perm.begin() + i, 0);
 
-            for (uint j = 0; j < this->instance->node_cnt; j++){    // for all nodes
-                if (this->solution.frequency[j] >= this->instance->ubs[j]) continue;
-                new_perm[i] = j;
-                this->instance->compute_fitness(new_perm, &fitness);
-
+        for (uint j = 0; j < this->instance->node_cnt; j++){    // for all nodes j
+            if (this->solution.frequency[j] >= this->instance->ubs[j]) continue;
+            new_perm[i] = j;
+            new_freq[j]++;
+            this->instance->compute_fitness(new_perm, &new_fitness);
+            auto penalty = this->instance->get_lb_penalty(best_solution.frequency);
+            auto new_penalty = this->instance->get_lb_penalty(new_freq);
 #pragma omp critical
-                if (fitness < best_solution.fitness) {
-                    best_solution = make_solution(new_perm);
-                }
+            if (new_fitness + new_penalty < best_solution.fitness + penalty) {
+                best_solution = make_solution(new_perm);
             }
+            new_freq[j]--;
+        }
     }
 
     // Update this->solution
-    if (best_solution < this->solution) {
+    auto new_penalty = this->instance->get_lb_penalty(best_solution.frequency);
+    auto penalty = this->instance->get_lb_penalty(this->solution.frequency);
+
+    if (best_solution.fitness + new_penalty < this->solution.fitness + penalty) {
         updated = true;
         this->solution.copy(best_solution);
     }
@@ -1043,7 +1049,8 @@ void LS_optimizer::construct_greedy() {
     std::cout << std::endl;
 #endif
 
-    // Construct TODO initialize empty this->solution
+    // Construct
+    this->solution = Solution(this->instance->node_cnt);
     bool updated, valid;
     do {
         updated = insert1();

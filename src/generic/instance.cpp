@@ -22,8 +22,11 @@ Instance::Instance(const string& name, uint node_count, uint common_lb, uint com
     }
 }
 
-uint Instance::sum_lb_violation(const vector<uint> &permutation) {
+fitness_t Instance::get_lb_penalty(const vector<uint> &frequency) {
     uint sum = 0;
-
-    return 0;
+    for (uint i = 0; i < this->node_cnt; i++) {
+        sum += std::max((int)this->lbs[i] - (int)frequency[i], 0);
+    }
+    return sum * LB_PENALTY;
 }
+

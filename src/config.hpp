@@ -19,9 +19,10 @@ namespace metaopt {
     typedef FITNESS_TYPE fitness_t;
 #else
 #define FITNESS_TYPE fitness_t
-    typedef unsigned int fitness_t;
+    typedef unsigned long int fitness_t;
 #endif
 }
+#define LB_PENALTY 1000000
 
 
 using json = nlohmann::json;
