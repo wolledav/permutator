@@ -26,9 +26,8 @@ public:
     // Constructors
     Solution();
     explicit Solution(uint node_cnt);
-    Solution(uint node_cnt, std::vector<uint> &freq);
-    Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible);
     Solution(vector<uint> &perm, Instance &instance);
+    Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible);
 
     // Utils
     uint getSize() const {return this->permutation.size();}

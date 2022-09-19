@@ -169,7 +169,7 @@ bool LS_optimizer::remove1() {
     vector<uint> perm = this->solution.permutation;
     uint removed_node = std::numeric_limits<uint>::max()/2;
     fitness_t fitness;
-    Solution best_solution(this->instance->node_cnt, this->solution.frequency);
+    Solution best_solution(this->instance->node_cnt);
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, removed_node, perm)
@@ -211,7 +211,7 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
     if (x > this->solution.permutation.size()) return false;
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
-    Solution best_solution(this->instance->node_cnt, this->solution.frequency);
+    Solution best_solution(this->instance->node_cnt);
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, reverse)
@@ -517,7 +517,7 @@ bool LS_optimizer::two_opt() {
     if (perm.size() < 2)
         return false;
 
-    Solution best_solution(this->instance->node_cnt, this->solution.frequency);
+    Solution best_solution(this->instance->node_cnt);
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i <= perm.size() - 2; i++) {

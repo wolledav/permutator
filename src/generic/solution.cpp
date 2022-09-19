@@ -18,13 +18,6 @@ Solution::Solution(uint node_cnt) {
     this->fitness = std::numeric_limits<fitness_t>::max()/2;
 }
 
-Solution::Solution(uint node_cnt, std::vector<uint> &freq) {
-    this->frequency = freq;
-    this->permutation.reserve(node_cnt);
-    this->is_feasible = false;
-    this->fitness = std::numeric_limits<fitness_t>::max()/2;
-}
-
 Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible) {
     this->frequency.reserve(node_cnt);
     this->permutation = std::move(perm);
