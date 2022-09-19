@@ -167,7 +167,7 @@ bool LS_optimizer::remove1() {
 
     if (this->solution.permutation.empty()) return false;
     vector<uint> perm = this->solution.permutation;
-    uint removed_node = std::numeric_limits<uint>::max();
+    uint removed_node = std::numeric_limits<uint>::max()/2;
     fitness_t fitness;
     Solution best_solution(this->instance->node_cnt, this->solution.frequency);
     bool updated = false;
@@ -187,7 +187,7 @@ bool LS_optimizer::remove1() {
             removed_node = perm[i];
         }
     }
-    if (best_solution <= this->solution && removed_node != std::numeric_limits<uint>::max()) {
+    if (best_solution <= this->solution && removed_node != std::numeric_limits<uint>::max()/2) {
         updated = true;
         this->solution.copy(best_solution);
     }
@@ -733,7 +733,7 @@ void LS_optimizer::random_move_all(uint k) {
             pos = new_pos;
         }
         // Fill new_perm with node_id at new_pos
-        std::vector<uint> new_perm(perm.size(), std::numeric_limits<uint>::max());
+        std::vector<uint> new_perm(perm.size(), std::numeric_limits<uint>::max()/2);
         for (auto pos:positions) {
             new_perm[pos] = node_id;
         }
@@ -741,7 +741,7 @@ void LS_optimizer::random_move_all(uint k) {
         for (auto node:perm) {
             if (node != node_id) {
                 for (auto &elem:new_perm) {
-                    if (elem == std::numeric_limits<uint>::max()) {
+                    if (elem == std::numeric_limits<uint>::max()/2) {
                         elem = node;
                         break;
                     }
@@ -773,7 +773,7 @@ void LS_optimizer::basicVND() {
     std::cout << std::endl;
 #endif
 
-    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
+    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max()/2;
     fitness_t current_fitness = prev_fitness - 1;
 
     while (current_fitness < prev_fitness) {
@@ -798,7 +798,7 @@ void LS_optimizer::pipeVND() {
     std::cout << std::endl;
 #endif
 
-    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
+    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max()/2;
     fitness_t current_fitness = prev_fitness - 1;
     int last_improving_operator = -1;
 
@@ -827,7 +827,7 @@ void LS_optimizer::cyclicVND() {
     std::cout << std::endl;
 #endif
 
-    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
+    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max()/2;
     fitness_t current_fitness = prev_fitness - 1;
     int last_improving_operator = -1;
 
@@ -860,7 +860,7 @@ void LS_optimizer::randomVND() {
     vector<uint> order; // order of local search operators
     for (uint i = 0; i < operation_list.size(); i++)
         order.push_back(i);
-    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
+    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max()/2;
     fitness_t current_fitness = prev_fitness - 1;
 
     while (current_fitness < prev_fitness) {
@@ -890,7 +890,7 @@ void LS_optimizer::randompipeVND() {
     vector<uint> order;
     for (uint i = 0; i < operation_list.size(); i++)
         order.push_back(i);
-    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max();
+    fitness_t prev_fitness = std::numeric_limits<fitness_t>::max()/2;
     fitness_t current_fitness = prev_fitness - 1;
 
     while (current_fitness < prev_fitness) {

@@ -7,7 +7,7 @@ Instance::Instance(const string& name, uint node_count) {
     this->ubs.resize(node_count);
     for (uint i = 0; i < node_count; i++) {
         this->lbs[i] = 0;
-        this->ubs[i] = std::numeric_limits<unsigned  int>::max();
+        this->ubs[i] = std::numeric_limits<uint>::max()/2;
     }
 }
 

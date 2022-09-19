@@ -98,8 +98,8 @@ void WCPInstance::compute_dist_mat() {
 }
 
 uint WCPInstance::closest_unused(const vector<fitness_t>& dist, const vector<bool>& sptSet) {
-    fitness_t min = std::numeric_limits<fitness_t>::max();
-    uint min_index = std::numeric_limits<uint>::max();
+    fitness_t min = std::numeric_limits<fitness_t>::max()/2;
+    uint min_index = std::numeric_limits<uint>::max()/2;
 
     for (uint v = 0; v < dist.size(); v++){
         if (!sptSet[v] && dist[v] <= min) {
@@ -112,7 +112,7 @@ uint WCPInstance::closest_unused(const vector<fitness_t>& dist, const vector<boo
 
 fitness_t WCPInstance::dijkstra(const boost::numeric::ublas::matrix<fitness_t>& graph, uint start, uint goal, vector<uint> &path) {
     auto size = graph.size1();
-    vector<fitness_t> dist(size, std::numeric_limits<fitness_t>::max());
+    vector<fitness_t> dist(size, std::numeric_limits<fitness_t>::max()/2);
     vector<bool> sptSet(size, false);
     vector<uint> prev(size, start);
 
@@ -121,7 +121,7 @@ fitness_t WCPInstance::dijkstra(const boost::numeric::ublas::matrix<fitness_t>& 
         auto u = closest_unused(dist, sptSet);
         sptSet[u] = true;
         for (uint v = 0; v < size; v++)
-            if (!sptSet[v] && dist[u] != std::numeric_limits<fitness_t>::max() && dist[u] + graph(u, v) < dist[v]) {
+            if (!sptSet[v] && dist[u] != std::numeric_limits<fitness_t>::max()/2 && dist[u] + graph(u, v) < dist[v]) {
                 dist[v] = dist[u] + graph(u, v);
                 prev[v] = u;
             }
