@@ -147,7 +147,7 @@ bool LS_optimizer::insert1() {
 
     if (best_solution.fitness + new_penalty < this->solution.fitness + penalty) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -189,7 +189,7 @@ bool LS_optimizer::remove1() {
     }
     if (best_solution <= this->solution && removed_node != std::numeric_limits<uint>::max()/2) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -236,7 +236,7 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
     }
     if (best_solution < this->solution) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -277,7 +277,7 @@ bool LS_optimizer::centered_exchange(uint x) {
     }
     if (best_solution < this->solution) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -338,7 +338,7 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
     }
     if (best_solution < this->solution) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -396,7 +396,7 @@ bool LS_optimizer::move_all(uint x) {
     }
     if (best_solution < this->solution) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -442,7 +442,7 @@ bool LS_optimizer::exchange_ids() {
     }
     if (best_solution < this->solution) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -494,7 +494,7 @@ bool LS_optimizer::exchange_n_ids() {
     }
     if (best_solution < this->solution) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -534,7 +534,7 @@ bool LS_optimizer::two_opt() {
     }
     if (best_solution < this->solution) {
         updated = true;
-        this->solution.copy(best_solution);
+        this->solution=best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -585,7 +585,7 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
     // copy new solution
     new_solution.permutation = new_perm;
     new_solution.is_feasible = this->instance->compute_fitness(new_perm, &new_solution.fitness) && this->instance->frequency_in_bounds(new_solution.frequency);
-    this->solution.copy(new_solution);
+    this->solution=new_solution;
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
@@ -931,7 +931,7 @@ void LS_optimizer::ILS() {
         this->local_search();
         // Reset this->solution to this->best_known_solution
         if (this->best_known_solution.fitness != this->solution.fitness) {
-            this->solution.copy(this->best_known_solution);
+            this->solution=this->best_known_solution;
         }
     }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
@@ -966,7 +966,7 @@ void LS_optimizer::basicVNS() {
         this->local_search();
         // Adjust k
         if (this->solution < current_best_solution){
-            current_best_solution.copy(this->solution);
+            current_best_solution=this->solution;
             k = min_k;
         } else {
             k = k < max_k ? k + 1 : max_k;
@@ -975,7 +975,7 @@ void LS_optimizer::basicVNS() {
         if (this->best_known_solution.fitness != current_best_solution.fitness)
             std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
         // Reset this->solution to this->best_known_solution
-        this->solution.copy(this->best_known_solution);
+        this->solution=this->best_known_solution;
     }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
@@ -1011,7 +1011,7 @@ void LS_optimizer::calibratedVNS() {
         this->local_search();
 
         if (this->solution < current_best_solution) { // Improving solution -> reset k
-            current_best_solution.copy(this->solution);
+            current_best_solution=this->solution;
             k = min_k;
         }
         if (this->solution.fitness == current_best_solution.fitness){ // Improving or same solution found
@@ -1030,7 +1030,7 @@ void LS_optimizer::calibratedVNS() {
         if (this->best_known_solution.fitness != current_best_solution.fitness)
             std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
         // Reset this->solution to this->best_known_solution
-        this->solution.copy(this->best_known_solution);
+        this->solution=this->best_known_solution;
     }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
@@ -1059,7 +1059,7 @@ void LS_optimizer::construct_greedy() {
 
     // Evaluate
     if (this->solution < this->best_known_solution) {
-        this->best_known_solution.copy(this->solution);
+        this->best_known_solution=this->solution;
         this->last_improvement = std::chrono::steady_clock::now();
         this->steps.emplace_back(this->get_runtime(), this->solution.fitness);
     }
@@ -1093,7 +1093,7 @@ void LS_optimizer::construct_random() {
 
     // Evaluate
     if (this->solution < this->best_known_solution) {
-        this->best_known_solution.copy(this->solution);
+        this->best_known_solution=this->solution;
         this->last_improvement = std::chrono::steady_clock::now();
         this->steps.emplace_back(this->get_runtime(), this->solution.fitness);
     }
@@ -1131,7 +1131,7 @@ void LS_optimizer::construct_random_replicate() {
 
     // Evaluate
     if (this->solution < this->best_known_solution) {
-        this->best_known_solution.copy(this->solution);
+        this->best_known_solution=this->solution;
         this->last_improvement = std::chrono::steady_clock::now();
         this->steps.emplace_back(this->get_runtime(), this->solution.fitness);
     }
@@ -1152,7 +1152,7 @@ bool LS_optimizer::operation_call(const string &operation_name) {
     if (result)
         this->operation_histogram[operation_name].second++;
     if (this->solution < this->best_known_solution) {
-        this->best_known_solution.copy(this->solution);
+        this->best_known_solution=this->solution;
         this->last_improvement = std::chrono::steady_clock::now();
         this->steps.emplace_back(this->get_runtime(), this->solution.fitness);
     }
@@ -1162,7 +1162,7 @@ bool LS_optimizer::operation_call(const string &operation_name) {
 void LS_optimizer::perturbation_call(const string &perturbation_name, uint k) {
     if (!config["allow_infeasible"].get<bool>()) {
         do {
-            this->solution.copy(this->best_known_solution);
+            this->solution=this->best_known_solution;
             this->perturbation_map.at(perturbation_name)(k); // call perturbation
         } while (this->solution.fitness == this->best_known_solution.fitness || !this->solution.is_feasible);
     } else {
@@ -1215,7 +1215,7 @@ void LS_optimizer::save_to_json(json& container) {
     container["name"] = this->instance->name;
     container["last_improvement"] = sec.count();
     container["timeout"] = this->timeout_s;
-    for (auto h : this->operation_histogram) {
+    for (const auto& h : this->operation_histogram) {
         container["histogram"]["all"][h.first] = h.second.first;
         container["histogram"]["improving"][h.first] = h.second.second;
         container["histogram"]["rate"][h.first] = h.second.second > 0 ? (float)h.second.second/(float)h.second.first : 0;

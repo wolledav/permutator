@@ -50,13 +50,6 @@ Solution::Solution(Solution const &sol) {
     this->is_feasible = sol.is_feasible;
 }
 
-void Solution::copy(Solution const &sol) {
-    this->permutation = sol.permutation;
-    this->frequency = sol.frequency;
-    this->fitness = sol.fitness;
-    this->is_feasible = sol.is_feasible;
-}
-
 void Solution::save_to_json(json& container) {
     container["solution"]["fitness"] = this->fitness;
     container["solution"]["is_feasible"] = this->is_feasible;
