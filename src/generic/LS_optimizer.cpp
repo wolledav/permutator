@@ -1196,7 +1196,6 @@ Solution LS_optimizer::make_solution(const vector<uint> &permutation) {
 //    new_solution.frequency = frequency;
     new_solution.is_feasible = this->instance->compute_fitness(permutation, &new_solution.fitness) &&
             solution_in_bounds(&new_solution);
-    new_solution.node_cnt = this->instance->node_cnt;
     return new_solution;
 }
 

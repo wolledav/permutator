@@ -7,7 +7,6 @@
 Solution::Solution() = default;
 
 Solution::Solution(uint node_cnt) {
-    this->node_cnt = node_cnt;
     this->frequency.reserve(node_cnt);
     this->permutation.reserve(node_cnt);
     for (uint i = 0; i < node_cnt; i++)
@@ -17,7 +16,6 @@ Solution::Solution(uint node_cnt) {
 }
 
 Solution::Solution(uint node_cnt, std::vector<uint> &freq) {
-    this->node_cnt = node_cnt;
     this->frequency = freq;
     this->permutation.reserve(node_cnt);
     this->is_feasible = false;
@@ -25,7 +23,6 @@ Solution::Solution(uint node_cnt, std::vector<uint> &freq) {
 }
 
 Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible) {
-    this->node_cnt = node_cnt;
     this->frequency.reserve(node_cnt);
     this->permutation = std::move(perm);
     this->fitness = fit;
@@ -36,7 +33,6 @@ Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_fea
 }
 
 Solution::Solution(Solution const &sol) {
-    this->node_cnt = sol.node_cnt;
     this->permutation = sol.permutation;
     this->frequency = sol.frequency;
     this->fitness = sol.fitness;
@@ -44,7 +40,6 @@ Solution::Solution(Solution const &sol) {
 }
 
 void Solution::copy(Solution const &sol) {
-    this->node_cnt = sol.node_cnt;
     this->permutation = sol.permutation;
     this->frequency = sol.frequency;
     this->fitness = sol.fitness;
