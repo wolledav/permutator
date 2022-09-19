@@ -30,7 +30,7 @@ Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_fea
     this->permutation = std::move(perm);
     this->fitness = fit;
     this->is_feasible = is_feasible;
-    for (auto node : perm) {
+    for (auto node : this->permutation) {
         this->frequency[node]++;
     }
 }
