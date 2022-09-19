@@ -7,7 +7,6 @@
 
 #include "../config.hpp"
 #include "../utils.hpp"
-#include "solution.hpp"
 
 using std::vector;
 using namespace metaopt;

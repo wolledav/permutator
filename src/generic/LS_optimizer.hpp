@@ -123,7 +123,6 @@ class LS_optimizer
         long get_runtime();
         bool timeout();
         void random_reverse(std::vector<uint>::iterator, std::vector<uint>::iterator);
-        Solution make_solution(const vector<uint> &permutation);
         void print_operation(const string& msg);
         void print_result(bool update);
     public:

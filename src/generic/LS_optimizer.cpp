@@ -135,7 +135,7 @@ bool LS_optimizer::insert1() {
             auto new_penalty = this->instance->get_lb_penalty(new_freq);
 #pragma omp critical
             if (new_fitness + new_penalty < best_solution.fitness + penalty) {
-                best_solution = make_solution(new_perm);
+                best_solution = Solution(new_perm, *this->instance);
             }
             new_freq[j]--;
         }
@@ -183,7 +183,7 @@ bool LS_optimizer::remove1() {
         this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
         if (fitness < best_solution.fitness) {
-            best_solution = make_solution(new_perm);
+            best_solution = Solution(new_perm, *this->instance);
             removed_node = perm[i];
         }
     }
@@ -230,7 +230,7 @@ bool LS_optimizer::relocate(uint x, bool reverse) {
             this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                best_solution = Solution(new_perm, *this->instance);
             }
         }
     }
@@ -272,7 +272,7 @@ bool LS_optimizer::centered_exchange(uint x) {
         this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
         if (fitness < best_solution.fitness) {
-            best_solution = make_solution(new_perm);
+            best_solution = Solution(new_perm, *this->instance);
         }
     }
     if (best_solution < this->solution) {
@@ -332,7 +332,7 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
             this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                best_solution = Solution(new_perm, *this->instance);
             }
         }
     }
@@ -390,7 +390,7 @@ bool LS_optimizer::move_all(uint x) {
             this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                best_solution = Solution(new_perm, *this->instance);
             }
         }
     }
@@ -436,7 +436,7 @@ bool LS_optimizer::exchange_ids() {
             this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
             if (fitness < best_solution.fitness) {
-                best_solution = make_solution(new_perm);
+                best_solution = Solution(new_perm, *this->instance);
             }
         }
     }
@@ -487,7 +487,7 @@ bool LS_optimizer::exchange_n_ids() {
                 this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
-                    best_solution = make_solution(new_perm);
+                    best_solution = Solution(new_perm, *this->instance);
                 }
             }
         }
@@ -528,7 +528,7 @@ bool LS_optimizer::two_opt() {
                 this->instance->compute_fitness(new_perm, &fitness);
 #pragma omp critical
                 if (fitness < best_solution.fitness) {
-                    best_solution = make_solution(new_perm);
+                    best_solution = Solution(new_perm, *this->instance);
                 }
             }
     }
@@ -613,7 +613,7 @@ void LS_optimizer::random_swap(uint k) {
         perm[sel1] = perm[sel2];
         perm[sel2] = temp;
     }
-    this->solution = make_solution(perm);
+    this->solution = Solution(perm, *this->instance);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
@@ -641,7 +641,7 @@ void LS_optimizer::random_move(uint k) {
         perm.erase(perm.begin() + sel1);
         perm.insert(perm.begin() + sel2, temp);
     }
-    this->solution = make_solution(perm);
+    this->solution = Solution(perm, *this->instance);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
@@ -686,7 +686,7 @@ void LS_optimizer::reinsert(uint k) {
             perm.insert(perm.begin() + uni(*this->rng), node_id);
         }
     }
-    this->solution = make_solution(perm);
+    this->solution = Solution(perm, *this->instance);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
@@ -750,7 +750,7 @@ void LS_optimizer::random_move_all(uint k) {
         }
         perm = new_perm;
     }
-    this->solution = make_solution(perm);
+    this->solution = Solution(perm, *this->instance);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
@@ -1089,7 +1089,7 @@ void LS_optimizer::construct_random() {
             sol.permutation.insert(sol.permutation.begin() + rnd_idx, node_id);
         }
     }
-    this->solution = make_solution(sol.permutation);
+    this->solution = Solution(sol.permutation, *this->instance);
 
     // Evaluate
     if (this->solution < this->best_known_solution) {
@@ -1127,7 +1127,7 @@ void LS_optimizer::construct_random_replicate() {
             }
         }
     } while(!this->instance->frequency_in_bounds(sol.frequency) && !this->timeout());
-    this->solution = make_solution(sol.permutation);
+    this->solution = Solution(sol.permutation, *this->instance);
 
     // Evaluate
     if (this->solution < this->best_known_solution) {
@@ -1184,19 +1184,6 @@ void LS_optimizer::random_reverse(std::vector<uint>::iterator it1, std::vector<u
     uint choice = uni(*this->rng);
     if (choice)
         std::reverse(it1, it2);
-}
-
-Solution LS_optimizer::make_solution(const vector<uint> &permutation) {
-    Solution new_solution;
-    new_solution.permutation = permutation;
-    new_solution.frequency = vector<uint>(this->instance->node_cnt, 0);
-    for (auto id:new_solution.permutation) {
-        new_solution.frequency[id]++;
-    }
-//    new_solution.frequency = frequency;
-    new_solution.is_feasible = this->instance->compute_fitness(permutation, &new_solution.fitness) &&
-            this->instance->frequency_in_bounds(new_solution.frequency);
-    return new_solution;
 }
 
 //**********************************************************************

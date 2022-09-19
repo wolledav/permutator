@@ -32,16 +32,16 @@ Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_fea
     }
 }
 
-//Solution::Solution(vector<uint> &perm, Instance &instance) {
-//    this->permutation = perm;
-//    this->frequency = vector<uint>(instance.node_cnt, 0);
-//    for (auto id:this->permutation) {
-//        this->frequency[id]++;
-//    }
-//    this->is_feasible = instance.compute_fitness(permutation, &this->fitness) &&
-//                               solution_in_bounds(this);
-//
-//}
+Solution::Solution(vector<uint> &perm, Instance &instance) {
+    this->permutation = perm;
+    this->frequency = vector<uint>(instance.node_cnt, 0);
+    for (auto id:this->permutation) {
+        this->frequency[id]++;
+    }
+    this->is_feasible = instance.compute_fitness(permutation, &this->fitness) &&
+                               instance.frequency_in_bounds(this->frequency);
+
+}
 
 Solution::Solution(Solution const &sol) {
     this->permutation = sol.permutation;
