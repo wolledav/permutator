@@ -956,7 +956,7 @@ void LS_optimizer::basicVNS() {
     uint k = min_k;
 
     this->local_search();
-    Solution current_best_solution(this->solution); // needed, as this->best_known_solution is updated internally
+    Solution current_best_solution = this->solution; // needed, as this->best_known_solution is updated internally
     while (!this->timeout()) {
         // Apply perturbation to this->solution
         for (const auto &pert : this->perturbation_list) {
@@ -1001,7 +1001,7 @@ void LS_optimizer::calibratedVNS() {
     uint k = min_k;
     this->local_search();
 
-    Solution current_best_solution(this->solution);
+    Solution current_best_solution = this->solution;
     while (!this->timeout()) {
         // Apply perturbation to this->solution
         for (const auto &pert: this->perturbation_list) {

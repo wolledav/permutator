@@ -28,7 +28,6 @@ public:
     Solution(uint node_cnt, std::vector<uint> &freq);
     Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible);
     Solution(vector<uint> &perm, Instance &instance);
-    Solution(Solution const &sol);
     uint getSize() const {return this->permutation.size();}
     void save_to_json(json& obj);
     void print();
