@@ -8,6 +8,7 @@ Solution::Solution() = default;
 
 /*
  * Initialize an empty solution with frequencies set to zeros.
+ * Fitness is set to max()/2.
  */
 Solution::Solution(uint node_cnt) {
     this->frequency.reserve(node_cnt);
@@ -18,6 +19,10 @@ Solution::Solution(uint node_cnt) {
     this->fitness = std::numeric_limits<fitness_t>::max()/2;
 }
 
+/*
+ * Initialize a solution based on given permutation.
+ * Fitness is not evaluated from scratch.
+ */
 Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible) {
     this->frequency.reserve(node_cnt);
     this->permutation = std::move(perm);
@@ -28,6 +33,9 @@ Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_fea
     }
 }
 
+/*
+ * Initialize a solution based on given permutation.
+ */
 Solution::Solution(vector<uint> &perm, Instance &instance) {
     this->permutation = perm;
     this->frequency = vector<uint>(instance.node_cnt, 0);

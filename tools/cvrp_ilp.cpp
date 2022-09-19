@@ -138,9 +138,7 @@ void ilp_minimize(CVRPInstance* inst, const string& model_filename = "", const s
         sout << "Best bound: " << (int)round(model->get(GRB_DoubleAttr_ObjBound))  << std::endl;
         // Print solution
         vector<uint> perm = construct_permutation(inst, x, N);
-        fitness_t fit;
-        bool is_feasible = inst->compute_fitness(perm, &fit);
-        Solution sol(inst->node_cnt, (vector<uint> &) perm, fit, is_feasible);
+        Solution sol((vector<uint> &) perm, *inst);
         inst->print_solution(&sol, sout);
     } catch (GRBException e) {
         cout << "Error number: " << e.getErrorCode() << endl;
