@@ -12,16 +12,17 @@
 
 // Compile time config macros
 #define GUROBI_THREAD_CNT 1
-#define STDOUT_ENABLED 0
+#define STDOUT_ENABLED 1
 namespace metaopt {
     typedef unsigned int uint;
 #ifdef FITNESS_TYPE
     typedef FITNESS_TYPE fitness_t;
 #else
 #define FITNESS_TYPE fitness_t
-    typedef unsigned int fitness_t;
+    typedef unsigned long int fitness_t;
 #endif
 }
+#define LB_PENALTY 1000000
 
 
 using json = nlohmann::json;

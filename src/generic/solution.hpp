@@ -17,7 +17,7 @@ using namespace metaopt;
 class Solution
 {
 public:
-    uint node_cnt = 0;
+    uint node_cnt = 0; // same as instance.node_cnt
     fitness_t fitness;
     bool is_feasible = false;
     vector<uint> permutation;

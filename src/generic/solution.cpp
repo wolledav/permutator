@@ -13,7 +13,7 @@ Solution::Solution(uint node_cnt) {
     for (uint i = 0; i < node_cnt; i++)
         this->frequency.push_back(0);
     this->is_feasible = false;
-    this->fitness = std::numeric_limits<fitness_t>::max();
+    this->fitness = std::numeric_limits<fitness_t>::max()/2;
 }
 
 Solution::Solution(uint node_cnt, std::vector<uint> &freq) {
@@ -21,7 +21,7 @@ Solution::Solution(uint node_cnt, std::vector<uint> &freq) {
     this->frequency = freq;
     this->permutation.reserve(node_cnt);
     this->is_feasible = false;
-    this->fitness = std::numeric_limits<fitness_t>::max();
+    this->fitness = std::numeric_limits<fitness_t>::max()/2;
 }
 
 Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible) {
@@ -59,7 +59,7 @@ void Solution::save_to_json(json& container) {
 
 void Solution::print() {
     std::cout << "solution state" << std::endl;
-    std::cout << "\tnode_cnt: " << node_cnt << std::endl;
+    std::cout << "\tlength: " << permutation.size() << std::endl;
     std::cout << "\tfitness: " << fitness << std::endl;
     std::cout << "\tis_feasible: " << is_feasible << std::endl;
 
