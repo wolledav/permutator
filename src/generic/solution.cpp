@@ -6,6 +6,9 @@
 
 Solution::Solution() = default;
 
+/*
+ * Initialize an empty solution with frequencies set to zeros.
+ */
 Solution::Solution(uint node_cnt) {
     this->frequency.reserve(node_cnt);
     this->permutation.reserve(node_cnt);

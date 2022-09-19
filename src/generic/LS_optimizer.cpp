@@ -258,7 +258,7 @@ bool LS_optimizer::centered_exchange(uint x) {
     if (x > this->solution.permutation.size())
         return false;
     vector<uint> perm = this->solution.permutation;
-    Solution best_solution(this->instance->node_cnt, this->solution.frequency);
+    Solution best_solution(this->instance->node_cnt);
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
@@ -560,9 +560,7 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
     std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt-1);
     std::vector<uint> idx;
-    vector<uint> perm = this->solution.permutation;
-    Solution new_solution(this->instance->node_cnt, this->solution.frequency);
-    vector<uint> new_perm = perm;
+    vector<uint> new_perm = this->solution.permutation;
 
     // generate random indices
     for (uint i = 0; i < k; i++) {
@@ -583,9 +581,7 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
         reverse(new_perm.begin() + idx[k - 1], new_perm.end()); // half closed interval [i, j)
     }
     // copy new solution
-    new_solution.permutation = new_perm;
-    new_solution.is_feasible = this->instance->compute_fitness(new_perm, &new_solution.fitness) && this->instance->frequency_in_bounds(new_solution.frequency);
-    this->solution=new_solution;
+    this->solution = Solution(new_perm, *this->instance);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
