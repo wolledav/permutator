@@ -300,7 +300,7 @@ bool LS_optimizer::exchange(uint x, uint y, bool reverse) {
         return false;
     fitness_t fitness;
     vector<uint> perm = this->solution.permutation;
-    Solution best_solution(this->instance->node_cnt, this->solution.frequency);
+    Solution best_solution(this->instance->node_cnt);
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, y, reverse)
