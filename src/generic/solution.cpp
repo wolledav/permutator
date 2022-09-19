@@ -32,6 +32,17 @@ Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_fea
     }
 }
 
+//Solution::Solution(vector<uint> &perm, Instance &instance) {
+//    this->permutation = perm;
+//    this->frequency = vector<uint>(instance.node_cnt, 0);
+//    for (auto id:this->permutation) {
+//        this->frequency[id]++;
+//    }
+//    this->is_feasible = instance.compute_fitness(permutation, &this->fitness) &&
+//                               solution_in_bounds(this);
+//
+//}
+
 Solution::Solution(Solution const &sol) {
     this->permutation = sol.permutation;
     this->frequency = sol.frequency;
@@ -96,5 +107,4 @@ bool Solution::operator >= (const Solution& other) const {
 bool Solution::operator[] (uint idx) {
     return this->permutation[idx];
 }
-
 

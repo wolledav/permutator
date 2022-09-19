@@ -30,3 +30,11 @@ fitness_t Instance::get_lb_penalty(const vector<uint> &frequency) {
     return sum * LB_PENALTY;
 }
 
+bool Instance::frequency_in_bounds(const vector<uint> &frequency) {
+    for (uint i = 0; i < this->node_cnt; i++){
+        if (frequency[i] < this->lbs[i] || frequency[i] > this->ubs[i])
+            return false;
+    }
+    return true;
+}
+

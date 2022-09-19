@@ -584,7 +584,7 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
     }
     // copy new solution
     new_solution.permutation = new_perm;
-    new_solution.is_feasible = this->instance->compute_fitness(new_perm, &new_solution.fitness) && solution_in_bounds(&new_solution);
+    new_solution.is_feasible = this->instance->compute_fitness(new_perm, &new_solution.fitness) && this->instance->frequency_in_bounds(new_solution.frequency);
     this->solution.copy(new_solution);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -1054,7 +1054,7 @@ void LS_optimizer::construct_greedy() {
     bool updated, valid;
     do {
         updated = insert1();
-        valid = this->solution_in_bounds(&this->solution);
+        valid = this->instance->frequency_in_bounds(this->solution.frequency);
     } while((!valid || updated) && !this->timeout());
 
     // Evaluate
@@ -1126,7 +1126,7 @@ void LS_optimizer::construct_random_replicate() {
                 sol.permutation.push_back(elem);
             }
         }
-    } while(!this->solution_in_bounds(&sol) && !this->timeout());
+    } while(!this->instance->frequency_in_bounds(sol.frequency) && !this->timeout());
     this->solution = make_solution(sol.permutation);
 
     // Evaluate
@@ -1195,16 +1195,8 @@ Solution LS_optimizer::make_solution(const vector<uint> &permutation) {
     }
 //    new_solution.frequency = frequency;
     new_solution.is_feasible = this->instance->compute_fitness(permutation, &new_solution.fitness) &&
-            solution_in_bounds(&new_solution);
+            this->instance->frequency_in_bounds(new_solution.frequency);
     return new_solution;
-}
-
-bool LS_optimizer::solution_in_bounds(Solution *sol) {
-    for (uint i = 0; i < this->instance->node_cnt; i++){
-        if (sol->frequency[i] < this->instance->lbs[i] || sol->frequency[i] > this->instance->ubs[i])
-            return false;
-    }
-    return true;
 }
 
 //**********************************************************************
