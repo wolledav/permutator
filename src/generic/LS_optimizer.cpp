@@ -418,7 +418,7 @@ bool LS_optimizer::exchange_ids() {
         return false;
     vector<uint> perm = this->solution.permutation;
     fitness_t fitness;
-    Solution best_solution(this->instance->node_cnt, this->solution.frequency);
+    Solution best_solution(this->instance->node_cnt);
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
@@ -442,7 +442,7 @@ bool LS_optimizer::exchange_ids() {
     }
     if (best_solution < this->solution) {
         updated = true;
-        this->solution=best_solution;
+        this->solution = best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
