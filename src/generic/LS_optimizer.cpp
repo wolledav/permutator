@@ -113,7 +113,7 @@ bool LS_optimizer::insert1() {
     this->print_operation(str(format("\t\tO: %1%") % __func__));
 #endif
 
-    Solution best_solution(this->instance->node_cnt, this->solution.frequency);
+    Solution best_solution(this->instance->node_cnt);
     vector<uint> perm = this->solution.permutation;
     vector<uint> freq = this->solution.frequency;
     fitness_t new_fitness;
