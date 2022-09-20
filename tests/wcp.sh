@@ -1,40 +1,63 @@
 #!/bin/bash
 
+CMD="./cmake-build-release/wcp_meta_stable"
 TEST_TIMEOUT=600
-CMD="./cmake-build-release/wcp_meta"
+DATASET_DIR="./data/tspsd/"
+LOG_DIR="./log/wcp-meta/"
 
 
-DATASET=("./data/tspsd/berlin52_x_closest_edges/")
-LOGDIR="./log/wcp-meta/berlin52_x_closest_edges_10min/"
+D_NAME="berlin52_distance_v2"
 
-echo $LOGDIR
-cmake -E make_directory "$LOGDIR"
-
-for data in "$DATASET"*
+D_PATH="${DATASET_DIR}${D_NAME}/"
+LOG_PATH="${LOG_DIR}${D_NAME}_${TEST_TIMEOUT}s"
+cmake -E make_directory "$LOG_PATH"
+for FILE in "$D_PATH"*
 do
-  echo $data
-  filename=$(basename $data ".json")
+  FILENAME=$(basename $FILE ".json")
   for i in {1..1}
   do
-    echo "[$i/1] Testing ${filename}..."
-    $CMD -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}.out"
+    $CMD -d $FILE -t $TEST_TIMEOUT -o "${LOG_PATH}/${FILENAME}.out"
   done
 done
 
+D_NAME="eil101_distance"
 
-DATASET=("./data/tspsd/berlin52_distance/")
-LOGDIR="./log/wcp-meta/berlin52_distance_10min/"
-
-echo $LOGDIR
-cmake -E make_directory "$LOGDIR"
-
-for data in "$DATASET"*
+D_PATH="${DATASET_DIR}${D_NAME}/"
+LOG_PATH="${LOG_DIR}${D_NAME}_${TEST_TIMEOUT}s"
+cmake -E make_directory "$LOG_PATH"
+for FILE in "$D_PATH"*
 do
-  echo $data
-  filename=$(basename $data ".json")
+  FILENAME=$(basename $FILE ".json")
   for i in {1..1}
   do
-    echo "[$i/1] Testing ${filename}..."
-    $CMD -d $data -t $TEST_TIMEOUT -o "${LOGDIR}/${filename}.out"
+    $CMD -d $FILE -t $TEST_TIMEOUT -o "${LOG_PATH}/${FILENAME}.out"
+  done
+done
+
+D_NAME="ch150_distance"
+
+D_PATH="${DATASET_DIR}${D_NAME}/"
+LOG_PATH="${LOG_DIR}${D_NAME}_${TEST_TIMEOUT}s"
+cmake -E make_directory "$LOG_PATH"
+for FILE in "$D_PATH"*
+do
+  FILENAME=$(basename $FILE ".json")
+  for i in {1..1}
+  do
+    $CMD -d $FILE -t $TEST_TIMEOUT -o "${LOG_PATH}/${FILENAME}.out"
+  done
+done
+
+D_NAME="a280_distance"
+
+D_PATH="${DATASET_DIR}${D_NAME}/"
+LOG_PATH="${LOG_DIR}${D_NAME}_${TEST_TIMEOUT}s"
+cmake -E make_directory "$LOG_PATH"
+for FILE in "$D_PATH"*
+do
+  FILENAME=$(basename $FILE ".json")
+  for i in {1..1}
+  do
+    $CMD -d $FILE -t $TEST_TIMEOUT -o "${LOG_PATH}/${FILENAME}.out"
   done
 done
