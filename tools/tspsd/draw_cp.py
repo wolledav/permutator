@@ -29,6 +29,9 @@ with open(inp) as input_file:
 Xs = []
 Ys = []
 
+x_max = max(data['NODE_COORDS'].values())
+factor = x_max[0]/1740.0
+
 # Plot delete function
 for node in data['NODE_COORDS']:
     for edge in data['DELETE'][node]:
@@ -41,8 +44,10 @@ for node in data['NODE_COORDS']:
         vertex = data['NODE_COORDS'][node]
         plt.plot([vertex[0], xm], [vertex[1], ym], color='red', alpha=0.3, linewidth=1, linestyle=':')
         ratio = 8
-        plt.arrow(xm, ym, (x2 - xm) / ratio, (y2 - ym) / ratio, color='red', alpha=0.5, head_width=5, linewidth=1)
-        red_label = plt.arrow(xm, ym, (x1 - xm) / ratio, (y1 - ym) / ratio, color='red', alpha=0.5, head_width=5, linewidth=1)
+        plt.arrow(xm, ym, (x2 - xm) / ratio, (y2 - ym) / ratio, color='red', alpha=0.5, linewidth=1)
+        # red_label = plt.arrow(xm, ym, (x1 - xm) / ratio, (y1 - ym) / ratio, color='red', alpha=0.5, linewidth=1)
+        plt.arrow(xm, ym, (x2 - xm) / ratio, (y2 - ym) / ratio, color='red', alpha=0.5, linewidth=1, head_width=5 * factor)
+        red_label = plt.arrow(xm, ym, (x1 - xm) / ratio, (y1 - ym) / ratio, color='red', alpha=0.5, linewidth=1, head_width=5 * factor)
 
 # plot solution
 if solution != '':
@@ -59,7 +64,8 @@ if solution != '':
             node2 = walk[(i + 1) % len(walk)]
             x1, y1 = data['NODE_COORDS'][node1][0], data['NODE_COORDS'][node1][1]
             x2, y2 = data['NODE_COORDS'][node2][0], data['NODE_COORDS'][node2][1]
-            green_label = plt.arrow(x1, y1, (x2 - x1), (y2 - y1), color='green', alpha=0.5, head_width=8, linewidth=2, length_includes_head=True)
+            green_label = plt.arrow(x1, y1, (x2 - x1), (y2 - y1), color='green', alpha=0.5, linewidth=2, length_includes_head=True, head_width=8 * factor)
+            # green_label = plt.arrow(x1, y1, (x2 - x1), (y2 - y1), color='green', alpha=0.5, linewidth=2, length_includes_head=True)
             if processing[i]:
                 black_label = plt.arrow(x1, y1, (x2 - x1), (y2 - y1), color='black', alpha=1, head_width=0, linewidth=0, length_includes_head=True)
                 plt.text(x1 + 1, y1 + 1, str(i), color='black', fontsize=8)
