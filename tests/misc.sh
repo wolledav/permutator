@@ -1,7 +1,7 @@
 #!/bin/bash
 
-./tests/scp.sh
 ./tests/wcp.sh
+./tests/scp.sh
 
 # SCP, large instance, 60 minutes
 #INSTANCE="./data/tspsd/vm1084_closest/vm1084_sd0_cl.json"

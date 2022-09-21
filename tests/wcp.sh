@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CMD="./cmake-build-release/wcp_meta_stable"
-TEST_TIMEOUT=600
+TEST_TIMEOUT=3600
 DATASET_DIR="./data/tspsd/"
 LOG_DIR="./log/wcp-meta/"
 
