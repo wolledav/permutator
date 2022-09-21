@@ -1,13 +1,32 @@
 # Permutator
 
-## Usage
+Clone the repository. Then, go to the permutator/ directory and run
 
 ### Compilation
 ```
-cd path/to/permutator
 cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" -S . -B"./cmake-build-release"
 cmake --build cmake-build-release --target all -- -j 6
 ```
+
+### Usage
+In the permutator/ directory, run
+```
+./cmake-build-release/scp_meta -d ./data/tspsd/berlin52_distance/berlin52_sd1_distance.json -o ./log/scp-meta/solution.out -t 10
+```
+or
+```
+./cmake-build-release/wcp_meta -d ./data/tspsd/berlin52_distance/berlin52_sd1_distance.json -o ./log/wcp-meta/solution.out -t 10
+```
+Parameters:
+
+-d . . . path to a problem instance
+
+-o . . . path to an output file (optional)
+
+-t . . . timeout is seconds (optional)
+
+-c . . . solver configuration file (optional)
+
 
 ### Gurobi installation
 1) Download and extract Gurobi to /opt
