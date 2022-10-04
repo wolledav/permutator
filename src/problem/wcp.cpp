@@ -55,7 +55,7 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
 
     // Initialize matrix for deleted edges
     boost::numeric::ublas::matrix<bool> del_mat(this->node_cnt, this->node_cnt, false);
-    boost::numeric::ublas::matrix<fitness_t> dist_mat_updated = dist_mat;
+//    boost::numeric::ublas::matrix<fitness_t> dist_mat_updated = dist_mat;
 
     for (uint i = 0; i < permutation.size(); i++) {
         uint node1 = permutation[i];
@@ -65,8 +65,8 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
         for (auto del:this->f_delete[node1]) {
             del_mat(del.first, del.second) = true;
             del_mat(del.second, del.first) = true;
-            dist_mat_updated(del.first, del.second) = DELETED_EDGE_PENALTY;
-            dist_mat_updated(del.second, del.first) = DELETED_EDGE_PENALTY;
+//            dist_mat_updated(del.first, del.second) = DELETED_EDGE_PENALTY;
+//            dist_mat_updated(del.second, del.first) = DELETED_EDGE_PENALTY;
         }
 
         // Update fitness and validity
@@ -74,7 +74,7 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
             *fitness += dist_mat(node1, node2);
         } else {
             vector<uint> path{};
-            auto aStar_fitness = Astar(dist_mat, dist_mat_updated, node1, node2, path);
+            auto aStar_fitness = Astar(dist_mat, del_mat, node1, node2, path);
             *fitness += aStar_fitness;
 
             for (uint j = 0; j < path.size() - 1; j++) {
@@ -156,11 +156,9 @@ void reconstructPath(uint start, uint goal, vector<uint> &path, vector<uint> &pr
     reverse(path.begin(), path.end());
 }
 
-fitness_t WCPInstance::Astar(const boost::numeric::ublas::matrix<fitness_t> &d,
-                             const boost::numeric::ublas::matrix<fitness_t> &d_updated, uint start, uint goal,
-                             vector<uint> &path) {
+fitness_t WCPInstance::Astar(const boost::numeric::ublas::matrix<fitness_t>& dist_mat, const boost::numeric::ublas::matrix<bool> &del_mat, uint start, uint goal, vector<uint> &path) {
     typedef std::pair<fitness_t , uint> my_pair;
-    auto size = d.size1();
+    auto size = dist_mat.size1();
 
     std::priority_queue<my_pair, vector<my_pair>, std::greater<my_pair>> openSet;               // priority queue <fScore, node>
     std::vector<uint> cameFrom(size);                                                        // immediate predecessors
@@ -168,7 +166,7 @@ fitness_t WCPInstance::Astar(const boost::numeric::ublas::matrix<fitness_t> &d,
     std::vector<fitness_t> fScore(size, std::numeric_limits<fitness_t>::max()/2);        // cost estimates of cheapest paths to goal
 
     gScore[start] = 0;
-    fScore[start] = d(start, goal); // h value
+    fScore[start] = dist_mat(start, goal); // h value
     openSet.push(std::make_pair(fScore[start], start));
 
     while (!openSet.empty()) {
@@ -184,11 +182,11 @@ fitness_t WCPInstance::Astar(const boost::numeric::ublas::matrix<fitness_t> &d,
             openSet.pop();
             for (uint neighbor = 0; neighbor < size; neighbor++) {
                 if (neighbor != current.second) {
-                    auto tentative_gScore = gScore[current.second] + d_updated(current.second, neighbor);
+                    auto tentative_gScore = gScore[current.second] + del_mat(current.second, neighbor) * DELETED_EDGE_PENALTY + (1 - del_mat(current.second, neighbor)) * dist_mat(current.second, neighbor);
                     if (tentative_gScore < gScore[neighbor]) {
                         cameFrom[neighbor] = current.second;
                         gScore[neighbor] = tentative_gScore;
-                        fScore[neighbor] = tentative_gScore + d(neighbor, goal); // h value
+                        fScore[neighbor] = tentative_gScore + dist_mat(neighbor, goal); // h value
                         openSet.push(std::make_pair(fScore[neighbor], neighbor));
                     }
                 }
