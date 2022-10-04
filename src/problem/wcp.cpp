@@ -73,33 +73,9 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
         if (!del_mat(node1, node2)) { // Assuming, that direct edge node1->node2 is the shortest path
             *fitness += dist_mat(node1, node2);
         } else {
-            std::cout << "\nstart: " << node1 << ", goal: " << node2 << std::endl;
             vector<uint> path{};
-
-
-            // Dijkstra
-            vector<uint> dijkstra_path{};
-            auto dijkstra_fitness = dijkstra(dist_mat_updated, node1, node2, dijkstra_path);
-            *fitness += dijkstra_fitness;
-            path = dijkstra_path;
-
-            for (auto j = 0; j < path.size() - 1; j++) {
-                std::cout << path[j] << " " << path[j+1] << "(" << dist_mat_updated(path[j], path[j+1]) << ")" << std::endl;
-            }
-            std::cout << "dijkstra fitness: " << dijkstra_fitness << std::endl;
-
-
-            // A*
-            vector<uint> aStar_path{};
-            auto aStar_fitness = Astar(dist_mat, dist_mat_updated, node1, node2, aStar_path);
+            auto aStar_fitness = Astar(dist_mat, dist_mat_updated, node1, node2, path);
             *fitness += aStar_fitness;
-            path = aStar_path;
-
-            for (auto j = 0; j < aStar_path.size() - 1; j++) {
-                std::cout << aStar_path[j] << " " << aStar_path[j+1] << " (" << dist_mat_updated(aStar_path[j], aStar_path[j+1]) << ")" << std::endl;
-            }
-            std::cout << "Astar fitness: " << aStar_fitness << std::endl;
-
 
             for (uint j = 0; j < path.size() - 1; j++) {
                 valid = valid && !del_mat(path[j], path[j + 1]);
