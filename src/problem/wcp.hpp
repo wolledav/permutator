@@ -7,6 +7,7 @@
 #include <iostream>
 #include <climits>
 #include <boost/numeric/ublas/matrix.hpp>
+#include <bits/stdc++.h>
 
 #include "generic/instance.hpp"
 #include "lib/nlohmann/json.hpp"
@@ -19,6 +20,7 @@ class WCPInstance : public Instance {
 private:
     static uint closest_unused(const vector<fitness_t>& dist, const vector<bool>& sptSet);
     static fitness_t dijkstra(const boost::numeric::ublas::matrix<fitness_t>& graph, uint start, uint goal, vector<uint> &path);
+    static fitness_t Astar(const boost::numeric::ublas::matrix<fitness_t>& d, const boost::numeric::ublas::matrix<fitness_t>& d_updated, uint start, uint goal, vector<uint> &path);
     uint compute_dist(uint id1, uint id2);
     void compute_dist_mat();
 

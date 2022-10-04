@@ -73,8 +73,34 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
         if (!del_mat(node1, node2)) { // Assuming, that direct edge node1->node2 is the shortest path
             *fitness += dist_mat(node1, node2);
         } else {
+            std::cout << "\nstart: " << node1 << ", goal: " << node2 << std::endl;
             vector<uint> path{};
-            *fitness += dijkstra(dist_mat_updated, node1, node2, path);
+
+
+            // Dijkstra
+            vector<uint> dijkstra_path{};
+            auto dijkstra_fitness = dijkstra(dist_mat_updated, node1, node2, dijkstra_path);
+            *fitness += dijkstra_fitness;
+            path = dijkstra_path;
+
+            for (auto j = 0; j < path.size() - 1; j++) {
+                std::cout << path[j] << " " << path[j+1] << "(" << dist_mat_updated(path[j], path[j+1]) << ")" << std::endl;
+            }
+            std::cout << "dijkstra fitness: " << dijkstra_fitness << std::endl;
+
+
+            // A*
+            vector<uint> aStar_path{};
+            auto aStar_fitness = Astar(dist_mat, dist_mat_updated, node1, node2, aStar_path);
+            *fitness += aStar_fitness;
+            path = aStar_path;
+
+            for (auto j = 0; j < aStar_path.size() - 1; j++) {
+                std::cout << aStar_path[j] << " " << aStar_path[j+1] << " (" << dist_mat_updated(aStar_path[j], aStar_path[j+1]) << ")" << std::endl;
+            }
+            std::cout << "Astar fitness: " << aStar_fitness << std::endl;
+
+
             for (uint j = 0; j < path.size() - 1; j++) {
                 valid = valid && !del_mat(path[j], path[j + 1]);
             }
@@ -144,6 +170,61 @@ fitness_t WCPInstance::dijkstra(const boost::numeric::ublas::matrix<fitness_t>& 
     return dist[goal];
 }
 
+void reconstructPath(uint start, uint goal, vector<uint> &path, vector<uint> &prev) {
+    auto current = goal;
+    do {
+        path.push_back(current);
+        current = prev[current];
+    } while (current != start);
+    path.push_back(current);
+    reverse(path.begin(), path.end());
+}
+
+fitness_t WCPInstance::Astar(const boost::numeric::ublas::matrix<fitness_t> &d,
+                             const boost::numeric::ublas::matrix<fitness_t> &d_updated, uint start, uint goal,
+                             vector<uint> &path) {
+    typedef std::pair<fitness_t , uint> my_pair;
+    auto size = d.size1();
+
+    std::priority_queue<my_pair, vector<my_pair>, std::greater<my_pair>> openSet;               // priority queue <fScore, node>
+    std::vector<uint> cameFrom(size);                                                        // immediate predecessors
+    std::vector<fitness_t> gScore(size, std::numeric_limits<fitness_t>::max()/2);        // costs of cheapest paths
+    std::vector<fitness_t> fScore(size, std::numeric_limits<fitness_t>::max()/2);        // cost estimates of cheapest paths to goal
+
+    gScore[start] = 0;
+    fScore[start] = d(start, goal); // h value
+    openSet.push(std::make_pair(fScore[start], start));
+
+    while (!openSet.empty()) {
+        my_pair current = openSet.top();
+        if (current.first != fScore[current.second]) { // fScore is not up-to-date
+            openSet.pop();
+        } else {
+            if (current.second == goal) {
+                reconstructPath(start, goal, path, cameFrom);
+                return gScore[current.second];
+            }
+            // Pop current and expand it
+            openSet.pop();
+            for (uint neighbor = 0; neighbor < size; neighbor++) {
+                if (neighbor != current.second) {
+                    auto tentative_gScore = gScore[current.second] + d_updated(current.second, neighbor);
+                    if (tentative_gScore < gScore[neighbor]) {
+                        cameFrom[neighbor] = current.second;
+                        gScore[neighbor] = tentative_gScore;
+                        fScore[neighbor] = tentative_gScore + d(neighbor, goal); // h value
+                        openSet.push(std::make_pair(fScore[neighbor], neighbor));
+                    }
+                }
+            }
+        }
+
+    }
+
+    std::cout << "A*: path not found" << std::endl;
+    return std::numeric_limits<fitness_t>::max()/2;
+}
+
 void WCPInstance::export_walk_orig_ids(vector<uint> &permutation, json &container) {
     vector<string> walk_orig_ids;
     vector<bool> walk_processing;
@@ -177,6 +258,7 @@ void WCPInstance::export_walk_orig_ids(vector<uint> &permutation, json &containe
     container["solution"]["walk_orig_ids"] = walk_orig_ids;
     container["solution"]["walk_processing"] = walk_processing;
 }
+
 
 
 
