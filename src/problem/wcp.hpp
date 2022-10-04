@@ -5,7 +5,7 @@
 #pragma once
 
 #include <iostream>
-#include <limits.h>
+#include <climits>
 #include <boost/numeric/ublas/matrix.hpp>
 
 #include "generic/instance.hpp"

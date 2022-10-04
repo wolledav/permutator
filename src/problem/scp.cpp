@@ -69,6 +69,7 @@ bool SCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
         valid = valid && !del_mat(node1, node2);
     }
 
+    fitness_evals++;
     return valid;
 }
 

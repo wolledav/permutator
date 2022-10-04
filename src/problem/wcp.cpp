@@ -70,13 +70,19 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
         }
 
         // Update fitness and validity
-        vector<uint> path{};
-        *fitness += dijkstra(dist_mat_updated, node1, node2, path);
-        for (uint j = 0; j < path.size() - 1; j++) {
-            valid = valid && !del_mat(path[j], path[j + 1]);
+        if (!del_mat(node1, node2)) { // Assuming, that direct edge node1->node2 is the shortest path
+            *fitness += dist_mat(node1, node2);
+        } else {
+            vector<uint> path{};
+            *fitness += dijkstra(dist_mat_updated, node1, node2, path);
+            for (uint j = 0; j < path.size() - 1; j++) {
+                valid = valid && !del_mat(path[j], path[j + 1]);
+            }
         }
+
     }
 
+    fitness_evals++;
     return valid;
 }
 

@@ -79,6 +79,7 @@ int main (int argc, char *argv[]) {
         output_file << output.dump(4);
     } else {
         sol.print();
+        std::cout << "fitness evals: " << inst.fitness_evals << std::endl;
         std::cout << sol.fitness << std::endl;
     }
     return 0;
