@@ -37,6 +37,7 @@ WCPInstance::WCPInstance(const char *path) : Instance() {
         this->positions[id].x = item.value()[0];
         this->positions[id].y = item.value()[1];
     }
+
     this->dist_mat.resize(this->node_cnt, node_cnt);    // distance matrix
     compute_dist_mat();
     f_delete.resize(this->node_cnt);                       // delete function
@@ -53,9 +54,7 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
     *fitness = 0;
     bool valid = true;
 
-    // Initialize matrix for deleted edges
-    boost::numeric::ublas::matrix<bool> del_mat(this->node_cnt, this->node_cnt, false);
-//    boost::numeric::ublas::matrix<fitness_t> dist_mat_updated = dist_mat;
+    auto del_mat = boost::numeric::ublas::matrix<bool, boost::numeric::ublas::row_major>(this->node_cnt, this->node_cnt, false); // delete matrix used in compute_fitness
 
     for (uint i = 0; i < permutation.size(); i++) {
         uint node1 = permutation[i];
@@ -65,8 +64,6 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
         for (auto del:this->f_delete[node1]) {
             del_mat(del.first, del.second) = true;
             del_mat(del.second, del.first) = true;
-//            dist_mat_updated(del.first, del.second) = DELETED_EDGE_PENALTY;
-//            dist_mat_updated(del.second, del.first) = DELETED_EDGE_PENALTY;
         }
 
         // Update fitness and validity
@@ -81,7 +78,6 @@ bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
                 valid = valid && !del_mat(path[j], path[j + 1]);
             }
         }
-
     }
 
     fitness_evals++;
