@@ -29,7 +29,7 @@ class LS_optimizer
         uint timeout_s;
         std::chrono::steady_clock::time_point start, last_improvement;
         Instance* instance;
-        Solution current_solution, best_known_solution;
+        Solution initial_solution, current_solution, best_known_solution;
         std::mt19937 *rng;
         vector<string> operation_list;
         vector<string> perturbation_list;

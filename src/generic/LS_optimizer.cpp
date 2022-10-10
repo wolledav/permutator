@@ -10,6 +10,7 @@ LS_optimizer::LS_optimizer(Instance *inst, json config, uint seed) {
     this->instance = inst;
     this->config = std::move(config);
     Solution sol(inst->node_cnt);
+    this->initial_solution = sol;
     this->current_solution = sol;
     this->best_known_solution = sol;
     this->rng = LS_optimizer::init_rng(seed);
@@ -31,7 +32,7 @@ std::mt19937* LS_optimizer::init_rng(uint seed) {
 }
 
 void LS_optimizer::setInitSolution(vector<uint> init_solution) {
-    this->current_solution = Solution(init_solution, *this->instance);
+    this->initial_solution = Solution(init_solution, *this->instance);
 }
 
 
@@ -1042,13 +1043,16 @@ void LS_optimizer::calibratedVNS() {
 
 /*
  * Applies insert1 operator until the solution is not valid w.r.t. LBs and UBs or the operator does not update the solution.
- * Updates existing this->solution.
+ * Uses this->initial_solution and sets this->current solution.
  */
 void LS_optimizer::construct_greedy() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(str(format("C: %1%") % __func__ ));
     std::cout << std::endl;
 #endif
+    this->current_solution = this->initial_solution;
+
+    this->current_solution.print();
 
     // Construct
     bool updated, valid;
@@ -1064,6 +1068,9 @@ void LS_optimizer::construct_greedy() {
         this->steps.emplace_back(this->get_runtime(), this->current_solution.fitness);
     }
 
+    this->current_solution.print();
+    exit(1);
+
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(str(format("C: %1%") % __func__ ));
     this->print_result(true);
@@ -1072,7 +1079,7 @@ void LS_optimizer::construct_greedy() {
 
 /*
  * Adds nodes to random positions of the solution, until all nodes are at their LBs.
- * Updates existing this->solution.
+ * Uses this->initial_solution and sets this->current solution.
  */
 void LS_optimizer::construct_random() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -1080,7 +1087,10 @@ void LS_optimizer::construct_random() {
 #endif
 
     // Construct
-    Solution sol = this->current_solution;
+    Solution sol = this->initial_solution;
+
+    sol.print();
+
     uint rnd_idx;
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++) { // for all nodes
         while (sol.frequency[node_id] < this->instance->lbs[node_id]) {
@@ -1091,6 +1101,9 @@ void LS_optimizer::construct_random() {
         }
     }
     this->current_solution = Solution(sol.permutation, *this->instance);
+
+    this->current_solution.print();
+    exit(1);
 
     // Evaluate
     if (this->current_solution < this->best_known_solution) {
@@ -1107,15 +1120,18 @@ void LS_optimizer::construct_random() {
 /*
  * Creates a random permutation of nodes.
  * Replicates the permutation, until the solution is not valid w.r.t. LBs and UBs.
- * Updates existing this->solution.
+ * Uses this->initial_solution and sets this->current solution.
  */
 void LS_optimizer::construct_random_replicate() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(str(format("C: %1%") % __func__ ));
 #endif
+
+    this->initial_solution.print();
+
     // Extract permutation from initial solution
     Solution sol(this->instance->node_cnt);
-    for (auto node:this->current_solution.permutation) {
+    for (auto node:this->initial_solution.permutation) {
         if (sol.frequency[node] == 0) {
             sol.permutation.push_back(node);
             sol.frequency[node]++;
@@ -1155,6 +1171,9 @@ void LS_optimizer::construct_random_replicate() {
         this->last_improvement = std::chrono::steady_clock::now();
         this->steps.emplace_back(this->get_runtime(), this->current_solution.fitness);
     }
+
+    this->current_solution.print();
+    exit(1);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
