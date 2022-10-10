@@ -1052,8 +1052,6 @@ void LS_optimizer::construct_greedy() {
 #endif
     this->current_solution = this->initial_solution;
 
-    this->current_solution.print();
-
     // Construct
     bool updated, valid;
     do {
@@ -1067,9 +1065,6 @@ void LS_optimizer::construct_greedy() {
         this->last_improvement = std::chrono::steady_clock::now();
         this->steps.emplace_back(this->get_runtime(), this->current_solution.fitness);
     }
-
-    this->current_solution.print();
-    exit(1);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(str(format("C: %1%") % __func__ ));
@@ -1089,8 +1084,6 @@ void LS_optimizer::construct_random() {
     // Construct
     Solution sol = this->initial_solution;
 
-    sol.print();
-
     uint rnd_idx;
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++) { // for all nodes
         while (sol.frequency[node_id] < this->instance->lbs[node_id]) {
@@ -1101,9 +1094,6 @@ void LS_optimizer::construct_random() {
         }
     }
     this->current_solution = Solution(sol.permutation, *this->instance);
-
-    this->current_solution.print();
-    exit(1);
 
     // Evaluate
     if (this->current_solution < this->best_known_solution) {
@@ -1126,8 +1116,6 @@ void LS_optimizer::construct_random_replicate() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_operation(str(format("C: %1%") % __func__ ));
 #endif
-
-    this->initial_solution.print();
 
     // Extract permutation from initial solution
     Solution sol(this->instance->node_cnt);
@@ -1171,9 +1159,6 @@ void LS_optimizer::construct_random_replicate() {
         this->last_improvement = std::chrono::steady_clock::now();
         this->steps.emplace_back(this->get_runtime(), this->current_solution.fitness);
     }
-
-    this->current_solution.print();
-    exit(1);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->print_result(true);
