@@ -29,7 +29,6 @@ public:
     std::vector<coords> positions;
     boost::numeric::ublas::matrix<uint, boost::numeric::ublas::row_major> dist_mat;
     std::vector<std::vector<std::pair<uint, uint>>> f_delete;
-//    boost::numeric::ublas::matrix<bool> del_mat;
 
     static uint get_internal_id(const string& id);
     static string get_original_id(uint id);

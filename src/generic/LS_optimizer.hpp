@@ -29,7 +29,7 @@ class LS_optimizer
         uint timeout_s;
         std::chrono::steady_clock::time_point start, last_improvement;
         Instance* instance;
-        Solution solution, best_known_solution;
+        Solution current_solution, best_known_solution;
         std::mt19937 *rng;
         vector<string> operation_list;
         vector<string> perturbation_list;
@@ -132,6 +132,7 @@ class LS_optimizer
         ~LS_optimizer() = default;
         static std::mt19937* init_rng(uint seed);
         void setLogger(std::basic_ostream<char>& logs);
+        void setInitSolution(vector<uint> init_solution);
         void setConstruction(const string& constr);
         void setMetaheuristic(const string& meta);
         void setLocalSearch(const string& loc_method);
