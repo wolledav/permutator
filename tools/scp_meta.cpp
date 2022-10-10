@@ -16,13 +16,13 @@ void show_usage(){
 
 int main (int argc, char *argv[]) {
     uint seed = 0, timeout_s = 0;
-    string data_path, output_path, conf_path;
+    string data_path, output_path, conf_path, init_path;
     std::ofstream log_file, output_file;
     int opt;
     json config, output;
 
     // Parse arguments
-    while ((opt = getopt(argc, argv, "d:t:s:o:c:")) != -1) {
+    while ((opt = getopt(argc, argv, "d:t:s:o:c:i:")) != -1) {
         switch (opt) {
             case 'd':
                 data_path = optarg;
@@ -38,6 +38,9 @@ int main (int argc, char *argv[]) {
                 break;
             case 'c':
                 conf_path = optarg;
+                break;
+            case 'i':
+                init_path = optarg;
                 break;
             default: /* '?' */
                 std::cout << "Unknown arg option: " << (char)opt << std::endl;
@@ -64,9 +67,16 @@ int main (int argc, char *argv[]) {
 
     // Load instance
     SCPInstance inst = SCPInstance(data_path.c_str());
-
-    std::cout << "Solving " << inst.name << std::endl;
     LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
+
+    if (!init_path.empty()) {
+        std::cout << "Initial solution read from " + init_path << std::endl;
+        json data = read_json(init_path);
+        std::vector<uint> init_solution = data["solution"]["permutation"];
+        optimizer.setInitSolution(init_solution);
+    }
+
+    std::cout << "Solving " << data_path << std::endl;
     optimizer.run();
     Solution sol = optimizer.getSolution();
 

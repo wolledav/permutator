@@ -65,7 +65,6 @@ int main (int argc, char *argv[]) {
         config["timeout"] = timeout_s;
     }
 
-
     // Load instance
     WCPInstance inst = WCPInstance(data_path.c_str());
     LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
@@ -77,7 +76,7 @@ int main (int argc, char *argv[]) {
         optimizer.setInitSolution(init_solution);
     }
 
-    std::cout << "Solving " << inst.name << std::endl;
+    std::cout << "Solving " << data_path << std::endl;
     optimizer.run();
     Solution sol = optimizer.getSolution();
 
