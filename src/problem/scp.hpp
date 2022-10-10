@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/symmetric.hpp>
+#include <boost/functional/hash.hpp>
 
 #include "generic/instance.hpp"
 #include "lib/nlohmann/json.hpp"
@@ -23,6 +25,7 @@ public:
     std::vector<coords> positions;
     boost::numeric::ublas::matrix<uint> dist_mat;
     std::vector<std::vector<std::pair<uint, uint>>> f_delete;
+    boost::numeric::ublas::symmetric_matrix<std::vector<bool>> deleted_by;
 
     static uint get_internal_id(const string& id);
     static string get_original_id(uint id);
