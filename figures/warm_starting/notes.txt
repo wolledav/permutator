@@ -1,0 +1,5 @@
+WCP_eil101_distance     all valid in SCP, no progress in WCP
+ch150_distance          all valid in SCP, WCP found better solution for ch150_sd3_distance.out, but this was still a SCP path
+a280_distance           SCP found only valid solution to sd1, wcp found a valid SCP path to sd2, sd3 unsolved by both
+WCP_vm1084_closest      all valid in SCP, WCP made some progress, although it did very few iterations (3600s budget)
+berlin52_closest
