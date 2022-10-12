@@ -1,5 +1,6 @@
 {
     "timeout": 1,
+    "stop_on_feasible": false,
     "num_threads": 1,
     "metaheuristic": "BVNS",
     "bvns_min_k": 3,

@@ -923,17 +923,25 @@ void LS_optimizer::ILS() {
     std::cout << std::endl;
 #endif
 
-    this->local_search();
+//    this->local_search();
     while (!this->timeout()) {
-        // Apply perturbation to this->solution
-        for (const auto &pert : this->perturbation_list) {
-            this->perturbation_call(pert, config["ils_k"].get<uint>());
+        // Terminate, if stop_on_feasible set on true
+        if (config["stop_on_feasible"]) {
+            std::cout << str(format("%1% found a feasible solution in %2% seconds ") % __func__ % this->get_runtime()) << std::endl;
+            return;
         }
-        // Perform local search on this->solution, ev. update this->best_known_solution
+
+        // Perform local search on this->current_solution, ev. update this->best_known_solution
         this->local_search();
-        // Reset this->solution to this->best_known_solution
+
+        // Reset this->current_solution to this->best_known_solution
         if (this->best_known_solution.fitness != this->current_solution.fitness) {
             this->current_solution=this->best_known_solution;
+        }
+
+        // Apply perturbation to this->current_solution
+        for (const auto &pert : this->perturbation_list) {
+            this->perturbation_call(pert, config["ils_k"].get<uint>());
         }
     }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
@@ -957,15 +965,17 @@ void LS_optimizer::basicVNS() {
     uint max_k = config["bvns_max_k"].get<uint>();
     uint k = min_k;
 
-    this->local_search();
     Solution current_best_solution = this->current_solution; // needed, as this->best_known_solution is updated internally
     while (!this->timeout()) {
-        // Apply perturbation to this->solution
-        for (const auto &pert : this->perturbation_list) {
-            this->perturbation_call(pert, k);
+        // Terminate, if stop_on_feasible set on true
+        if (config["stop_on_feasible"]) {
+            std::cout << str(format("%1% found a feasible solution in %2% seconds ") % __func__ % this->get_runtime()) << std::endl;
+            return;
         }
-        // Perform local search on this->solution, ev. update this->best_known_solution
+
+        // Perform local search on this->current_solution, ev. update this->best_known_solution
         this->local_search();
+
         // Adjust k
         if (this->current_solution < current_best_solution){
             current_best_solution=this->current_solution;
@@ -973,11 +983,14 @@ void LS_optimizer::basicVNS() {
         } else {
             k = k < max_k ? k + 1 : max_k;
         }
-        // TODO this should never happen
-        if (this->best_known_solution.fitness != current_best_solution.fitness)
-            std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
+
         // Reset this->solution to this->best_known_solution
         this->current_solution=this->best_known_solution;
+
+        // Apply perturbation to this->current_solution
+        for (const auto &pert : this->perturbation_list) {
+            this->perturbation_call(pert, k);
+        }
     }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }
