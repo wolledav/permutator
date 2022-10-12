@@ -22,7 +22,7 @@ namespace metaopt {
     typedef unsigned long int fitness_t;
 #endif
 }
-#define LB_PENALTY 1000000
+#define LB_PENALTY 10000000
 
 
 using json = nlohmann::json;

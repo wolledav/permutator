@@ -46,12 +46,12 @@ SCPInstance::SCPInstance(const char *path) : Instance() {
     compute_dist_mat();
 
     f_delete.resize(this->node_cnt);                       // delete function
-    deleted_by.resize(this->node_cnt);
-    for (auto i = 0; i < this->node_cnt; i++) {
-        for (auto j = 0; j < this->node_cnt; j++) {
-            deleted_by(i, j) = std::vector<bool>(this->node_cnt, false);
-        }
-    }
+//    deleted_by.resize(this->node_cnt);
+//    for (auto i = 0; i < this->node_cnt; i++) {
+//        for (auto j = 0; j < this->node_cnt; j++) {
+//            deleted_by(i, j) = std::vector<bool>(this->node_cnt, false);
+//        }
+//    }
 
     for (const auto &item: data["DELETE"].items()) {
         uint id = get_internal_id(item.key());
@@ -61,7 +61,7 @@ SCPInstance::SCPInstance(const char *path) : Instance() {
             auto del_edge = get_edge(id1, id2);
             f_delete[id].push_back(del_edge);
 
-            deleted_by(del_edge.first, del_edge.second)[id] = true;
+//            deleted_by(del_edge.first, del_edge.second)[id] = true;
         }
     }
 }
