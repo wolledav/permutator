@@ -926,7 +926,7 @@ void LS_optimizer::ILS() {
 //    this->local_search();
     while (!this->timeout()) {
         // Terminate, if stop_on_feasible set on true
-        if (config["stop_on_feasible"]) {
+        if (config["stop_on_feasible"] && this->best_known_solution.is_feasible) {
             std::cout << str(format("%1% found a feasible solution in %2% seconds ") % __func__ % this->get_runtime()) << std::endl;
             return;
         }
@@ -968,7 +968,7 @@ void LS_optimizer::basicVNS() {
     Solution current_best_solution = this->current_solution; // needed, as this->best_known_solution is updated internally
     while (!this->timeout()) {
         // Terminate, if stop_on_feasible set on true
-        if (config["stop_on_feasible"]) {
+        if (config["stop_on_feasible"] && this->best_known_solution.is_feasible) {
             std::cout << str(format("%1% found a feasible solution in %2% seconds ") % __func__ % this->get_runtime()) << std::endl;
             return;
         }
