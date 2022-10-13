@@ -34,7 +34,7 @@ NUM_VERTICES = 24
 PROBLEMS_PER_SIZE = 2
 X_MAX = 100
 Y_MAX = 100
-OUTDIR = "./data/tspsd/random24/"
+OUTDIR = "./data/tspsd/random24_v2/"
 
 if not os.path.exists(OUTDIR):
     os.makedirs(OUTDIR)
@@ -47,7 +47,7 @@ for node1 in all_vertices:
         if node1 < node2:
             all_edges.append([str(node1), str(node2)])
 
-for removed_edges_cnt in range(max_edges):
+for removed_edges_cnt in range(max_edges + 1):
     for problems_cnt in range(PROBLEMS_PER_SIZE):  # generate j problems with i edges removed
         data = {}
         data["NAME"] = "random-" + str(NUM_VERTICES) + "-" + str(removed_edges_cnt / 2) + "-" + str(problems_cnt)
