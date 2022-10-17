@@ -4,8 +4,8 @@ import json
 import matplotlib.pyplot as plt
 
 
-INPUT_DIR = "./log/scp-meta/random24_v2_3s/"
-OUTPUT_DIR = "./figures/scp/hamiltonicity/"
+INPUT_DIR = "./log/wcp-meta/random24_200_3s/"
+OUTPUT_DIR = "./figures/wcp/hamiltonicity/"
 
 files = os.listdir(INPUT_DIR)
 deg2cnt = {} # avg_degree -> [feasible, total]
