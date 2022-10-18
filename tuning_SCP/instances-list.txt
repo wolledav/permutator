@@ -1,0 +1,20 @@
+## This is an example of specifying instances with a file.
+
+# Each line is an instance relative to trainInstancesDir
+# (see scenario.txt.tmpl) and an optional sequence of instance-specific
+# parameters that will be passed to target-runnerx when invoked on that
+# instance.
+
+# Empty lines and comments are ignored.
+# A-n65-k09.xml timeout 600
+
+eil101_sd1_distance.json    timeout 60
+eil101_sd2_distance.json    timeout 60
+eil101_sd3_distance.json    timeout 60
+ch150_sd1_distance.json     timeout 60
+ch150_sd2_distance.json     timeout 60
+ch150_sd3_distance.json     timeout 60
+a280_sd1_distance.json      timeout 600
+a280_sd2_distance.json      timeout 600
+a280_sd3_distance.json      timeout 600
+vm1084_sd1_cl.json          timeout 3600
