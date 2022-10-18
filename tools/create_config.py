@@ -17,7 +17,7 @@ for i in range(0, len(params), 2):
     elif param == "perturbation":
         perturbations.append(value)
     elif param == "allow_infeasible":
-        config[param] = bool(value)
+        config[param] = bool(int(value))
     elif param == "ils_k":
         config[param] = int(value)
     elif param == "bvns_min_k":
@@ -34,6 +34,8 @@ for i in range(0, len(params), 2):
         config[param] = int(value)
     elif param == "num_threads":
         config[param] = int(value)
+    elif param == "stop_on_feasible":
+        config[param] = bool(int(value))
     else:
         print(sys.argv[0], "unknown parameter:", param)
 
