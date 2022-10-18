@@ -1201,7 +1201,7 @@ void LS_optimizer::perturbation_call(const string &perturbation_name, uint k) {
         do {
             this->current_solution=this->best_known_solution;
             this->perturbation_map.at(perturbation_name)(k); // call perturbation
-        } while (this->current_solution.fitness == this->best_known_solution.fitness || !this->current_solution.is_feasible);
+        } while (!this->timeout() && (this->current_solution.fitness == this->best_known_solution.fitness || !this->current_solution.is_feasible)); // no change or not feasible -> repeat
     } else {
         this->perturbation_map.at(perturbation_name)(k); // call perturbation
     }
