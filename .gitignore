@@ -4,3 +4,7 @@ cmake-build-release/
 build/
 bin/
 model/*
+/data/tspsd/random24_ov_100/
+/data/tspsd/random24_ov_20/
+/data/tspsd/random_tsp24_20/
+/data/tspsd/random_tsp24_100/
