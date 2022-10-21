@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+import copy
 import random
 import json
 import os
@@ -37,10 +37,10 @@ def get_exp_degree(edge_rem_cnt, n, steps):
 
 
 NUM_VERTICES = 24
-PROBLEMS_PER_DEGREE = 1
+PROBLEMS_PER_DEGREE = 20
 MIN_AVG_DEGREE = 0
-MAX_AVG_DEGREE = NUM_VERTICES - 1
-STEP = 0.5
+MAX_AVG_DEGREE = 23
+STEP = 1.0/12
 X_MAX = 100
 Y_MAX = 100
 EPS = 0.025
@@ -66,7 +66,7 @@ for v in all_vertices:
 for id in range(PROBLEMS_PER_DEGREE):
     all_degrees = list(np.arange(MIN_AVG_DEGREE - STEP, MAX_AVG_DEGREE + STEP, STEP))
     random.shuffle(all_deletes)
-    all_deletes_ = all_deletes.copy()
+    all_deletes_ = copy.deepcopy(all_deletes)
     edge_removed_cnt = {}
     coords = {}
     delete = {}
@@ -84,7 +84,7 @@ for id in range(PROBLEMS_PER_DEGREE):
             print("goal_degree = " + str(goal_degree) + ", current_degree = " + str(current_degree))
             # EXPORT ------------------------------------------
             data = {}
-            data["NAME"] = "random-" + str(NUM_VERTICES) + "-" + str(goal_degree) + "-" + str(id)
+            data["NAME"] = "random-" + str(NUM_VERTICES) + "-" + "{:.2f}".format(goal_degree) + "-" + str(id)
             data["TYPE"] = "TSPSD"
             data["COMMENT"] = str(NUM_VERTICES) + " random locations, " + str(goal_degree) + " goal degree after n/2 deletes"
             data["EDGE_WEIGHT_TYPE"] = "EUC_2D"
