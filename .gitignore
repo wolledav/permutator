@@ -12,3 +12,5 @@ model/*
 /log/scp-meta/random_tsp24_100_3s/
 /log/scp-meta/random_tsp24_20_3s/
 /log/scp-meta/random24_ov_20_3s/
+/data/tspsd/random24_ov_250/
+/data/tspsd/random_tsp24_250/
