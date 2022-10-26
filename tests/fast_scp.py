@@ -7,13 +7,13 @@ import shutil
 import json
 
 
-CMD = "./cmake-build-release/scp_meta"
-TEST_TIMEOUT = str(4)
+CMD = "./cmake-build-release/wcp_meta"
+TEST_TIMEOUT = str(3)
 DATASET_DIR = "./data/tspsd/"
-LOG_DIR = "./log/scp-meta/"
+LOG_DIR = "./log/wcp-meta/"
 MAX_INFEASIBLE = 5
 
-D_NAME = "random24_ov_100"
+D_NAME = "random24_ov_250"
 problems_cnt = int(D_NAME.split('_')[-1])
 
 D_PATH = DATASET_DIR + D_NAME + "/"

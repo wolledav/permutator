@@ -31,9 +31,13 @@ def get_data(input_dir):
     return degrees_sorted, prob_list
 
 
-INPUT_DIRS = ["./log/scp-meta/random24_ov_20_3s/",
-              "./log/scp-meta/random24_ov_20_3s/"
-              ]
+INPUT_DIRS = [
+            "./log/scp-meta/random24_ov_250_SCP_3s/",
+            # "./log/scp-meta/random24_ov_100_SCP_4s/"
+            # "./log/scp-meta/random_tsp24_100_TSP_3s/",
+            # "./log/wcp-meta/random24_ov_100_WCP_3s/"
+            ]
+
 OUTPUT_DIR = "./figures/scp/hamiltonicity/"
 
 fig_output = OUTPUT_DIR
