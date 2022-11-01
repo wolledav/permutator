@@ -19,7 +19,7 @@ def test_instance(path, k):
         size = data["DIMENSION"]
         nodes = {*range(1, size + 1)}
         subsets = [*itertools.combinations(nodes, k)]
-        reachable_subset = False
+        result = False
         for subset in subsets:
             # Init delete matrix
             deleted = [[False for i in range(size + 1)] for j in range(size + 1)]
@@ -28,22 +28,31 @@ def test_instance(path, k):
                     for e in data["DELETE"][str(node)]:
                         deleted[int(e[0])][int(e[1])] = True
                         deleted[int(e[1])][int(e[0])] = True
-            first = subset[0]
-            last = subset[-1]
-            if not deleted[first][last] and is_reachable(first, nodes, subset, deleted) and is_reachable(last, nodes, subset, deleted):
-                # print("Reachable subset:", subset)
-                reachable_subset = True
-    return reachable_subset
+            # print("subset: ", subset)
+            permutations = itertools.permutations(subset)
+            for permutation in permutations:
+                reachable_perm = True
+                reachable_perm = reachable_perm and is_reachable(permutation[0], nodes, subset, deleted)
+                reachable_perm = reachable_perm and is_reachable(permutation[-1], nodes, subset, deleted)
+                # reachable_perm = reachable_perm and not deleted[permutation[0]][permutation[-1]]
+                for i in range(len(permutation) - 1):
+                    reachable_perm = reachable_perm and not deleted[permutation[i]][permutation[i + 1]]
+                if reachable_perm:
+                    # print("Reachable permutation:", permutation)
+                    result = True
+    return result
 
 
 PROBLEM_DIR = "./data/tspsd/random24_ov_100/"
 SOLUTION_DIR = "./log/scp-meta/random24_ov_100_SCP_3s/"
-k = 1
+k = 3
 
 total = 0
 infeasible = 0
 solved = 0
 problems = os.listdir(PROBLEM_DIR)
+# problems = ["random-24-7.75-39.json"]
+
 for problem in problems:
     problem_path = PROBLEM_DIR + problem
     if not test_instance(problem_path, k):
