@@ -36,11 +36,12 @@ def get_exp_degree(edge_rem_cnt, n, steps):
     return (n - 1) - (2 * sum)/n
 
 
-NUM_VERTICES = 24
-PROBLEMS_PER_DEGREE = 250
-MIN_AVG_DEGREE = 0
-MAX_AVG_DEGREE = 10
-STEP = 1.0/12
+NUM_VERTICES = 100
+PROBLEMS_PER_DEGREE = 100
+MIN_AVG_DEGREE = 12
+MAX_AVG_DEGREE = 40
+# STEP = 1.0/12
+STEP = 1
 X_MAX = 100
 Y_MAX = 100
 EPS = 0.025
@@ -78,6 +79,7 @@ for id in range(PROBLEMS_PER_DEGREE):
         delete[str(vertex)] = []
     total_removed_cnt = 0
     goal_degree = all_degrees.pop()
+    print(all_degrees)
     while goal_degree >= MIN_AVG_DEGREE:
         current_degree = get_exp_degree(edge_removed_cnt, NUM_VERTICES, NUM_VERTICES/2)
         if abs(current_degree - goal_degree) < EPS: # export instance
@@ -99,14 +101,13 @@ for id in range(PROBLEMS_PER_DEGREE):
                 data["EXP_REMOVED_EDGES"].append(get_exp_sum(edge_removed_cnt, NUM_VERTICES, steps))
             data["NODE_COORDS"] = coords
             data["DELETE"] = delete
-
             json_data = json.dumps(data, indent=4)
             output_path = OUTDIR + data["NAME"] + ".json"
             with open(output_path, "w") as outfile:
                 outfile.write(json_data)
                 print("Generated " + output_path)
-            # EXPORT ------------------------------------------
             goal_degree = all_degrees.pop()
+        # EXPORT ------------------------------------------
         else: # delete one more edge
             e = all_deletes_.pop()
             edge_removed_cnt[e[1]] += 1

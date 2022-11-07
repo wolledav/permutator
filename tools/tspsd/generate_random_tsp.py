@@ -4,14 +4,14 @@ import random
 import json
 import os
 
-NUM_VERTICES = 24
+NUM_VERTICES = 100
+STEP = 4
 MIN_AVG_DEGREE = 0
-MAX_AVG_DEGREE = 10
-PROBLEMS_PER_SIZE = 250
+MAX_AVG_DEGREE = 20
+PROBLEMS_PER_SIZE = 1
 X_MAX = 100
 Y_MAX = 100
-OUTDIR = "./data/tspsd/random_tsp24_" + str(PROBLEMS_PER_SIZE) + "/"
-
+OUTDIR = "./data/tspsd/random_tsp" + str(NUM_VERTICES) + "_" + str(PROBLEMS_PER_SIZE) + "/"
 
 if not os.path.exists(OUTDIR):
     os.makedirs(OUTDIR)
@@ -24,7 +24,7 @@ for node1 in all_vertices:
         if node1 < node2:
             all_edges.append([str(node1), str(node2)])
 
-for removed_edges_cnt in range(max_edges + 1):
+for removed_edges_cnt in range(0, max_edges + 1, STEP):
     avg_vertex_degree = 2 * (max_edges - removed_edges_cnt) / NUM_VERTICES
     if MIN_AVG_DEGREE <= avg_vertex_degree <= MAX_AVG_DEGREE:
         for problems_cnt in range(PROBLEMS_PER_SIZE): # generate j problems with i edges removed
