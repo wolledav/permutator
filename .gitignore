@@ -10,3 +10,7 @@ model/*
 /data/tspsd/random_tsp24_100/
 /data/tspsd/random24_ov_250/
 /data/tspsd/random_tsp24_250/
+/data/tspsd/random24_tsp_100/
+/data/tspsd/random50_ov_100/
+/data/tspsd/random50_tsp_100/
+/data/tspsd/random100_ov_100/
