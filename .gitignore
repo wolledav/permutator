@@ -8,16 +8,5 @@ model/*
 /data/tspsd/random24_ov_20/
 /data/tspsd/random_tsp24_20/
 /data/tspsd/random_tsp24_100/
-/log/scp-meta/random24_ov_100_3s/
-/log/scp-meta/random_tsp24_100_3s/
-/log/scp-meta/random_tsp24_20_3s/
-/log/scp-meta/random24_ov_20_3s/
 /data/tspsd/random24_ov_250/
 /data/tspsd/random_tsp24_250/
-/log/wcp-meta/random24_ov_100_WCP_3s/
-/log/wcp-meta/random24_ov_250_WCP_3s/
-/log/scp-meta/random_tsp24_100_TSP_3s/
-/log/scp-meta/random24_ov_250_SCP_3s/
-/log/scp-meta/random24_ov_100_SCP_3s/
-/log/wcp-meta/random24_200_3s/
-/log/scp-meta/random24_200_3s/
