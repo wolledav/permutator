@@ -36,12 +36,13 @@ def get_exp_degree(edge_rem_cnt, n, steps):
     return (n - 1) - (2 * sum)/n
 
 
-NUM_VERTICES = 100
-PROBLEMS_PER_DEGREE = 100
-MIN_AVG_DEGREE = 12
-MAX_AVG_DEGREE = 40
+NUM_VERTICES = 200
+PROBLEMS_PER_DEGREE = 1
+MIN_AVG_DEGREE = 0
+MAX_AVG_DEGREE = 60
 # STEP = 1.0/12
-STEP = 1
+VD_STEP = 1 # vertex degree sampling step
+ER_STEP = 10 # edges to remove at once
 X_MAX = 100
 Y_MAX = 100
 EPS = 0.025
@@ -65,7 +66,7 @@ for v in all_vertices:
 
 # Create PROBLEMS_PER_DEGREE instances for each avg degree
 for id in range(PROBLEMS_PER_DEGREE):
-    all_degrees = list(np.arange(MIN_AVG_DEGREE - STEP, MAX_AVG_DEGREE + STEP, STEP))
+    all_degrees = list(np.arange(MIN_AVG_DEGREE - VD_STEP, MAX_AVG_DEGREE + VD_STEP, VD_STEP))
     random.shuffle(all_deletes)
     all_deletes_ = copy.deepcopy(all_deletes)
     edge_removed_cnt = {}
@@ -108,9 +109,11 @@ for id in range(PROBLEMS_PER_DEGREE):
                 print("Generated " + output_path)
             goal_degree = all_degrees.pop()
         # EXPORT ------------------------------------------
-        else: # delete one more edge
-            e = all_deletes_.pop()
-            edge_removed_cnt[e[1]] += 1
-            total_removed_cnt += 1
-            groups[e[0] - 1] += 1
-            delete[str(e[0])].append([str(e[1][0]), str(e[1][1])])
+        else: # delete ER_STEP more edges
+            for i in range(ER_STEP):
+                if len(all_deletes_) > 0:
+                    e = all_deletes_.pop()
+                    edge_removed_cnt[e[1]] += 1
+                    total_removed_cnt += 1
+                    groups[e[0] - 1] += 1
+                    delete[str(e[0])].append([str(e[1][0]), str(e[1][1])])

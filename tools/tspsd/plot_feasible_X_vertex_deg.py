@@ -6,8 +6,9 @@ import pandas as pd
 
 
 INPUT_DIRS = [
-            "./log/scp-meta/random50_ov_100_5s/",
-            # "./log/scp-meta/random_tsp50_100_5s/"
+            "./log/scp-meta/random24_ov_100_SCP_3s/",
+            "./log/scp-meta/random50_ov_100_SCP_5s/",
+            "./log/scp-meta/random100_ov_100_10s/"
             ]
 
 OUTPUT_DIR = "./figures/scp/hamiltonicity/"

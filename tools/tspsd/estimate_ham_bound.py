@@ -6,24 +6,45 @@ import pandas as pd
 
 
 INPUT_DIRS = [
-    "./log/scp-meta/random24_ov_100_SCP_3s/",
-    "./log/scp-meta/random50_ov_100_SCP_5s/",
-    "./log/scp-meta/random100_ov_1_10s/"
-    # "./log/scp-meta/random_tsp24_100_TSP_3s/",
-    # "./log/scp-meta/random_tsp50_100_5s/"
-]
-WINDOW_SIZE = 24 # should be even
+    # "./log/scp-meta/random24_ov_100_SCP_3s/",
+    # "./log/scp-meta/random50_ov_100_SCP_5s/",
+    # "./log/scp-meta/random100_ov_100_SCP_10s/"
 
-for input_dir in INPUT_DIRS:
+    "./log/scp-meta/random24_ov_100_SCP_3s/",
+    "./log/scp-meta/random24_tsp_100_TSP_3s/",
+    "./log/wcp-meta/random24_ov_100_WCP_3s/"
+
+    # "./log/scp-meta/random24_ov_100_SCP_3s/",
+    # "./log/scp-meta/random24_tsp_100_TSP_3s/",
+    # "./log/scp-meta/random50_ov_100_SCP_5s/",
+    # "./log/scp-meta/random50_tsp_100_TSP_5s/"
+]
+
+WINDOW_SIZES = [ # must be even
+    # 24,
+    # 24,
+    # 6
+
+    24,
+    24,
+    24
+
+    # 24,
+    # 24,
+    # 24,
+    # 24
+]
+
+for input_dir, window_size in zip(INPUT_DIRS, WINDOW_SIZES):
     degrees, probs = get_probs_in_half(input_dir)
     dataset = input_dir.split('/')[-2]
     color = plt.plot(degrees, probs, alpha=0.5)[0].get_color()
 
     # Filter probabilities by moving average filter
     probs_series = pd.Series(probs)
-    windows = probs_series.rolling(WINDOW_SIZE)
-    probs_smooth = windows.mean().tolist()[WINDOW_SIZE - 1:]
-    degrees_reduced = degrees[int(WINDOW_SIZE/2 - 1):-int(WINDOW_SIZE/2)]
+    windows = probs_series.rolling(window_size)
+    probs_smooth = windows.mean().tolist()[window_size - 1:]
+    degrees_reduced = degrees[int(window_size/2 - 1):-int(window_size/2)]
     plt.plot(degrees_reduced, probs_smooth, color, label=dataset)
 
     # Estimate degree of p = 0.5

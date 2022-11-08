@@ -6,22 +6,22 @@ DATASET_DIR="./data/tspsd/"
 LOG_DIR="./log/scp-meta/"
 
 
-D_NAME="random24_ov_100"
+#D_NAME="random24_ov_100"
+#
+#D_PATH="${DATASET_DIR}${D_NAME}/"
+#LOG_PATH="${LOG_DIR}${D_NAME}_${TEST_TIMEOUT}s"
+#cmake -E make_directory "$LOG_PATH"
+#for FILE in "$D_PATH"*
+#do
+#  FILENAME=$(basename $FILE ".json")
+#  for i in {1..1}
+#  do
+#    $CMD -d $FILE -t $TEST_TIMEOUT -o "${LOG_PATH}/${FILENAME}.out"
+#  done
+#done
 
-D_PATH="${DATASET_DIR}${D_NAME}/"
-LOG_PATH="${LOG_DIR}${D_NAME}_${TEST_TIMEOUT}s"
-cmake -E make_directory "$LOG_PATH"
-for FILE in "$D_PATH"*
-do
-  FILENAME=$(basename $FILE ".json")
-  for i in {1..1}
-  do
-    $CMD -d $FILE -t $TEST_TIMEOUT -o "${LOG_PATH}/${FILENAME}.out"
-  done
-done
 
-
-D_NAME="random_tsp24_100"
+D_NAME="random10_ov_1"
 
 D_PATH="${DATASET_DIR}${D_NAME}/"
 LOG_PATH="${LOG_DIR}${D_NAME}_${TEST_TIMEOUT}s"
