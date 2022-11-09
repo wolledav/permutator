@@ -3,49 +3,20 @@ import copy
 import random
 import json
 import os
-import math
 import numpy as np
-
-
-def get_p_e_removed(n, k, steps):
-    if k == 0:
-        return 0
-    elif k > n - int(steps):
-        return 1
-    else:
-        return (math.comb(n, k) - math.comb(n - int(steps), k)) / math.comb(n, k)
-
-
-def get_exp_sum(edge_rem_cnt, n, steps):
-    sum = 0
-    for e in edge_rem_cnt:
-        k = edge_rem_cnt[e]
-        sum += get_p_e_removed(n, k, steps)
-    return sum
-
-
-def get_p_e_removed_v2(n, k, steps):
-    prod = 1
-    for i in range(k):
-        prod *= ((n - steps) - i)/(n - i)
-    return 1 - prod
-
-
-def get_exp_degree(edge_rem_cnt, n, steps):
-    sum = get_exp_sum(edge_rem_cnt, n, steps)
-    return (n - 1) - (2 * sum)/n
+from tools.tspsd.tspsd_common import *
 
 
 NUM_VERTICES = 200
 PROBLEMS_PER_DEGREE = 1
 MIN_AVG_DEGREE = 0
-MAX_AVG_DEGREE = 60
-# STEP = 1.0/12
+MAX_AVG_DEGREE = NUM_VERTICES - 1
 VD_STEP = 1 # vertex degree sampling step
-ER_STEP = 10 # edges to remove at once
+
 X_MAX = 100
 Y_MAX = 100
-EPS = 0.025
+EPS = 0.1
+ER_STEP = int(NUM_VERTICES/10) # edges to remove at once
 OUTDIR = "./data/tspsd/random" + str(NUM_VERTICES) + "_ov_" + str(PROBLEMS_PER_DEGREE) + "/"
 
 # Create dataset directory
@@ -83,6 +54,7 @@ for id in range(PROBLEMS_PER_DEGREE):
     print(all_degrees)
     while goal_degree >= MIN_AVG_DEGREE:
         current_degree = get_exp_degree(edge_removed_cnt, NUM_VERTICES, NUM_VERTICES/2)
+        # print(current_degree)
         if abs(current_degree - goal_degree) < EPS: # export instance
             print("goal_degree = " + str(goal_degree) + ", current_degree = " + str(current_degree))
             # EXPORT ------------------------------------------

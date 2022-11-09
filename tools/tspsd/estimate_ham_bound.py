@@ -10,9 +10,9 @@ INPUT_DIRS = [
     # "./log/scp-meta/random50_ov_100_SCP_5s/",
     # "./log/scp-meta/random100_ov_100_SCP_10s/"
 
-    "./log/scp-meta/random24_ov_100_SCP_3s/",
-    "./log/scp-meta/random24_tsp_100_TSP_3s/",
-    "./log/wcp-meta/random24_ov_100_WCP_3s/"
+    # "./log/scp-meta/random24_ov_100_SCP_3s/",
+    # "./log/scp-meta/random24_tsp_100_TSP_3s/",
+    # "./log/wcp-meta/random24_ov_100_WCP_3s/"
 
     # "./log/scp-meta/random24_ov_100_SCP_3s/",
     # "./log/scp-meta/random24_tsp_100_TSP_3s/",
@@ -25,14 +25,16 @@ WINDOW_SIZES = [ # must be even
     # 24,
     # 6
 
-    24,
-    24,
-    24
+    # 24,
+    # 24,
+    # 24
 
     # 24,
     # 24,
     # 24,
     # 24
+
+    6
 ]
 
 for input_dir, window_size in zip(INPUT_DIRS, WINDOW_SIZES):
