@@ -65,3 +65,36 @@ def get_probs_in_half(input_dir):
         total_list.append(deg2cnt[degree][1])
         prob_list.append(deg2cnt[degree][0]/deg2cnt[degree][1])
     return degrees_sorted, prob_list
+
+
+def get_data(json_path):
+    with open(json_path) as f:
+        data = json.load(f)
+        return data
+
+
+def get_probs_in_step(problem_dir, log_dir, step, decimals):
+    solutions = os.listdir(log_dir)
+    deg2cnt = {} # avg_degree -> [feasible, total]
+    for solution in solutions:
+        sol_data = get_data(log_dir + solution)
+        feasible = sol_data["solution"]["is_feasible"]
+        name = sol_data["name"]
+        problem_data = get_data(problem_dir + name + ".json")
+        exp_degrees = problem_data["EXP_DEGREES"]
+        degree = round(exp_degrees[step], decimals)
+        if degree not in deg2cnt.keys():
+            deg2cnt[degree] = [0, 0]
+        if feasible:
+            deg2cnt[degree][0] += 1
+        deg2cnt[degree][1] += 1
+    degrees_sorted = sorted(deg2cnt.keys())
+    feasible_list = []
+    total_list = []
+    prob_list = []
+    for degree in degrees_sorted:
+        feasible_list.append(deg2cnt[degree][0])
+        total_list.append(deg2cnt[degree][1])
+        prob = deg2cnt[degree][0]/deg2cnt[degree][1]
+        prob_list.append(prob)
+    return degrees_sorted, prob_list

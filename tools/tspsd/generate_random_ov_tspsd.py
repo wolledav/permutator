@@ -1,18 +1,16 @@
 #!/usr/bin/python
 import copy
 import random
-import json
-import os
 import numpy as np
 from tools.tspsd.tspsd_common import *
 
 
-NUM_VERTICES = 200
-PROBLEMS_PER_DEGREE = 1
-MIN_AVG_DEGREE = 0
-MAX_AVG_DEGREE = NUM_VERTICES - 1
-VD_STEP = 1 # vertex degree sampling step
+NUM_VERTICES = 90
+PROBLEMS_PER_DEGREE = 50
+MIN_AVG_DEGREE = 6
+MAX_AVG_DEGREE = 20
 
+VD_STEP = (MAX_AVG_DEGREE - MIN_AVG_DEGREE) / 50 # vertex degree sampling step
 X_MAX = 100
 Y_MAX = 100
 EPS = 0.1
