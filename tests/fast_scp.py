@@ -4,14 +4,17 @@ import os
 from sortedcontainers import SortedSet
 import subprocess
 import json
+import time
 
 CMD = "./cmake-build-release/scp_meta_stable"
 PROBLEM_TYPE = "SCP"
-DATASET_DIR = "./data/tspsd/range_estimate/"
-LOG_DIR = "./log/scp-meta/"
+DATASET_DIR = "./data/tspsd/"
+LOG_DIR = "./log/scp-meta/ham_bound_v1/"
 MAX_INFEASIBLE = 5
-DATASETS = ["random10_ov_1", "random20_ov_1", "random30_ov_1", "random40_ov_1", "random50_ov_1", "random60_ov_1", "random70_ov_1", "random80_ov_1", "random90_ov_1", "random100_ov_1", "random200_ov_1", "random400_ov_1"]
-TEST_TIMEOUTS = [3, 3, 3, 4, 5, 6, 7, 8, 9, 10, 20, 40]
+DATASETS = ["random10_ov_50", "random20_ov_50", "random30_ov_50", "random40_ov_50", "random50_ov_50", "random60_ov_50", "random70_ov_50", "random80_ov_50", "random90_ov_50", "random100_ov_50"]
+TEST_TIMEOUTS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+
+time.sleep(3600)
 
 for D_NAME, TEST_TIMEOUT in zip(DATASETS, TEST_TIMEOUTS):
     problems_cnt = int(D_NAME.split('_')[-1])
