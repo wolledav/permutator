@@ -5,27 +5,27 @@ import pandas as pd
 
 
 LOG_DIRS = [
-    # "./log/scp-meta/tsp/random24_tsp_100_TSP_3s/", "./log/scp-meta/dense_sampling/random24_ov_100_SCP_3s/", "./log/wcp-meta/dense_sampling/random24_ov_100_WCP_3s/"
-    "./log/scp-meta/ham_bound_v1/random10_ov_50_SCP_10s/", "./log/scp-meta/ham_bound_v1/random20_ov_50_SCP_20s/", "./log/scp-meta/ham_bound_v1/random30_ov_50_SCP_30s/", "./log/scp-meta/ham_bound_v1/random40_ov_50_SCP_40s/", "./log/scp-meta/ham_bound_v1/random50_ov_50_SCP_50s/"
+    "./log/scp-meta/tsp/random24_tsp_100_TSP_3s/", "./log/scp-exact/dense_sampling/random24_ov_100_SCP/", "./log/wcp-meta/dense_sampling/random24_ov_100_WCP_3s/"
+    # "./log/scp-meta/ham_bound_v1/random10_ov_50_SCP_10s/", "./log/scp-meta/ham_bound_v1/random20_ov_50_SCP_20s/", "./log/scp-meta/ham_bound_v1/random30_ov_50_SCP_30s/", "./log/scp-meta/ham_bound_v1/random40_ov_50_SCP_40s/", "./log/scp-meta/ham_bound_v1/random50_ov_50_SCP_50s/", "./log/scp-meta/ham_bound_v1/random60_ov_50_SCP_60s/"
 ]
 PROBLEM_DIRS = [
-    # "./data/tspsd/tsp/random24_tsp_100/", "./data/tspsd/dense_sampling/random24_ov_100/", "./data/tspsd/dense_sampling/random24_ov_100/"
-    "./data/tspsd/random10_ov_50/", "./data/tspsd/random20_ov_50/", "./data/tspsd/random30_ov_50/", "./data/tspsd/random40_ov_50/", "./data/tspsd/random50_ov_50/"
+    "./data/tspsd/tsp/random24_tsp_100/", "./data/tspsd/dense_sampling/random24_ov_100/", "./data/tspsd/dense_sampling/random24_ov_100/"
+    # "./data/tspsd/random10_ov_50/", "./data/tspsd/random20_ov_50/", "./data/tspsd/random30_ov_50/", "./data/tspsd/random40_ov_50/", "./data/tspsd/random50_ov_50/", "./data/tspsd/random60_ov_50/"
 ]
 LEGENDS = [
-    # "TSP", "SCP", "WCP"
-    "random10", "random20", "random30", "random40", "random50"
+    "TSP", "SCP", "WCP"
+    # "random10", "random20", "random30", "random40", "random50", "random60"
 ]
 WINDOW_SIZES = [ # must be even
-    # 18, 18, 8
-    10, 10, 10, 10, 10
+    18, 18, 8
+    # 10, 10, 10, 10, 10, 10
 ]
-# TITLE = "24-vertex graph"
-TITLE = "SCP_ham_bound_v1"
+TITLE = "24-vertex graph"
+# TITLE = "SCP_ham_bound_v1"
 
 FIG_DIR = "./figures/scp/hamiltonicity/"
 DECIMALS = 1
-REL_STEP = 0.75
+REL_STEP = 0.5
 BOUNDS_FILE = "./log/scp-meta/ham_bound_v1/bounds_" + str(REL_STEP) + "n.json"
 PROBLEM_TYPE = "SCP"
 
@@ -69,16 +69,16 @@ for log_dir, problem_dir, window_size, legend in zip(LOG_DIRS, PROBLEM_DIRS, WIN
 
 
 # Export vertex degrees of prob. bound
-bounds_dict = {}
-bounds_dict["problem_type"] = PROBLEM_TYPE
-bounds_dict["log_dirs"] = LOG_DIRS
-bounds_dict["problem_dirs"] = PROBLEM_DIRS
-bounds_dict["sizes"] = problem_sizes
-bounds_dict["bounds"] = bound_vd
-bounds_dict["rel_step"] = REL_STEP
-json_object = json.dumps(bounds_dict, indent=4)
-with open(BOUNDS_FILE, "w") as outfile:
-    outfile.write(json_object)
+# bounds_dict = {}
+# bounds_dict["problem_type"] = PROBLEM_TYPE
+# bounds_dict["log_dirs"] = LOG_DIRS
+# bounds_dict["problem_dirs"] = PROBLEM_DIRS
+# bounds_dict["sizes"] = problem_sizes
+# bounds_dict["bounds"] = bound_vd
+# bounds_dict["rel_step"] = REL_STEP
+# json_object = json.dumps(bounds_dict, indent=4)
+# with open(BOUNDS_FILE, "w") as outfile:
+#     outfile.write(json_object)
 
 
 fig_output = fig_output[:-1] + "_STEP=" + str(REL_STEP) + "n.pdf"

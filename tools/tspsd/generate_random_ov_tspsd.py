@@ -22,16 +22,7 @@ if not os.path.exists(OUTDIR):
     os.makedirs(OUTDIR)
 
 # Create list of all vertex->edge combinations
-all_vertices = list(range(1, NUM_VERTICES + 1))
-all_edges = []
-all_deletes = []
-for e_from in all_vertices:
-    for e_to in all_vertices:
-        if e_from < e_to:
-            all_edges.append(tuple([e_from, e_to]))
-for v in all_vertices:
-    for e in all_edges:
-        all_deletes.append([v, e])
+all_vertices, all_edges, all_deletes = get_vertices_edges_deletes(NUM_VERTICES)
 
 # Create PROBLEMS_PER_DEGREE instances for each avg degree
 for id in range(PROBLEMS_PER_DEGREE):

@@ -98,3 +98,17 @@ def get_probs_in_step(problem_dir, log_dir, step, decimals):
         prob = deg2cnt[degree][0]/deg2cnt[degree][1]
         prob_list.append(prob)
     return degrees_sorted, prob_list
+
+
+def get_vertices_edges_deletes(num_vertices):
+    vertices = list(range(1, num_vertices + 1))
+    edges = []
+    deletes = []
+    for e_from in vertices:
+        for e_to in vertices:
+            if e_from < e_to:
+                edges.append(tuple([e_from, e_to]))
+    for v in vertices:
+        for e in edges:
+            deletes.append([v, e])
+    return vertices, edges, deletes
