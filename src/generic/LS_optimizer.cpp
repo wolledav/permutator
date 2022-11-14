@@ -1183,7 +1183,13 @@ void LS_optimizer::construct_random_replicate() {
 //**********************************************************************
 
 bool LS_optimizer::operation_call(const string &operation_name) {
-    bool result;
+    bool result = false;
+
+    // Terminate, if stop_on_feasible set on true
+    if (config["stop_on_feasible"] && this->best_known_solution.is_feasible) {
+        return result;
+    }
+
     this->operation_histogram[operation_name].first++;
     result = this->operation_map.at(operation_name)();
     if (result)

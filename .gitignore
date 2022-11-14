@@ -4,3 +4,7 @@ cmake-build-release/
 build/
 bin/
 model/*
+/data/tspsd/dense_sampling/
+/data/tspsd/range_estimate/random200_ov_1/
+/data/tspsd/range_estimate/random400_ov_1/
+/data/tspsd/tsp/
