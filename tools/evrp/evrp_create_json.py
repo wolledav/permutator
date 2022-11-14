@@ -6,9 +6,6 @@ import json
 
 def create_dict(input_file_path):
     D = {}
-    node_coord = []
-    node_demand = []
-    stations = []
 
     section = 'init'
     with open(input_file_path, 'r') as f:
@@ -17,15 +14,15 @@ def create_dict(input_file_path):
             splt = line.split(' ', 1)
             
             if splt[0] == 'NODE_COORD_SECTION':
-                D['node_coord'] = []
-                section = 'node_coord'
+                D['node_coord'] = {}
+                section = 'coord'
             
             elif splt[0] == 'DEMAND_SECTION':
-                D['node_demand'] = []
+                D['node_demand'] = {}
                 section = 'demand'
             
             elif splt[0] == 'STATIONS_COORD_SECTION':
-                D['stations'] = []
+                D['stations_id'] = []
                 section = 'stations'
             
             elif splt[0] == 'DEPOT_SECTION':
@@ -44,26 +41,20 @@ def create_dict(input_file_path):
                     except:
                         pass
                     
-                D[splt[0].lower()] = value
+                D[splt[0].strip(':').lower()] = value
 
-            elif section == 'node_coord':
-                D['node_coord'].append({
-                    'id' : int(splt[0]),
-                    'coords' : [float(x) for x in splt[1].split(' ')]
-                })
+            elif section == 'coord':
+                D['node_coord'][splt[0]] = [float(x) for x in splt[1].split(' ')]
             
             elif section == 'demand':
-                D['node_demand'].append({
-                    'id' : int(splt[0]),
-                    'demand' : float(splt[1])
-                })
+                D['node_demand'][splt[0]] = float(splt[1])
 
             elif section == 'stations':
-                D['stations'].append(int(splt[0]))
+                D['stations_id'].append(splt[0])
             
             elif section == 'depot':
-                id = int(splt[0])
-                if id >= 0:
+                id = splt[0]
+                if id != '-1':
                     D['depot'] = id
 
         return D
