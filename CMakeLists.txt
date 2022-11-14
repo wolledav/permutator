@@ -80,6 +80,14 @@ add_executable(wcp_meta
         src/generic/solution.cpp
         src/problem/wcp.cpp)
 
+add_executable(evrp_meta
+        tools/evrp_meta.cpp
+        src/config.cpp
+        src/generic/LS_optimizer.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/problem/evrp.cpp)
+
 target_include_directories(cvrp_meta PUBLIC
                            "${PROJECT_BINARY_DIR}/../"
                            "${PROJECT_BINARY_DIR}/../src"
@@ -111,6 +119,12 @@ target_include_directories(scp_meta PUBLIC
         )
 
 target_include_directories(wcp_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+target_include_directories(evrp_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"

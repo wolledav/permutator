@@ -21,3 +21,4 @@ model/*
 /log/scp-meta/random24_ov_100_SCP_3s/
 /log/wcp-meta/random24_200_3s/
 /log/scp-meta/random24_200_3s/
+.vscode/settings.json

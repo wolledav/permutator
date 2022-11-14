@@ -1,11 +1,13 @@
 #pragma once
 
 #include "generic/instance.hpp"
+#include "generic/solution.hpp"
 #include <vector>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#define CAPACITY_PENALTY 100000000
-#define ENERGY_PENALTY 100000000
+#define CAPACITY_PENALTY 1000000
+#define ENERGY_PENALTY 1000000
+#define NO_MOVE_PENALTY 10000000
 
 using namespace std;
 
@@ -49,4 +51,6 @@ class EVRPInstance: public Instance
         ~EVRPInstance();
 
         bool compute_fitness(const vector<uint> &permutation, fitness_t* fitness) override;
+
+        void print_solution(Solution *solution, std::basic_ostream<char>& outf = std::cout);
 };
