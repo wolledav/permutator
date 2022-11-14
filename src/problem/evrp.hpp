@@ -5,9 +5,9 @@
 #include <vector>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#define CAPACITY_PENALTY 1000000
+#define CAPACITY_PENALTY 10000000
 #define ENERGY_PENALTY 1000000
-#define NO_MOVE_PENALTY 10000000
+#define NO_MOVE_PENALTY 0
 
 using namespace std;
 
@@ -24,14 +24,15 @@ class EVRPInstance: public Instance
         float capacity; // load capacity
         float energy_cap; // energy capacity
         float energy_cons; // energy consumption
+        float total_demand; // total sum of demands
 
         uint route_cnt;
         uint customer_cnt;
         uint station_cnt;
 
         uint depot_id;
-        vector<float> demands;
-        vector<bool> station;
+        float* demands;
+        bool* station;
 
         vector<Point> coords;
         boost::numeric::ublas::matrix<float> dist_mat;

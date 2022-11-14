@@ -19,6 +19,8 @@ EVRPInstance::EVRPInstance(const char* path) : Instance()
 }
 
 EVRPInstance::~EVRPInstance(){
+    delete[] this->demands;
+    delete[] this->station;
 }
 
 void EVRPInstance::parse_json(const char* path)
@@ -45,22 +47,25 @@ void EVRPInstance::parse_json(const char* path)
         this->coords[id].y = item.value()[1];
     }
     // demand section
-    this->demands.resize(this->node_cnt);
-    fill(this->demands.begin(), this->demands.end(), 0);
+    this->total_demand = 0;
+    this->demands = new float[this->node_cnt] {0};
     for (const auto& item: data["node_demand"].items()) {
         uint id = this->get_int_id(item.key());
         this->demands[id] = item.value();
+        this->total_demand += this->demands[id];
     }
 
     // station section
-    this->station.resize(this->node_cnt);
-    fill(this->station.begin(), this->station.end(), false);
+    this->station = new bool[this->node_cnt] {false};
     for (const auto& item: data["stations_id"]) {
         uint id = this->get_int_id(item);
         this->station[id] = true;
     }
 
     this->depot_id = this->get_int_id(data["depot"]);
+
+    // additional stats
+    
 }
 
 void EVRPInstance::calculate_dist_matrix()
@@ -100,43 +105,78 @@ void EVRPInstance::calculate_lbs_ubs()
 bool EVRPInstance::compute_fitness(const vector<uint> &permutation, fitness_t* fitness)
 {
     float fit = 0; // original fitness function
-    uint cap_viol = 0; // number of node with violating capacity
-    uint energy_viol = 0; // number of node with violating energy
-    uint no_move_viol = 0;
+    bool is_feasable = true;
 
     uint prev_node = this->depot_id; // we are implicitly starting at a depot
-    float curr_cap = this->capacity; // we start full capacity
+    float curr_load = this->capacity; // we start full capacity
     float curr_energy = this->energy_cap; // we start full energy
     float dist;
 
+    bool* visited = new bool[this->node_cnt] {false};
+    float unsatisfied = this->total_demand;
+    float missing_energy = 0;
+    uint no_move_viol = 0;
+
+
     for (const auto node: permutation) {
         dist = this->dist_mat(prev_node, node);
-
         fit += dist;
-        curr_cap -= this->demands[node];
+
         curr_energy -= dist*this->energy_cons;
+        if (curr_energy < 0) {
+            missing_energy -= curr_energy;
+        }
 
-        cap_viol += (curr_cap < 0); // ran out of capacity
-        energy_viol += (curr_energy < 0); // ran out of energy
-        no_move_viol += (prev_node == node);
 
-        curr_cap = (node == this->depot_id) 
-            ? this->capacity : curr_cap; // refill capacity in depot
+        if (node == prev_node) {
+            no_move_viol += 1;
+        }
+        
+        else if (node == this->depot_id) {
+            curr_load = this->capacity;
+            curr_energy = this->energy_cap;
+        }
+        else if (this->station[node]) {
+            curr_energy = this->energy_cap;
+        }
 
-        curr_energy = ((node == this->depot_id) || this->station[node])
-            ? this->energy_cap : curr_energy; // refill energy in depot or station
-
-        prev_node = node;
+        else if (!visited[node] && (curr_load >= this->demands[node])) {
+            curr_load -= this->demands[node];
+            unsatisfied -= this->demands[node];
+            visited[node] = true;
+        }
     }
 
-    dist = this->dist_mat(prev_node, this->depot_id); // we are finishing starting at a depot
+    delete[] visited;
 
+    // we implicitly finishing at a depot
+    dist = this->dist_mat(prev_node, this->depot_id); 
     fit += dist;
-    curr_energy -= dist*this->energy_cons; // ran out of energy
+    
+    curr_energy -= dist*this->energy_cons;
+    if (curr_energy < 0) {
+        missing_energy -= curr_energy;
+    }
 
+    if (prev_node == this->depot_id) {
+        no_move_viol += 1;
+    }
 
-    *fitness = (fitness_t)fit + CAPACITY_PENALTY*cap_viol + ENERGY_PENALTY*energy_viol + NO_MOVE_PENALTY*no_move_viol;
-    return (cap_viol == 0) && (energy_viol == 0) && (no_move_viol == 0);
+    if (unsatisfied > 0) {
+        fit += CAPACITY_PENALTY*(1 + unsatisfied/1000);
+        is_feasable = false;
+    }
+    if (missing_energy > 0) {
+        fit += ENERGY_PENALTY*(1 + missing_energy/10000);
+        is_feasable = false;
+    }
+    if (no_move_viol > 0) {
+        fit += NO_MOVE_PENALTY*no_move_viol;
+        is_feasable = false;
+    }
+
+    *fitness = (fitness_t)round(fit);
+    return is_feasable;
 }
 
 
@@ -162,26 +202,23 @@ void EVRPInstance::print_solution(Solution *solution, std::basic_ostream<char>& 
         curr_cap -= this->demands[node];
         curr_energy -= dist*this->energy_cons;
 
-        cap_viol += (curr_cap < 0) ? 1 : 0; // ran out of capacity
-        energy_viol += (curr_energy < 0) ? 1 : 0; // ran out of energy
-
         if ((node == this->depot_id) && (prev_node == this->depot_id)) continue;
 
         if (node == this->depot_id) {
-            outf << " -> " << this->get_orig_id(node) << "[D](" << curr_cap << "/" << curr_energy << ")" << endl;
+            outf << " -|" << (int)round(dist) << "|> " << this->get_orig_id(node) << "[D](" << curr_cap << "/" << (int)round(curr_energy) << ")" << endl;
             curr_cap = this->capacity;
             curr_energy = this->energy_cap;
-            outf << "    " << this->get_orig_id(node) << "[D](" << curr_cap << "/" << curr_energy << ")";
+            outf << "    " << this->get_orig_id(node) << "[D](" << curr_cap << "/" << (int)round(curr_energy) << ")";
             tours += 1;
         }
 
         else if (this->station[node]) {
-            outf << " -> " << this->get_orig_id(node) << "[S](" << curr_cap << "/" << curr_energy << " R " << this->energy_cap << ")";
+            outf << " -|" << (int)round(dist) << "|> " << this->get_orig_id(node) << "[S](" << curr_cap << "/" << (int)round(curr_energy) << " R " << this->energy_cap << ")";
             curr_energy = this->energy_cap;
         }
 
         else {
-            outf << " -> " << this->get_orig_id(node) << "(" << curr_cap << "/" << curr_energy << ")";
+            outf << " -|" << (int)round(dist) << "|> " << this->get_orig_id(node) << "(" << curr_cap << "/" << (int)round(curr_energy) << ")";
         }
 
         curr_cap = (node == this->depot_id) 
@@ -195,7 +232,7 @@ void EVRPInstance::print_solution(Solution *solution, std::basic_ostream<char>& 
     dist = this->dist_mat(prev_node, this->depot_id); // we are finishing starting at a depot
     curr_energy -= dist*this->energy_cons;
 
-    outf << " -> " << this->get_orig_id(this->depot_id) << "[D](" << curr_cap << "/" << curr_energy << ")" << endl;
+    outf << " -|" << (int)round(dist) << "|> " << this->get_orig_id(this->depot_id) << "[D](" << curr_cap << "/" << (int)round(curr_energy) << ")" << endl;
 
     outf << "Fitness: " << solution->fitness << endl;
     outf << "Feasibility: " << solution->is_feasible << endl;
