@@ -6,17 +6,15 @@ import subprocess
 import json
 import time
 
-CMD = "./cmake-build-release/scp_meta_stable"
-PROBLEM_TYPE = "SCP"
-DATASET_DIR = "./data/tspsd/tsplib_10/"
-LOG_DIR = "./log/scp-meta/tsplib_10/"
-MAX_INFEASIBLE = 3
+CMD = "./cmake-build-release/wcp_meta_stable"
+PROBLEM_TYPE = "WCP"
+DATASET_DIR = "./data/tspsd/dense_sampling/"
+LOG_DIR = "./log/wcp-meta/dense_sampling/"
+MAX_INFEASIBLE = 5
 # DATASETS = ["random10_ov_50", "random20_ov_50", "random30_ov_50", "random40_ov_50", "random50_ov_50", "random60_ov_50", "random70_ov_50", "random80_ov_50", "random90_ov_50", "random100_ov_50"]
+DATASETS = ["random24_ov_100"]
 # TEST_TIMEOUTS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-DATASETS = ["burma14", "ulysses22", "berlin52", "eil101", "gr202", "lin318", "fl417", "d657", "rat783", "vm1084"]
-TEST_TIMEOUTS = [140, 220, 520, 1010, 2020, 3180, 4170, 6570, 7830, 10840]
-CONFIG = "./configs/SCP_config.json"
-
+TEST_TIMEOUTS = [24]
 
 for D_NAME, TEST_TIMEOUT in zip(DATASETS, TEST_TIMEOUTS):
     problems_cnt = int(D_NAME.split('_')[-1])
@@ -48,7 +46,7 @@ for D_NAME, TEST_TIMEOUT in zip(DATASETS, TEST_TIMEOUTS):
             problem = prefix + '{0:.2f}'.format(vd) + "-" + str(id)
             log = LOG_PATH + problem + ".out"
             if infeasible_cnt < MAX_INFEASIBLE: # Solve
-                run = subprocess.run([CMD, "-d", D_PATH + problem + ".json", "-t", str(TEST_TIMEOUT), "-o", log, "-c", CONFIG])
+                run = subprocess.run([CMD, "-d", D_PATH + problem + ".json", "-t", str(TEST_TIMEOUT), "-o", log])
                 print("Exported " + log)
                 ret = run.returncode
                 if ret == 0:
