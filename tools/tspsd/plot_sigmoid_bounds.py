@@ -5,20 +5,21 @@ import pandas as pd
 
 
 LOG_DIRS = [
-    "./log/scp-meta/tsp/random24_tsp_100_TSP_3s/", "./log/scp-exact/dense_sampling/random24_ov_100_SCP/", "./log/wcp-meta/dense_sampling/random24_ov_100_WCP_3s/"
-    # "./log/scp-meta/ham_bound_v1/random10_ov_50_SCP_10s/", "./log/scp-meta/ham_bound_v1/random20_ov_50_SCP_20s/", "./log/scp-meta/ham_bound_v1/random30_ov_50_SCP_30s/", "./log/scp-meta/ham_bound_v1/random40_ov_50_SCP_40s/", "./log/scp-meta/ham_bound_v1/random50_ov_50_SCP_50s/", "./log/scp-meta/ham_bound_v1/random60_ov_50_SCP_60s/"
+    "./log/scp-exact/dense_sampling/random24_tsp_100_HCP/", "./log/scp-exact/dense_sampling/random24_ov_100_SCP/", "./log/wcp-meta/dense_sampling/random24_ov_100_WCP_24s/"
+    # "./log/scp-exact/ham_bound_v1/random10_ov_50/", "./log/scp-exact/ham_bound_v1/random20_ov_50/", "./log/scp-exact/ham_bound_v1/random30_ov_50/", "./log/scp-exact/ham_bound_v1/random40_ov_50/", "./log/scp-exact/ham_bound_v1/random50_ov_50/", "./log/scp-exact/ham_bound_v1/random60_ov_50/", "./log/scp-exact/ham_bound_v1/random70_ov_50/", "./log/scp-exact/ham_bound_v1/random80_ov_50/", "./log/scp-exact/ham_bound_v1/random90_ov_50/", "./log/scp-exact/ham_bound_v1/random100_ov_50/"
+    # "./log/wcp-meta/ham_bound_v1/random10_ov_50_WCP_10s/", "./log/wcp-meta/ham_bound_v1/random20_ov_50_WCP_20s/", "./log/wcp-meta/ham_bound_v1/random30_ov_50_WCP_30s/", "./log/wcp-meta/ham_bound_v1/random40_ov_50_WCP_40s/", "./log/wcp-meta/ham_bound_v1/random50_ov_50_WCP_50s/", "./log/wcp-meta/ham_bound_v1/random60_ov_50_WCP_60s/", "./log/wcp-meta/ham_bound_v1/random70_ov_50_WCP_70s/", "./log/wcp-meta/ham_bound_v1/random80_ov_50_WCP_80s/", "./log/wcp-meta/ham_bound_v1/random90_ov_50_WCP_90s/", "./log/wcp-meta/ham_bound_v1/random100_ov_50_WCP_100s/"
 ]
 PROBLEM_DIRS = [
     "./data/tspsd/tsp/random24_tsp_100/", "./data/tspsd/dense_sampling/random24_ov_100/", "./data/tspsd/dense_sampling/random24_ov_100/"
-    # "./data/tspsd/random10_ov_50/", "./data/tspsd/random20_ov_50/", "./data/tspsd/random30_ov_50/", "./data/tspsd/random40_ov_50/", "./data/tspsd/random50_ov_50/", "./data/tspsd/random60_ov_50/"
+    # "./data/tspsd/random10_ov_50/", "./data/tspsd/random20_ov_50/", "./data/tspsd/random30_ov_50/", "./data/tspsd/random40_ov_50/", "./data/tspsd/random50_ov_50/", "./data/tspsd/random60_ov_50/", "./data/tspsd/random70_ov_50/", "./data/tspsd/random80_ov_50/", "./data/tspsd/random90_ov_50/", "./data/tspsd/random100_ov_50/"
 ]
 LEGENDS = [
-    "TSP", "SCP", "WCP"
-    # "random10", "random20", "random30", "random40", "random50", "random60"
+    "HCP", "SCP", "WCP"
+    # "random10", "random20", "random30", "random40", "random50", "random60", "random70", "random80", "random90", "random100"
 ]
 WINDOW_SIZES = [ # must be even
-    18, 18, 8
-    # 10, 10, 10, 10, 10, 10
+    14, 8, 8
+    # 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
 ]
 TITLE = "24-vertex graph"
 # TITLE = "SCP_ham_bound_v1"
@@ -26,7 +27,7 @@ TITLE = "24-vertex graph"
 FIG_DIR = "./figures/scp/hamiltonicity/"
 DECIMALS = 1
 REL_STEP = 0.5
-BOUNDS_FILE = "./log/scp-meta/ham_bound_v1/bounds_" + str(REL_STEP) + "n.json"
+BOUNDS_FILE = "./log/scp-exact/ham_bound_v1/bounds_" + str(REL_STEP) + "|V|.json"
 PROBLEM_TYPE = "SCP"
 
 fig_output = FIG_DIR
@@ -84,7 +85,7 @@ for log_dir, problem_dir, window_size, legend in zip(LOG_DIRS, PROBLEM_DIRS, WIN
 fig_output = fig_output[:-1] + "_STEP=" + str(REL_STEP) + "n.pdf"
 plt.legend()
 plt.grid()
-plt.xlabel("Expected average vertex degree after " + str(REL_STEP) + "n steps")
+plt.xlabel("EAVD after " + str(REL_STEP) + "|V| steps")
 plt.ylabel("Hamiltonian - probability []")
 plt.title(TITLE)
 

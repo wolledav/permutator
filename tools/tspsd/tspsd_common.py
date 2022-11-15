@@ -79,7 +79,7 @@ def get_probs_in_step(problem_dir, log_dir, step, decimals):
     for solution in solutions:
         sol_data = get_data(log_dir + solution)
         feasible = sol_data["solution"]["is_feasible"]
-        name = sol_data["name"]
+        name = sol_data["name"].split('.json')[0]
         problem_data = get_data(problem_dir + name + ".json")
         exp_degrees = problem_data["EXP_DEGREES"]
         degree = round(exp_degrees[step], decimals)

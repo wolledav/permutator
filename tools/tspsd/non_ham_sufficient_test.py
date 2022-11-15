@@ -43,19 +43,20 @@ def test_instance(path, k):
     return result
 
 
-PROBLEM_DIR = "./data/tspsd/random24_ov_100/"
-SOLUTION_DIR = "./log/scp-meta/random24_ov_100_SCP_3s/"
-k = 3
+PROBLEM_DIR = "./data/tspsd/dense_sampling/random24_ov_100/"
+SOLUTION_DIR = "./log/scp-meta/dense_sampling/random24_ov_100_SCP_3s/"
+k = 2
 
 total = 0
 infeasible = 0
 solved = 0
 problems = os.listdir(PROBLEM_DIR)
-# problems = ["random-24-7.75-39.json"]
+# problems = ["random-24-4.00-70.json"]
 
 for problem in problems:
     problem_path = PROBLEM_DIR + problem
     if not test_instance(problem_path, k):
+        print(problem, " infeasible")
         infeasible += 1
     total += 1
 
@@ -65,6 +66,6 @@ for problem in problems:
         if data["solution"]["is_feasible"]:
             solved += 1
 
-    print(problem, infeasible, solved, total)
+    # print(problem, infeasible, solved, total)
 
 
