@@ -5,13 +5,15 @@ import copy
 import numpy as np
 from tspsd_common import *
 
-TSP_INSTANCE = "./data/tsp/tsplib_10/rat783.json"
-OUTDIR = "./data/tspsd/tsplib_10/rat783/"
 
-MIN_AVG_DEGREE = 53
-MAX_AVG_DEGREE = 55
-VD_STEP = 0.2
-EPS = 0.025
+TSP_INSTANCE = "./data/tsp/tsplib_10/fl417.json"
+OUTDIR = "./data/tspsd/tsplib_10/fl417/"
+
+MIN_AVG_DEGREE = 10
+MAX_AVG_DEGREE = 410
+VD_STEP = 10
+EPS = 0.5
+random.seed(1)
 
 data = get_data(TSP_INSTANCE)
 name = data['NAME']
@@ -19,7 +21,7 @@ data['DELETE'] = {}
 NUM_VERTICES = data['DIMENSION']
 for node in data['NODE_COORDS']:
     data['DELETE'][node] = []
-ER_STEP = int(NUM_VERTICES) # edges to remove at once
+ER_STEP = int(NUM_VERTICES/5) # edges to remove at once
 
 # Create dataset directory
 if not os.path.exists(OUTDIR):

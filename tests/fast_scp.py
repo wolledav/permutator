@@ -13,13 +13,16 @@ LOG_DIR = "./log/scp-meta/tsplib_10/"
 MAX_INFEASIBLE = 3
 # DATASETS = ["random10_ov_50", "random20_ov_50", "random30_ov_50", "random40_ov_50", "random50_ov_50", "random60_ov_50", "random70_ov_50", "random80_ov_50", "random90_ov_50", "random100_ov_50"]
 # TEST_TIMEOUTS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-DATASETS = ["burma14", "ulysses22", "berlin52", "eil101", "gr202", "lin318", "fl417", "d657", "rat783", "vm1084"]
-TEST_TIMEOUTS = [140, 220, 520, 1010, 2020, 3180, 4170, 6570, 7830, 10840]
+# DATASETS = ["burma14", "ulysses22", "berlin52", "eil101", "gr202", "lin318", "fl417", "d657", "rat783", "vm1084"]
+# TEST_TIMEOUTS = [140, 220, 520, 1010, 2020, 3180, 4170, 6570, 7830, 10840]
+
+DATASETS = ["fl417"]
+TEST_TIMEOUTS = [1000]
 CONFIG = "./configs/SCP_config.json"
 
 
 for D_NAME, TEST_TIMEOUT in zip(DATASETS, TEST_TIMEOUTS):
-    problems_cnt = int(D_NAME.split('_')[-1])
+    # problems_cnt = int(D_NAME.split('_')[-1])
 
     D_PATH = DATASET_DIR + D_NAME + "/"
     LOG_PATH = LOG_DIR + D_NAME + "_" + PROBLEM_TYPE + "_" + str(TEST_TIMEOUT) + "s/"
