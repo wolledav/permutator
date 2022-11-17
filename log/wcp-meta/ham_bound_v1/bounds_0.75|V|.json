@@ -1,0 +1,52 @@
+{
+    "problem_type": "WCP",
+    "log_dirs": [
+        "./log/wcp-meta/ham_bound_v1/random10_ov_50_WCP_10s/",
+        "./log/wcp-meta/ham_bound_v1/random20_ov_50_WCP_20s/",
+        "./log/wcp-meta/ham_bound_v1/random30_ov_50_WCP_30s/",
+        "./log/wcp-meta/ham_bound_v1/random40_ov_50_WCP_40s/",
+        "./log/wcp-meta/ham_bound_v1/random50_ov_50_WCP_50s/",
+        "./log/wcp-meta/ham_bound_v1/random60_ov_50_WCP_60s/",
+        "./log/wcp-meta/ham_bound_v1/random70_ov_50_WCP_70s/",
+        "./log/wcp-meta/ham_bound_v1/random80_ov_50_WCP_80s/",
+        "./log/wcp-meta/ham_bound_v1/random90_ov_50_WCP_90s/",
+        "./log/wcp-meta/ham_bound_v1/random100_ov_50_WCP_100s/"
+    ],
+    "problem_dirs": [
+        "./data/tspsd/random10_ov_50/",
+        "./data/tspsd/random20_ov_50/",
+        "./data/tspsd/random30_ov_50/",
+        "./data/tspsd/random40_ov_50/",
+        "./data/tspsd/random50_ov_50/",
+        "./data/tspsd/random60_ov_50/",
+        "./data/tspsd/random70_ov_50/",
+        "./data/tspsd/random80_ov_50/",
+        "./data/tspsd/random90_ov_50/",
+        "./data/tspsd/random100_ov_50/"
+    ],
+    "sizes": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100
+    ],
+    "bounds": [
+        1.0164009148485407,
+        1.0399651493944304,
+        1.4180312692175854,
+        1.5101289290136346,
+        1.8774639769339025,
+        1.9756532596822403,
+        2.228244914995984,
+        2.5789954849837797,
+        2.8437171390592813,
+        2.9611957134913354
+    ],
+    "rel_step": 0.75
+}
