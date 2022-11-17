@@ -8,3 +8,7 @@ model/*
 /data/tspsd/range_estimate/random200_ov_1/
 /data/tspsd/range_estimate/random400_ov_1/
 /data/tspsd/tsp/
+/log/scp-meta/range_estimate/
+/log/wcp-meta/range_estimate/
+/log/scp-meta/ham_bound_v1/
+/data/tspsd/ham_bound_v1/
