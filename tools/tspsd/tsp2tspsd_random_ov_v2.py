@@ -7,12 +7,12 @@ import sys
 from tspsd_common import *
 
 
-TSP_INSTANCE = "./data/tsp/tsplib_10/berlin52.json"
-OUTDIR = "./data/tspsd/tsplib_10/berlin52_test/"
+TSP_INSTANCE = "./data/tsp/tsplib_10/vm1084.json"
+OUTDIR = "./data/tspsd/tsplib_10/vm1084/"
 
-MIN_AVG_DEGREE = 1
-MAX_AVG_DEGREE = 51
-VD_STEP = 1
+MIN_AVG_DEGREE = 100
+MAX_AVG_DEGREE = 1080
+VD_STEP = 20
 EPS = 0.5
 random.seed(1)
 
@@ -22,19 +22,16 @@ data['DELETE'] = {}
 NUM_VERTICES = data['DIMENSION']
 for node in data['NODE_COORDS']:
     data['DELETE'][node] = []
-ER_STEP = int(NUM_VERTICES/10) # edges to remove at once
+ER_STEP = int(NUM_VERTICES) # edges to remove at once
 
 # Create dataset directory
 if not os.path.exists(OUTDIR):
     os.makedirs(OUTDIR)
 
-vertices, edges, deletes = get_vertices_edges_deletes(NUM_VERTICES)
-
-
+vertices, edges = get_vertices_edges(NUM_VERTICES)
 
 # Create PROBLEMS_PER_DEGREE instances for each avg degree
 all_degrees = list(np.arange(MIN_AVG_DEGREE - VD_STEP, MAX_AVG_DEGREE + VD_STEP, VD_STEP))
-random.shuffle(deletes)
 edge_removed_cnt = {}
 delete = {}
 groups = [0] * NUM_VERTICES
@@ -72,11 +69,13 @@ while goal_degree >= MIN_AVG_DEGREE:
         # EXPORT ------------------------------------------
         goal_degree = all_degrees.pop()
     else: # delete ER_STEP more edges
-        for i in range(ER_STEP):
-            if len(deletes) > 0:
-                e = deletes.pop()
-                edge_removed_cnt[e[1]] += 1
+        i = 0
+        while i < ER_STEP:
+            vertex = random.choice(vertices)
+            edge = random.choice(edges)
+            if [str(edge[0]), str(edge[1])] not in delete[str(vertex)]:
+                edge_removed_cnt[edge] += 1
                 total_removed_cnt += 1
-                groups[e[0] - 1] += 1
-                delete[str(e[0])].append([str(e[1][0]), str(e[1][1])])
-
+                groups[vertex - 1] += 1
+                delete[str(vertex)].append([str(edge[0]), str(edge[1])])
+                i += 1

@@ -2,6 +2,10 @@
 import os
 import json
 import math
+import itertools
+import sys
+
+import numpy as np
 
 
 def get_p_e_removed(n, k, steps):
@@ -104,11 +108,52 @@ def get_vertices_edges_deletes(num_vertices):
     vertices = list(range(1, num_vertices + 1))
     edges = []
     deletes = []
-    for e_from in vertices:
-        for e_to in vertices:
-            if e_from < e_to:
-                edges.append(tuple([e_from, e_to]))
-    for v in vertices:
-        for e in edges:
-            deletes.append([v, e])
+    for e_from, e_to in itertools.product(vertices, vertices):
+        if e_from < e_to:
+            edges.append(tuple([e_from, e_to]))
+    for v, e in itertools.product(vertices, edges):
+        deletes.append([v, e])
     return vertices, edges, deletes
+
+
+def get_vertices_edges(num_vertices):
+    vertices = list(range(1, num_vertices + 1))
+    edges = []
+    for e_from, e_to in itertools.product(vertices, vertices):
+        if e_from < e_to:
+            edges.append(tuple([e_from, e_to]))
+    return vertices, edges
+
+
+def get_cutoff_success(log_dir, max_depth):
+    stats = {}
+    files = os.listdir(log_dir)
+    for file in files:
+        data = get_data(log_dir + file)
+        name = data["name"]
+        feasible = data["solution"]["is_feasible"]
+        depth = data["solution"]["max_depth"]
+        EAVD = float(name.split('-')[2])
+        if EAVD not in stats.keys():
+            stats[EAVD] = {}
+            stats[EAVD]["feasible"] = 0
+            stats[EAVD]["infeasible"] = 0
+            stats[EAVD]["total"] = 0
+            stats[EAVD]["depths"] = []
+        if feasible:
+            stats[EAVD]["feasible"] += 1
+        else:
+            stats[EAVD]["infeasible"] += 1
+        stats[EAVD]["total"] += 1
+        stats[EAVD]["depths"].append(depth)
+    EAVDs = []
+    infeasible_detected = []
+    infeasible_cnts = []
+    for EAVD in sorted(stats.keys()):
+        EAVDs.append(EAVD)
+        infeasible_cnts.append(stats[EAVD]["infeasible"])
+        depth_cnt = 0
+        for depth in range(max_depth + 1):
+            depth_cnt += stats[EAVD]["depths"].count(depth)
+        infeasible_detected.append(min(depth_cnt, stats[EAVD]["infeasible"]))
+    return EAVDs, infeasible_detected, infeasible_cnts
