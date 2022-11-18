@@ -7,11 +7,10 @@ import matplotlib.pyplot as plt
 LOG_DIR = "./log/scp-exact/dense_sampling/random24_ov_100_SCP_v2/"
 TITLE = "random24_ov_100"
 FIG_OUTPUT = "./figures/scp/hamiltonicity/bw_cutoff_" + TITLE + ".pdf"
-REL_DEPTHS = [0, 0.1, 0.5, 1]
+MAX_DEPTHS = [0, 1, 2, 3, 4, 5, 10, 24]
 SIZE = 24
 
-for rel_depth in REL_DEPTHS:
-    max_depth = int(SIZE * rel_depth)
+for max_depth in MAX_DEPTHS:
     EAVDs, infeasible_detected, infeasible_cnts = get_cutoff_success(LOG_DIR, max_depth)
     success_rate = []
     for detected, cnt in zip(infeasible_detected, infeasible_cnts):
@@ -19,7 +18,7 @@ for rel_depth in REL_DEPTHS:
             success_rate.append(detected/cnt)
         else:
             success_rate.append(0)
-    plt.plot(EAVDs, success_rate, label=str(rel_depth) + "|V| BW search depth")
+    plt.plot(EAVDs, success_rate, label="BW search depth=" + str(max_depth))
 
 
 plt.grid()
