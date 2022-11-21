@@ -146,7 +146,7 @@
       "insert_1",
       "remove_1",
       "two_opt",
-      "exchange_ids",
+      "exchange_1_1",
       "exchange_1_2",
       "exchange_2_2",
       "exchange_3_3",
@@ -154,12 +154,7 @@
       "exchange_4_4",
       "rexchange_2_2",
       "rexchange_2_3",
-      "rexchange_4_4",
-      "centered_exchange_1",
-      "relocate_1",
-      "relocate_5",
-      "rrelocate_3",
-      "rrelocate_4"
+      "rexchange_4_4"
     ],
     "perturbation" : ["double_bridge"]
   }

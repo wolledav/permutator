@@ -88,7 +88,7 @@ void EVRPInstance::calculate_lbs_ubs()
     this->ubs.resize(this->node_cnt);
     for (uint i = 0; i < this->node_cnt; i++) {
         if (i == this->depot_id) { // depot
-            this->lbs[i] = this->route_cnt + 1; // depot final destination is implicit
+            this->lbs[i] = 0; // depot final destination is implicit
             this->ubs[i] = this->customer_cnt + 1; // at worst we go (dep, cust_1, dep, cust_2, ... dep, cust_n, dep) 
         }
         else if (this->station[i]) { // station
@@ -127,7 +127,7 @@ bool EVRPInstance::compute_fitness(const vector<uint> &permutation, fitness_t* f
         
         dist = this->dist_mat(prev_id, curr_id);
         fit += dist;
-        curr_energy -= dist*this->energy_cons;
+        curr_energy -= dist;
 
         if (curr_energy < 0) {
             missing_energy -= curr_energy;
