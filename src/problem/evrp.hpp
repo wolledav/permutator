@@ -5,9 +5,9 @@
 #include <vector>
 #include <boost/numeric/ublas/matrix.hpp>
 
-#define CAPACITY_PENALTY 10000000
-#define ENERGY_PENALTY 1000000
-#define NO_MOVE_PENALTY 0
+#define CAPACITY_PENALTY 50000
+#define ENERGY_PENALTY 200000
+#define INVALID_SOL_PENALTY 1000000
 
 using namespace std;
 
@@ -29,10 +29,11 @@ class EVRPInstance: public Instance
         uint route_cnt;
         uint customer_cnt;
         uint station_cnt;
+        uint total_cnt;
 
         uint depot_id;
-        float* demands;
-        bool* station;
+        vector<float> demands;
+        vector<bool> station;
 
         vector<Point> coords;
         boost::numeric::ublas::matrix<float> dist_mat;
@@ -42,7 +43,7 @@ class EVRPInstance: public Instance
         void calculate_lbs_ubs();
 
         uint get_int_id(const string& str) { return stoi(str) - 1; }
-        string get_orig_id(const uint id) { return to_string(id + 1); }
+        string get_orig_id(const uint& id) { return to_string(id + 1); }
 
 
     public:
@@ -54,4 +55,5 @@ class EVRPInstance: public Instance
         bool compute_fitness(const vector<uint> &permutation, fitness_t* fitness) override;
 
         void print_solution(Solution *solution, std::basic_ostream<char>& outf = std::cout);
+        string node_to_str(uint id, float load, float energy);
 };

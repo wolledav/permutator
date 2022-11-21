@@ -19,8 +19,6 @@ EVRPInstance::EVRPInstance(const char* path) : Instance()
 }
 
 EVRPInstance::~EVRPInstance(){
-    delete[] this->demands;
-    delete[] this->station;
 }
 
 void EVRPInstance::parse_json(const char* path)
@@ -40,7 +38,7 @@ void EVRPInstance::parse_json(const char* path)
     this->node_cnt = this->customer_cnt + this->station_cnt;
 
     // coord section
-    this->coords.resize(this->node_cnt);
+    this->coords = vector<Point>(this->node_cnt);
     for (const auto& item: data["node_coord"].items()) {
         uint id = this->get_int_id(item.key());
         this->coords[id].x = item.value()[0];
@@ -48,7 +46,8 @@ void EVRPInstance::parse_json(const char* path)
     }
     // demand section
     this->total_demand = 0;
-    this->demands = new float[this->node_cnt] {0};
+    this->demands = vector<float>(this->node_cnt);
+    fill(this->demands.begin(), this->demands.end(), 0);
     for (const auto& item: data["node_demand"].items()) {
         uint id = this->get_int_id(item.key());
         this->demands[id] = item.value();
@@ -56,7 +55,8 @@ void EVRPInstance::parse_json(const char* path)
     }
 
     // station section
-    this->station = new bool[this->node_cnt] {false};
+    this->station = vector<bool>(this->node_cnt);
+    fill(this->station.begin(), this->station.end(), false);
     for (const auto& item: data["stations_id"]) {
         uint id = this->get_int_id(item);
         this->station[id] = true;
@@ -88,8 +88,8 @@ void EVRPInstance::calculate_lbs_ubs()
     this->ubs.resize(this->node_cnt);
     for (uint i = 0; i < this->node_cnt; i++) {
         if (i == this->depot_id) { // depot
-            this->lbs[i] = this->route_cnt - 1; // depot final destination is implicit
-            this->ubs[i] = this->customer_cnt - 1; // at worst we go (cust_1, dep, cust_2, ... dep, cust_n) 
+            this->lbs[i] = this->route_cnt + 1; // depot final destination is implicit
+            this->ubs[i] = this->customer_cnt + 1; // at worst we go (dep, cust_1, dep, cust_2, ... dep, cust_n, dep) 
         }
         else if (this->station[i]) { // station
             this->lbs[i] = 0; // at best we dont have to recharge
@@ -102,76 +102,69 @@ void EVRPInstance::calculate_lbs_ubs()
     }
 }
 
+
 bool EVRPInstance::compute_fitness(const vector<uint> &permutation, fitness_t* fitness)
 {
     float fit = 0; // original fitness function
     bool is_feasable = true;
 
-    uint prev_node = this->depot_id; // we are implicitly starting at a depot
-    float curr_load = this->capacity; // we start full capacity
-    float curr_energy = this->energy_cap; // we start full energy
-    float dist;
-
-    bool* visited = new bool[this->node_cnt] {false};
     float unsatisfied = this->total_demand;
     float missing_energy = 0;
-    uint no_move_viol = 0;
 
+    uint no_move = 0;
 
-    for (const auto node: permutation) {
-        dist = this->dist_mat(prev_node, node);
+    uint prev_id, curr_id, perm_size = permutation.size();
+    float dist, curr_load = this->capacity, curr_energy = this->energy_cap;
+
+    for (uint i = 1; i < perm_size; i++) {
+        prev_id = permutation[i-1];
+        curr_id = permutation[i];
+
+        if (curr_id == prev_id) {
+            no_move += 1;
+            continue;
+        }
+        
+        dist = this->dist_mat(prev_id, curr_id);
         fit += dist;
-
         curr_energy -= dist*this->energy_cons;
+
         if (curr_energy < 0) {
             missing_energy -= curr_energy;
         }
-
-
-        if (node == prev_node) {
-            no_move_viol += 1;
-        }
         
-        else if (node == this->depot_id) {
+        if (curr_id == this->depot_id) {
+            curr_energy = this->energy_cap;
             curr_load = this->capacity;
+        }
+        else if (this->station[curr_id]) {
             curr_energy = this->energy_cap;
         }
-        else if (this->station[node]) {
-            curr_energy = this->energy_cap;
-        }
-
-        else if (!visited[node] && (curr_load >= this->demands[node])) {
-            curr_load -= this->demands[node];
-            unsatisfied -= this->demands[node];
-            visited[node] = true;
+        else {
+            if (curr_load >= this->demands[curr_id]) {
+                unsatisfied -= this->demands[curr_id];
+            }
+            curr_load -= this->demands[curr_id];
         }
     }
 
-    delete[] visited;
-
-    // we implicitly finishing at a depot
-    dist = this->dist_mat(prev_node, this->depot_id); 
-    fit += dist;
-    
-    curr_energy -= dist*this->energy_cons;
-    if (curr_energy < 0) {
-        missing_energy -= curr_energy;
-    }
-
-    if (prev_node == this->depot_id) {
-        no_move_viol += 1;
+    if (missing_energy > 0) {
+        fit += ENERGY_PENALTY*(1 + missing_energy/1000);
+        is_feasable = false;
     }
 
     if (unsatisfied > 0) {
-        fit += CAPACITY_PENALTY*(1 + unsatisfied/1000);
+        fit += CAPACITY_PENALTY*(1 + unsatisfied/this->total_demand);
         is_feasable = false;
     }
-    if (missing_energy > 0) {
-        fit += ENERGY_PENALTY*(1 + missing_energy/10000);
+
+    if (no_move > 0) {
+        fit += 0.1*INVALID_SOL_PENALTY*(1 + no_move/this->customer_cnt);
         is_feasable = false;
     }
-    if (no_move_viol > 0) {
-        fit += NO_MOVE_PENALTY*no_move_viol;
+
+    if ((permutation.front() != this->depot_id) || (permutation.back() != this->depot_id)) {
+        fit += INVALID_SOL_PENALTY;
         is_feasable = false;
     }
 
@@ -180,61 +173,103 @@ bool EVRPInstance::compute_fitness(const vector<uint> &permutation, fitness_t* f
 }
 
 
+string EVRPInstance::node_to_str(uint id, float load, float energy)
+{
+    char buffer[256];
+    snprintf(buffer, 256, "[%3s %s %5.0f/%5.0f]", 
+        this->get_orig_id(id).c_str(), 
+        ((this->depot_id == id) ? "D" : (this->station[id] ? "S" : " ")),
+        load, energy);
+
+    return string(buffer);
+}
+
 void EVRPInstance::print_solution(Solution *solution, std::basic_ostream<char>& outf)
 {
-    outf << "ERVP solutiun, printing tours in <node id>(<load>/<energy>)" << endl;
+    char print_buffer[256];
+    float fit = 0; // original fitness function
+    bool is_feasable = true;
+    int routes = 0;
 
-    uint cap_viol = 0; // number of node with violating capacity
-    uint energy_viol = 0; // number of node with violating energy
+    auto permutation = solution->permutation;
+    
+    float unsatisfied = this->total_demand;
+    float missing_energy = 0;
 
-    uint prev_node = this->depot_id; // we are implicitly starting at a depot
-    float curr_cap = this->capacity; // we start full capacity
-    float curr_energy = this->energy_cap; // we start full energy
-    float dist;
+    uint no_move = 0;
+    
+    uint prev_id, curr_id, perm_size = permutation.size();
+    float dist, curr_load = this->capacity, curr_energy = this->energy_cap;
 
-    outf << "    " << this->get_orig_id(this->depot_id) << "[D](" << curr_cap << "/" << curr_energy << ")";
+    outf << "Route " << routes + 1 << " started" << endl << "    " 
+        << this->node_to_str(permutation.front(), curr_load, curr_energy);
 
-    uint tours = 1;
+    for (uint i = 1; i < perm_size; i++) {
+        prev_id = permutation[i-1];
+        curr_id = permutation[i];
 
-    for (const auto node: solution->permutation) {
-        dist = this->dist_mat(prev_node, node);
+        dist = this->dist_mat(prev_id, curr_id);
 
-        curr_cap -= this->demands[node];
+        if (curr_id == prev_id) {
+            no_move += 1;
+            outf << " -x- ";
+        }
+        else {
+            snprintf(print_buffer, 256, " --(%.2f)-> ", dist);
+            outf << print_buffer;
+        }
+        
+        fit += dist;
         curr_energy -= dist*this->energy_cons;
 
-        if ((node == this->depot_id) && (prev_node == this->depot_id)) continue;
-
-        if (node == this->depot_id) {
-            outf << " -|" << (int)round(dist) << "|> " << this->get_orig_id(node) << "[D](" << curr_cap << "/" << (int)round(curr_energy) << ")" << endl;
-            curr_cap = this->capacity;
-            curr_energy = this->energy_cap;
-            outf << "    " << this->get_orig_id(node) << "[D](" << curr_cap << "/" << (int)round(curr_energy) << ")";
-            tours += 1;
+        if (curr_energy < 0) {
+            missing_energy -= curr_energy;
         }
-
-        else if (this->station[node]) {
-            outf << " -|" << (int)round(dist) << "|> " << this->get_orig_id(node) << "[S](" << curr_cap << "/" << (int)round(curr_energy) << " R " << this->energy_cap << ")";
+        outf << endl << "    " << this->node_to_str(curr_id, curr_load, curr_energy);
+        
+        if (curr_id == this->depot_id) {
+            routes += 1;
+            outf << endl << "Route " << routes << " ended" << endl << endl;
+            curr_energy = this->energy_cap;
+            curr_load = this->capacity;
+            if (i + 1 < perm_size) {
+            outf << "Route " << routes + 1 << " started" << endl << "    " 
+                << this->node_to_str(curr_id, curr_load, curr_energy);
+            }
+        }
+        else if (this->station[curr_id]) {
             curr_energy = this->energy_cap;
         }
-
         else {
-            outf << " -|" << (int)round(dist) << "|> " << this->get_orig_id(node) << "(" << curr_cap << "/" << (int)round(curr_energy) << ")";
+            if (curr_load >= this->demands[curr_id]) {
+                unsatisfied -= this->demands[curr_id];
+            }
+            curr_load -= this->demands[curr_id];
         }
-
-        curr_cap = (node == this->depot_id) 
-            ? this->capacity : curr_cap; // refill capacity in depot
-
-        curr_energy = ((node == this->depot_id) || this->station[node])
-            ? this->energy_cap : curr_energy; // refill energy in depot or station
-
-        prev_node = node;
     }
-    dist = this->dist_mat(prev_node, this->depot_id); // we are finishing starting at a depot
-    curr_energy -= dist*this->energy_cons;
 
-    outf << " -|" << (int)round(dist) << "|> " << this->get_orig_id(this->depot_id) << "[D](" << curr_cap << "/" << (int)round(curr_energy) << ")" << endl;
+    if (missing_energy > 0) {
+        fit += ENERGY_PENALTY*(1 + missing_energy/1000);
+        is_feasable = false;
+    }
 
-    outf << "Fitness: " << solution->fitness << endl;
-    outf << "Feasibility: " << solution->is_feasible << endl;
-    outf << "Tours " << tours << endl;
+    if (unsatisfied > 0) {
+        fit += CAPACITY_PENALTY*(1 + unsatisfied/this->total_demand);
+        is_feasable = false;
+    }
+
+    if (no_move > 0) {
+        fit += 0.02*INVALID_SOL_PENALTY*(1+no_move/this->customer_cnt);
+        is_feasable = false;
+    }
+
+    if ((permutation.front() != this->depot_id) || (permutation.back() != this->depot_id)) {
+        fit += INVALID_SOL_PENALTY;
+        is_feasable = false;
+    }
+
+    snprintf(print_buffer, 256, "Feasible: %s, Fitness %.0f, Unsatisfied: %.0f, Missing energy: %.0f, No move: %d",
+        (is_feasable  ? "YES" : "NO"), fit, unsatisfied, missing_energy, no_move);
+
+    outf << endl << print_buffer << endl;
 }
