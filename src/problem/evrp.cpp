@@ -127,7 +127,7 @@ bool EVRPInstance::compute_fitness(const vector<uint> &permutation, fitness_t* f
         
         dist = this->dist_mat(prev_id, curr_id);
         fit += dist;
-        curr_energy -= dist;
+        curr_energy -= dist*this->energy_cons;
 
         if (curr_energy < 0) {
             missing_energy -= curr_energy;
