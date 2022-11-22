@@ -1,0 +1,128 @@
+{
+    "config": {
+        "allow_infeasible": true,
+        "bvns_max_k": 7,
+        "bvns_min_k": 1,
+        "construction": "greedy",
+        "local_search": "CVND",
+        "metaheuristic": "BVNS",
+        "num_threads": 8,
+        "operators": [
+            "insert_1",
+            "remove_1",
+            "two_opt",
+            "centered_exchange_1",
+            "centered_exchange_3",
+            "centered_exchange_4",
+            "relocate_1",
+            "relocate_4",
+            "rrelocate_2",
+            "rrelocate_3",
+            "rrelocate_5",
+            "move_all_by_1",
+            "move_all_by_2",
+            "move_all_by_3",
+            "move_all_by_10"
+        ],
+        "perturbation": [
+            "reinsert"
+        ],
+        "stop_on_feasible": false,
+        "timeout": 140
+    },
+    "histogram": {
+        "all": {
+            "centered_exchange_1": 705436,
+            "centered_exchange_3": 705431,
+            "centered_exchange_4": 705431,
+            "insert_1": 730648,
+            "move_all_by_1": 581154,
+            "move_all_by_10": 439470,
+            "move_all_by_2": 562451,
+            "move_all_by_3": 529925,
+            "relocate_1": 662529,
+            "relocate_4": 654130,
+            "remove_1": 730648,
+            "rrelocate_2": 618695,
+            "rrelocate_3": 609106,
+            "rrelocate_5": 608836,
+            "two_opt": 706980
+        },
+        "improving": {
+            "centered_exchange_1": 223560,
+            "centered_exchange_3": 36555,
+            "centered_exchange_4": 6973,
+            "insert_1": 0,
+            "move_all_by_1": 127958,
+            "move_all_by_10": 222907,
+            "move_all_by_2": 116281,
+            "move_all_by_3": 126025,
+            "relocate_1": 384839,
+            "relocate_4": 218823,
+            "remove_1": 0,
+            "rrelocate_2": 293297,
+            "rrelocate_3": 101686,
+            "rrelocate_5": 9501,
+            "two_opt": 357225
+        },
+        "rate": {
+            "centered_exchange_1": 0.31691038608551025,
+            "centered_exchange_3": 0.05181938409805298,
+            "centered_exchange_4": 0.009884737432003021,
+            "insert_1": 0.0,
+            "move_all_by_1": 0.22017915546894073,
+            "move_all_by_10": 0.5072177648544312,
+            "move_all_by_2": 0.20673978328704834,
+            "move_all_by_3": 0.2378166764974594,
+            "relocate_1": 0.5808636546134949,
+            "relocate_4": 0.3345252573490143,
+            "remove_1": 0.0,
+            "rrelocate_2": 0.47405749559402466,
+            "rrelocate_3": 0.1669430285692215,
+            "rrelocate_5": 0.015605187974870205,
+            "two_opt": 0.5052830576896667
+        }
+    },
+    "last_improvement": 0,
+    "name": "burma14-14-2.20-0",
+    "solution": {
+        "fitness": 53,
+        "is_feasible": true,
+        "permutation": [
+            1,
+            7,
+            10,
+            2,
+            13,
+            6,
+            5,
+            3,
+            11,
+            12,
+            0,
+            9,
+            4,
+            8
+        ],
+        "permutation_orig_ids": [
+            "2",
+            "8",
+            "11",
+            "3",
+            "14",
+            "7",
+            "6",
+            "4",
+            "12",
+            "13",
+            "1",
+            "10",
+            "5",
+            "9"
+        ]
+    },
+    "steps": {
+        "0": 53
+    },
+    "timeout": 140
+}
