@@ -3,19 +3,21 @@ import copy
 import random
 import numpy as np
 from tools.tspsd.tspsd_common import *
+import matplotlib.pyplot as plt
 
 
-NUM_VERTICES = 90
-PROBLEMS_PER_DEGREE = 50
-MIN_AVG_DEGREE = 6
-MAX_AVG_DEGREE = 20
+NUM_VERTICES = 24
+PROBLEMS_PER_DEGREE = 100
+MIN_AVG_DEGREE = 0
+MAX_AVG_DEGREE = 12
 
-VD_STEP = (MAX_AVG_DEGREE - MIN_AVG_DEGREE) / 50 # vertex degree sampling step
+# VD_STEP = (MAX_AVG_DEGREE - MIN_AVG_DEGREE) / 50 # vertex degree sampling step
+VD_STEP = 1/12
 X_MAX = 100
 Y_MAX = 100
-EPS = 0.1
-ER_STEP = int(NUM_VERTICES/10) # edges to remove at once
-OUTDIR = "./data/tspsd/random" + str(NUM_VERTICES) + "_ov_" + str(PROBLEMS_PER_DEGREE) + "/"
+EPS = 0.025
+ER_STEP = 1
+OUTDIR = "./data/tspsd/dense_sampling/random" + str(NUM_VERTICES) + "_ov_" + str(PROBLEMS_PER_DEGREE) + "_v2/"
 
 # Create dataset directory
 if not os.path.exists(OUTDIR):
@@ -41,26 +43,40 @@ for id in range(PROBLEMS_PER_DEGREE):
     total_removed_cnt = 0
     goal_degree = all_degrees.pop()
     print(all_degrees)
+
+    # current_degrees = []
+    # AVDs = []
+
     while goal_degree >= MIN_AVG_DEGREE:
+
         current_degree = get_exp_degree(edge_removed_cnt, NUM_VERTICES, NUM_VERTICES/2)
-        # print(current_degree)
-        if abs(current_degree - goal_degree) < EPS: # export instance
-            print("goal_degree = " + str(goal_degree) + ", current_degree = " + str(current_degree))
+        exp_degrees = []
+        for steps in range(1, NUM_VERTICES + 1):
+            exp_degrees.append(get_exp_degree(edge_removed_cnt, NUM_VERTICES, steps))
+        AVD = np.mean(exp_degrees)
+        # print(current_degree, AVD)
+        if abs(AVD - goal_degree) < EPS: # export instance
+            # current_degrees.append(current_degree)
+            # AVDs.append(AVD)
+            # print(current_degree, goal_degree, goal_degree - current_degree)
+            print("goal_degree = " + str(goal_degree) + ", AVD = " + str(AVD))
             # EXPORT ------------------------------------------
             data = {}
             data["NAME"] = "random-" + str(NUM_VERTICES) + "-" + "{:.2f}".format(goal_degree) + "-" + str(id)
             data["TYPE"] = "TSPSD"
-            data["COMMENT"] = str(NUM_VERTICES) + " random locations, " + str(goal_degree) + " goal degree after n/2 deletes"
+            data["COMMENT"] = str(NUM_VERTICES) + " random locations, " + "{:.2f}".format(goal_degree) + " goal AVD"
             data["EDGE_WEIGHT_TYPE"] = "EUC_2D"
             data["DIMENSION"] = NUM_VERTICES
             data["GROUPS"] = groups
             data["GROUPS_SUM"] = total_removed_cnt
             data["EXP_DEGREE_HALF"] = current_degree
+            data["AVD"] = AVD
             data["EXP_DEGREES"] = []
             data["EXP_REMOVED_EDGES"] = []
-            for steps in range(NUM_VERTICES + 1):
-                data["EXP_DEGREES"].append(get_exp_degree(edge_removed_cnt, NUM_VERTICES, steps))
-                data["EXP_REMOVED_EDGES"].append(get_exp_sum(edge_removed_cnt, NUM_VERTICES, steps))
+            for steps in range(1, NUM_VERTICES + 1):
+                exp_sum = get_exp_sum(edge_removed_cnt, NUM_VERTICES, steps)
+                data["EXP_REMOVED_EDGES"].append(exp_sum)
+                data["EXP_DEGREES"].append((NUM_VERTICES - 1) - (2 * exp_sum)/NUM_VERTICES)
             data["NODE_COORDS"] = coords
             data["DELETE"] = delete
             json_data = json.dumps(data, indent=4)
@@ -78,3 +94,13 @@ for id in range(PROBLEMS_PER_DEGREE):
                     total_removed_cnt += 1
                     groups[e[0] - 1] += 1
                     delete[str(e[0])].append([str(e[1][0]), str(e[1][1])])
+
+    # print(current_degrees)
+    # print(AVDs)
+    #
+    # plt.grid()
+    # plt.xlabel('EAVD in |V|/2')
+    # plt.ylabel('AVD')
+    # plt.plot(current_degrees, AVDs)
+    # plt.show()
+    #
