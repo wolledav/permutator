@@ -10,11 +10,13 @@ from tspsd_common import *
 TSP_INSTANCE = "./data/tsp/tsplib_10/berlin52.json"
 OUTDIR = "./data/tspsd/tsplib_10/berlin52_test/"
 
-MIN_AVG_DEGREE = 1
-MAX_AVG_DEGREE = 51
-VD_STEP = 1
+MIN_AVG_DEGREE = 4.5
+MAX_AVG_DEGREE = 6
+VD_STEP = 0.1
 EPS = 0.5
-random.seed(1)
+SEED = 9
+random.seed(SEED)
+# OUTDIR = "./data/tspsd/tsplib_10/berlin52-" + str(SEED) + "/"
 
 data = get_data(TSP_INSTANCE)
 name = data['NAME']
@@ -51,7 +53,7 @@ while goal_degree >= MIN_AVG_DEGREE:
     if abs(current_degree - goal_degree) < EPS: # export instance
         print("goal_degree = " + str(goal_degree) + ", current_degree = " + str(current_degree))
         # EXPORT ------------------------------------------
-        data["NAME"] = name + "-" + str(NUM_VERTICES) + "-" + "{:.2f}".format(goal_degree) + "-" + str(0)
+        data["NAME"] = name + "-" + "{:.2f}".format(goal_degree) + "-" + str(SEED)
         data["TYPE"] = "TSPSD"
         data["COMMENT"] = str(NUM_VERTICES) + " random locations, " + str(goal_degree) + " goal degree after n/2 deletes"
         data["GROUPS"] = groups
