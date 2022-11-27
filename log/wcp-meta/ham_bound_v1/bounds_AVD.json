@@ -1,0 +1,53 @@
+{
+    "problem_type": "WCP",
+    "log_dirs": [
+        "./log/wcp-meta/ham_bound_v1/random10_ov_50_WCP_10s/",
+        "./log/wcp-meta/ham_bound_v1/random20_ov_50_WCP_20s/",
+        "./log/wcp-meta/ham_bound_v1/random30_ov_50_WCP_30s/",
+        "./log/wcp-meta/ham_bound_v1/random40_ov_50_WCP_40s/",
+        "./log/wcp-meta/ham_bound_v1/random50_ov_50_WCP_50s/",
+        "./log/wcp-meta/ham_bound_v1/random60_ov_50_WCP_60s/",
+        "./log/wcp-meta/ham_bound_v1/random70_ov_50_WCP_70s/",
+        "./log/wcp-meta/ham_bound_v1/random80_ov_50_WCP_80s/",
+        "./log/wcp-meta/ham_bound_v1/random90_ov_50_WCP_90s/",
+        "./log/wcp-meta/ham_bound_v1/random100_ov_50_WCP_100s/"
+    ],
+    "problem_dirs": [
+        "./data/tspsd/ham_bound_v1/random10_ov_50/",
+        "./data/tspsd/ham_bound_v1/random20_ov_50/",
+        "./data/tspsd/ham_bound_v1/random30_ov_50/",
+        "./data/tspsd/ham_bound_v1/random40_ov_50/",
+        "./data/tspsd/ham_bound_v1/random50_ov_50/",
+        "./data/tspsd/ham_bound_v1/random60_ov_50/",
+        "./data/tspsd/ham_bound_v1/random70_ov_50/",
+        "./data/tspsd/ham_bound_v1/random80_ov_50/",
+        "./data/tspsd/ham_bound_v1/random90_ov_50/",
+        "./data/tspsd/ham_bound_v1/random100_ov_50/",
+        "./data/tspsd/ham_bound_v1/random200_ov_50/"
+    ],
+    "sizes": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100
+    ],
+    "bounds": [
+        2.331403013182674,
+        4.393152866242039,
+        6.4779123951537745,
+        8.37820512820513,
+        10.537254901960784,
+        12.424117647058823,
+        14.489411764705881,
+        16.777142857142856,
+        18.22830188679245,
+        20.91216565249748
+    ],
+    "rel_step": 0.5
+}
