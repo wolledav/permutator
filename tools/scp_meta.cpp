@@ -72,7 +72,11 @@ int main (int argc, char *argv[]) {
     if (!init_path.empty()) {
         std::cout << "Initial solution read from " + init_path << std::endl;
         json data = read_json(init_path);
-        std::vector<uint> init_solution = data["solution"]["permutation"];
+        std::vector<uint> init_solution = data["solution"]["route"];
+        if (std::find(init_solution.begin(), init_solution.end(), 0) == init_solution.end()) {
+            std::cout << "Reindexing initial solution" << std::endl;
+            for (auto &i:init_solution) i--;
+        }
         optimizer.setInitSolution(init_solution);
     }
 
