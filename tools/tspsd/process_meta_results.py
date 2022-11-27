@@ -3,7 +3,7 @@ import os
 from tspsd_common import *
 import numpy as np
 
-LOG_DIR = "./log/scp-meta/tsplib_10/selected/burma14-2.20_5s/"
+LOG_DIR = "./log/scp-meta/tsplib_10/selected/berlin52-8.30_520s/"
 
 
 feasible_cnt = 0
@@ -27,9 +27,9 @@ best = min(scores)
 avg = np.mean(scores)
 stdev = np.std(scores)
 time = np.mean(times)
-success = feasible_cnt/total_cnt
+success = 100*feasible_cnt/total_cnt
 
 
 print(best, avg, stdev, time, success)
-output = " {0:.0f}\t\t& {1:.2f}\t\t& {2:.2f}\t\t& {3:.0f}\t\t\t\t& {4:.2f}\t\t\t\t".format(best, avg, stdev, time, success)
+output = " {0:.0f}\t\t& {1:.2f}\t\t& {2:.2f}\t\t& {3:.0f}\t\t\t\t& {4:.0f}\t\t\t\t".format(best, avg, stdev, time, success)
 print(output)

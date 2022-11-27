@@ -1,0 +1,56 @@
+{
+    "problem_type": "SCP",
+    "log_dirs": [
+        "./log/scp-exact/ham_bound_v1/random10_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random20_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random30_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random40_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random50_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random60_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random70_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random80_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random90_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random100_ov_50/",
+        "./log/scp-exact/ham_bound_v1/random200_ov_50/"
+    ],
+    "problem_dirs": [
+        "./data/tspsd/ham_bound_v1/random10_ov_50/",
+        "./data/tspsd/ham_bound_v1/random20_ov_50/",
+        "./data/tspsd/ham_bound_v1/random30_ov_50/",
+        "./data/tspsd/ham_bound_v1/random40_ov_50/",
+        "./data/tspsd/ham_bound_v1/random50_ov_50/",
+        "./data/tspsd/ham_bound_v1/random60_ov_50/",
+        "./data/tspsd/ham_bound_v1/random70_ov_50/",
+        "./data/tspsd/ham_bound_v1/random80_ov_50/",
+        "./data/tspsd/ham_bound_v1/random90_ov_50/",
+        "./data/tspsd/ham_bound_v1/random100_ov_50/",
+        "./data/tspsd/ham_bound_v1/random200_ov_50/"
+    ],
+    "sizes": [
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        200
+    ],
+    "bounds": [
+        2.967540983606557,
+        5.088392857142857,
+        7.22328860898138,
+        9.07862669245648,
+        10.975657894736843,
+        12.939473684210526,
+        14.505505722239405,
+        16.46556473829201,
+        18.099305555555556,
+        19.91289256198347,
+        34.3
+    ],
+    "rel_step": 0.5
+}
