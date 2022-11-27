@@ -104,6 +104,33 @@ def get_probs_in_step(problem_dir, log_dir, step, decimals):
     return degrees_sorted, prob_list
 
 
+def get_probs_in_AVD(problem_dir, log_dir, decimals):
+    solutions = os.listdir(log_dir)
+    deg2cnt = {} # avg_degree -> [feasible, total]
+    for solution in solutions:
+        sol_data = get_data(log_dir + solution)
+        feasible = sol_data["solution"]["is_feasible"]
+        name = sol_data["name"].split('.json')[0]
+        problem_data = get_data(problem_dir + name + ".json")
+        exp_degrees = problem_data["EXP_DEGREES"]
+        degree = round(np.mean(exp_degrees[1:]), decimals)
+        if degree not in deg2cnt.keys():
+            deg2cnt[degree] = [0, 0]
+        if feasible:
+            deg2cnt[degree][0] += 1
+        deg2cnt[degree][1] += 1
+    degrees_sorted = sorted(deg2cnt.keys())
+    feasible_list = []
+    total_list = []
+    prob_list = []
+    for degree in degrees_sorted:
+        feasible_list.append(deg2cnt[degree][0])
+        total_list.append(deg2cnt[degree][1])
+        prob = deg2cnt[degree][0]/deg2cnt[degree][1]
+        prob_list.append(prob)
+    return degrees_sorted, prob_list
+
+
 def get_vertices_edges_deletes(num_vertices):
     vertices = list(range(1, num_vertices + 1))
     edges = []
@@ -133,27 +160,30 @@ def get_cutoff_success(log_dir, max_depth):
         name = data["name"]
         feasible = data["solution"]["is_feasible"]
         depth = data["solution"]["max_depth"]
-        EAVD = float(name.split('-')[2])
-        if EAVD not in stats.keys():
-            stats[EAVD] = {}
-            stats[EAVD]["feasible"] = 0
-            stats[EAVD]["infeasible"] = 0
-            stats[EAVD]["total"] = 0
-            stats[EAVD]["depths"] = []
+        # EAVD = float(name.split('-')[2])
+        AVD = round(data["AVD"], 1)
+        if AVD not in stats.keys():
+            stats[AVD] = {}
+            stats[AVD]["feasible"] = 0
+            stats[AVD]["infeasible"] = 0
+            stats[AVD]["total"] = 0
+            stats[AVD]["depths"] = []
         if feasible:
-            stats[EAVD]["feasible"] += 1
+            stats[AVD]["feasible"] += 1
         else:
-            stats[EAVD]["infeasible"] += 1
-        stats[EAVD]["total"] += 1
-        stats[EAVD]["depths"].append(depth)
-    EAVDs = []
+            stats[AVD]["infeasible"] += 1
+        stats[AVD]["total"] += 1
+        stats[AVD]["depths"].append(depth)
+    AVDs = []
     infeasible_detected = []
     infeasible_cnts = []
-    for EAVD in sorted(stats.keys()):
-        EAVDs.append(EAVD)
-        infeasible_cnts.append(stats[EAVD]["infeasible"])
+    total_cnts = []
+    for AVD in sorted(stats.keys()):
+        AVDs.append(AVD)
+        infeasible_cnts.append(stats[AVD]["infeasible"])
+        total_cnts.append(stats[AVD]["total"])
         depth_cnt = 0
         for depth in range(max_depth + 1):
-            depth_cnt += stats[EAVD]["depths"].count(depth)
-        infeasible_detected.append(min(depth_cnt, stats[EAVD]["infeasible"]))
-    return EAVDs, infeasible_detected, infeasible_cnts
+            depth_cnt += stats[AVD]["depths"].count(depth)
+        infeasible_detected.append(min(depth_cnt, stats[AVD]["infeasible"]))
+    return AVDs, infeasible_detected, infeasible_cnts, total_cnts
