@@ -994,7 +994,9 @@ void LS_optimizer::basicVNS() {
             this->perturbation_call(pert, k);
         }
     }
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
+#endif
 }
 
 /*
@@ -1049,7 +1051,9 @@ void LS_optimizer::calibratedVNS() {
         // Reset this->solution to this->best_known_solution
         this->current_solution=this->best_known_solution;
     }
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
+#endif
 }
 
 //**********************************************************************************************************************

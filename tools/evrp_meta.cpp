@@ -68,7 +68,7 @@ int main (int argc, char *argv[])
     // Parse and solve instance
     string filename = get_filename(data_path);
     EVRPInstance inst = EVRPInstance(data_path.c_str());
-    std::cout << "Solving " << inst.name << std::endl;
+    // std::cout << "Solving " << inst.name << std::endl;
     LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
     optimizer.run();
 
@@ -78,9 +78,10 @@ int main (int argc, char *argv[])
         output_file.open(output_path);
         optimizer.save_to_json(output);
         output_file << output.dump(4);
+        std::cout << sol.fitness << std::endl;
     } else {
         std::cout << sol.fitness << std::endl;
     }
-    inst.print_solution(&sol, std::cout);
+    // inst.print_solution(&sol, std::cout);
     return 0;
 } 
