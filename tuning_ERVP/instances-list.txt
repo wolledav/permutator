@@ -11,6 +11,6 @@ evrp-E-n22-k4.json timeout 20
 evrp-E-n23-k3.json timeout 20
 evrp-E-n30-k3.json timeout 20
 evrp-E-n33-k4.json timeout 20
-evrp-E-n51-k5.json timeout 30
-evrp-E-n76-k7.json timeout 30
-evrp-E-n101-k8.json timeout 40
+#evrp-E-n51-k5.json timeout 30
+#evrp-E-n76-k7.json timeout 30
+#evrp-E-n101-k8.json timeout 40

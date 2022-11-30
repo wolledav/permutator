@@ -64,8 +64,6 @@ void EVRPInstance::parse_json(const char* path)
 
     this->depot_id = this->get_int_id(data["depot"]);
 
-    // additional stats
-    
 }
 
 void EVRPInstance::calculate_dist_matrix()

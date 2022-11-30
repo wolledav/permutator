@@ -44,6 +44,8 @@ construction        "construction "     c   (greedy, random, random_replicate)
 
 ## PERTURBATION
 perturbation        "perturbation "     c   (double_bridge, random_double_bridge, reinsert, random_move_all, random_move, random_swap)
+#perturbation        "perturbation "     c   (double_bridge, random_move, random_swap)
+
 # perturbation        "perturbation "     c   (double_bridge, random_double_bridge, random_move, random_swap)
 allow_infeasible    "allow_infeasible " c   (0, 1)
 
@@ -54,7 +56,6 @@ local_search        "local_search "     c   (BVND, PVND, CVND, RVND, RPVND)
 insert_1            "op_insert_1 "      c   (0, 1)
 remove_1            "op_remove_1 "      c   (0, 1)
 two_opt             "op_two_opt "       c   (0, 1)
-exchange_ids        "op_exchange_ids "  c   (0, 1)
 exchange_n_ids      "op_exchange_n_ids "    c   (0, 1)
 exchange_1_1        "op_exchange_1_1 "      c   (0, 1)
 exchange_1_2        "op_exchange_1_2 "      c   (0, 1)
