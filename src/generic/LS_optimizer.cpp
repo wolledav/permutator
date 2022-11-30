@@ -944,7 +944,9 @@ void LS_optimizer::ILS() {
             this->perturbation_call(pert, config["ils_k"].get<uint>());
         }
     }
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
+#endif
 }
 
 /*
