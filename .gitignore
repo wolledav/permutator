@@ -12,3 +12,4 @@ model/*
 /log/wcp-meta/range_estimate/
 /log/scp-meta/ham_bound_v1/
 /data/tspsd/ham_bound_v1/
+/log/scp-exact/ham_bound_v1/
