@@ -3,9 +3,11 @@ import os
 from tspsd_common import *
 import matplotlib.pyplot as plt
 
+plt.figure(figsize=[6.4, 3.6])
+
 # Plots infeasibility detection ratio in different depths
 LOG_DIR = "./log/scp-exact/dense_sampling/random24_ov_100_AVD_SCP_v2/"
-TITLE = "24-vertex graph"
+TITLE = "(a) random24-100 dataset"
 FIG_OUTPUT = "./figures/scp/hamiltonicity/bw_cutoff_random24_ov_100_AVD.pdf"
 MAX_DEPTHS = [1, 2, 3, 5, 10]
 SIZE = 24
@@ -28,6 +30,11 @@ plt.ylabel("detected/infeasible")
 plt.title(TITLE)
 plt.legend()
 
+
+# figsize = plt.rcParams["figure.figsize"]
+# print(figsize)
+# figsize[1] = 0.75 * figsize[1]
+# print(figsize)
 
 plt.savefig(FIG_OUTPUT, bbox_inches='tight')
 print("Exported " + FIG_OUTPUT)

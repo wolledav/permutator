@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tspsd_common import *
 
+plt.figure(figsize=[6.4, 3.6])
+
 BOUND_FILES = [
     "./log/scp-exact/ham_bound_v1/bounds_AVD.json",
     "./log/scp-meta/ham_bound_v1/bounds_AVD.json",
-
     "./log/wcp-meta/ham_bound_v1/bounds_AVD.json",
 
 
@@ -22,7 +23,7 @@ LEGENDS = [
 COLORS = ["tab:orange", "gold", "tab:green"]
 
 FIG_OUTPUT = "./figures/scp/hamiltonicity/HCPxSCPxWCP_bounds_v4.pdf"
-
+TITLE = "(b) random datasets with 10-200 vertices"
 
 
 # Plot TSP bound
@@ -42,6 +43,7 @@ for bound_file, color, legend in zip(BOUND_FILES, COLORS, LEGENDS):
 plt.legend()
 plt.xlabel("|V|")
 plt.ylabel("AVD")
+plt.title(TITLE)
 plt.grid()
 
 plt.savefig(FIG_OUTPUT, bbox_inches='tight')

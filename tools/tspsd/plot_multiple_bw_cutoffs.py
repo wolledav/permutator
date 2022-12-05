@@ -3,10 +3,12 @@ import os
 from tspsd_common import *
 import matplotlib.pyplot as plt
 
-LOG_DIRS = ["./log/scp-exact/ham_bound_v1/random10_ov_50/", "./log/scp-exact/ham_bound_v1/random20_ov_50/", "./log/scp-exact/ham_bound_v1/random30_ov_50/", "./log/scp-exact/ham_bound_v1/random40_ov_50/", "./log/scp-exact/ham_bound_v1/random50_ov_50/", "./log/scp-exact/ham_bound_v1/random60_ov_50/", "./log/scp-exact/ham_bound_v1/random70_ov_50/", "./log/scp-exact/ham_bound_v1/random80_ov_50/", "./log/scp-exact/ham_bound_v1/random90_ov_50/", "./log/scp-exact/ham_bound_v1/random100_ov_50/", "./log/scp-exact/ham_bound_v1/random200_ov_50/"]
-SIZES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200]
+plt.figure(figsize=[6.4, 3.6])
+
+LOG_DIRS = ["./log/scp-exact/ham_bound_v1/random10_ov_50/", "./log/scp-exact/ham_bound_v1/random20_ov_50/", "./log/scp-exact/ham_bound_v1/random30_ov_50/", "./log/scp-exact/ham_bound_v1/random40_ov_50/", "./log/scp-exact/ham_bound_v1/random50_ov_50/", "./log/scp-exact/ham_bound_v1/random60_ov_50/", "./log/scp-exact/ham_bound_v1/random70_ov_50/", "./log/scp-exact/ham_bound_v1/random80_ov_50/", "./log/scp-exact/ham_bound_v1/random90_ov_50/", "./log/scp-exact/ham_bound_v1/random100_ov_50/", "./log/scp-exact/ham_bound_v1/random150_ov_50_v2/", "./log/scp-exact/ham_bound_v1/random200_ov_50/"]
+SIZES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200]
 FIG_OUTPUT = "./figures/scp/hamiltonicity/bw_multi_cutoffs_random10-200_ov_50_AVD_mix.pdf"
-TITLE = ""
+TITLE = "(b) random datasets with 10-200 vertices"
 
 # Plot ABS bound
 MAX_DEPTHS = [2, 5, 10]

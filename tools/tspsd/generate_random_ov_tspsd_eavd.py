@@ -5,10 +5,10 @@ import numpy as np
 from tools.tspsd.tspsd_common import *
 
 
-NUM_VERTICES = 200
+NUM_VERTICES = 150
 PROBLEMS_PER_DEGREE = 50
-MIN_AVG_DEGREE = 46
-MAX_AVG_DEGREE = 60
+MIN_AVG_DEGREE = 6
+MAX_AVG_DEGREE = 24
 
 VD_STEP = (MAX_AVG_DEGREE - MIN_AVG_DEGREE) / 50 # vertex degree sampling step
 X_MAX = 100

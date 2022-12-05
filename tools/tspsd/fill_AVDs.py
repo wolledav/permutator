@@ -5,9 +5,11 @@ import numpy as np
 import json
 from tspsd_common import *
 
-DATA_DIR = "./data/tspsd/dense_sampling/random24_ov_AVD_100/"
-LOG_DIR = "./log/scp-exact/dense_sampling/random24_ov_100_AVD_SCP_v2/"
-FIRST_EAVD = 0
+
+# TODO works only with exact solutions
+DATA_DIR = "./data/tspsd/ham_bound_v1/random150_ov_50_v2/"
+LOG_DIR = "./log/scp-exact/ham_bound_v1/random150_ov_50_v2/"
+FIRST_EAVD = 1
 
 problems = os.listdir(DATA_DIR)
 for problem in problems:

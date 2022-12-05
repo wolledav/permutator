@@ -8,10 +8,10 @@ from tspsd_common import *
 
 
 TSP_INSTANCE = "./data/tsp/tsplib_10/vm1084.json"
-OUTDIR = "./data/tspsd/tsplib_10/vm1084/"
+OUTDIR = "./data/tspsd/tsplib_10/AVD/"
 
-MIN_AVG_DEGREE = 100
-MAX_AVG_DEGREE = 1080
+MIN_AVG_DEGREE = 840
+MAX_AVG_DEGREE = 840
 VD_STEP = 20
 EPS = 0.5
 random.seed(1)
@@ -56,10 +56,11 @@ while goal_degree >= MIN_AVG_DEGREE:
         data["EXP_DEGREE_HALF"] = current_degree
         data["EXP_DEGREES"] = []
         data["EXP_REMOVED_EDGES"] = []
-        # for steps in range(NUM_VERTICES + 1):
-        #     exp_sum = get_exp_sum(edge_removed_cnt, NUM_VERTICES, steps)
-        #     data["EXP_REMOVED_EDGES"].append(exp_sum)
-        #     data["EXP_DEGREES"].append((NUM_VERTICES - 1) - (2 * exp_sum)/NUM_VERTICES)
+        for steps in range(1, NUM_VERTICES + 1):
+            exp_sum = get_exp_sum(edge_removed_cnt, NUM_VERTICES, steps)
+            data["EXP_REMOVED_EDGES"].append(exp_sum)
+            data["EXP_DEGREES"].append((NUM_VERTICES - 1) - (2 * exp_sum)/NUM_VERTICES)
+        data["AVD"] = np.mean(data["EXP_DEGREES"])
         data["DELETE"] = delete
         json_data = json.dumps(data, indent=4)
         output_path = OUTDIR + data["NAME"] + ".json"

@@ -7,16 +7,18 @@ import sys
 from tspsd_common import *
 
 
-TSP_INSTANCE = "./data/tsp/tsplib_10/berlin52.json"
-OUTDIR = "./data/tspsd/tsplib_10/berlin52_test/"
+TSP_INSTANCE = "./data/tsp/tsplib_10/rat783.json"
+OUTDIR = "./data/tspsd/tsplib_10/AVD/"
 
-MIN_AVG_DEGREE = 4.5
-MAX_AVG_DEGREE = 6
 VD_STEP = 0.1
-EPS = 0.5
-SEED = 9
+MIN_AVG_DEGREE = 460
+MAX_AVG_DEGREE = MIN_AVG_DEGREE
+
+
+
+EPS = 0.25
+SEED = 1
 random.seed(SEED)
-# OUTDIR = "./data/tspsd/tsplib_10/berlin52-" + str(SEED) + "/"
 
 data = get_data(TSP_INSTANCE)
 name = data['NAME']
@@ -24,7 +26,9 @@ data['DELETE'] = {}
 NUM_VERTICES = data['DIMENSION']
 for node in data['NODE_COORDS']:
     data['DELETE'][node] = []
-ER_STEP = int(NUM_VERTICES/10) # edges to remove at once
+
+ER_STEP = int(NUM_VERTICES/2) # edges to remove at once
+
 
 # Create dataset directory
 if not os.path.exists(OUTDIR):
@@ -61,10 +65,11 @@ while goal_degree >= MIN_AVG_DEGREE:
         data["EXP_DEGREE_HALF"] = current_degree
         data["EXP_DEGREES"] = []
         data["EXP_REMOVED_EDGES"] = []
-        # for steps in range(NUM_VERTICES + 1):
-        #     exp_sum = get_exp_sum(edge_removed_cnt, NUM_VERTICES, steps)
-        #     data["EXP_REMOVED_EDGES"].append(exp_sum)
-        #     data["EXP_DEGREES"].append((NUM_VERTICES - 1) - (2 * exp_sum)/NUM_VERTICES)
+        for steps in range(1, NUM_VERTICES + 1):
+            exp_sum = get_exp_sum(edge_removed_cnt, NUM_VERTICES, steps)
+            data["EXP_REMOVED_EDGES"].append(exp_sum)
+            data["EXP_DEGREES"].append((NUM_VERTICES - 1) - (2 * exp_sum)/NUM_VERTICES)
+        data["AVD"] = np.mean(data["EXP_DEGREES"])
         data["DELETE"] = delete
         json_data = json.dumps(data, indent=4)
         output_path = OUTDIR + data["NAME"] + ".json"
