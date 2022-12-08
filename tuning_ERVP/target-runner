@@ -22,7 +22,7 @@ error() {
 }
 
 EXE=../cmake-build-release/evrp_meta
-FIXED_PARAMS="num_threads 1"
+FIXED_PARAMS="num_threads 1 stop_on_feasible 0"
 
 CONFIG_ID=$1
 INSTANCE_ID=$2

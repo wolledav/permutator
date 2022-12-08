@@ -132,6 +132,7 @@
   },
   "evrp" : {
     "timeout": 60,
+    "use_repair_func" : true,
     "stop_on_feasible": false,
     "num_threads": 8,
     "allow_infeasible": true,

@@ -54,15 +54,17 @@ void EVRPInstance::parse_json(const char* path)
         this->total_demand += this->demands[id];
     }
 
+    this->depot_id = this->get_int_id(data["depot"]);
+    this->station_ids.push_back(this->depot_id);
+
     // station section
     this->station = vector<bool>(this->node_cnt);
     fill(this->station.begin(), this->station.end(), false);
     for (const auto& item: data["stations_id"]) {
         uint id = this->get_int_id(item);
         this->station[id] = true;
+        this->station_ids.push_back(id);
     }
-
-    this->depot_id = this->get_int_id(data["depot"]);
 
 }
 
@@ -86,7 +88,7 @@ void EVRPInstance::calculate_lbs_ubs()
     this->ubs.resize(this->node_cnt);
     for (uint i = 0; i < this->node_cnt; i++) {
         if (i == this->depot_id) { // depot
-            this->lbs[i] = 0; // depot final destination is implicit
+            this->lbs[i] = 2; // depot start and end
             this->ubs[i] = this->customer_cnt + 1; // at worst we go (dep, cust_1, dep, cust_2, ... dep, cust_n, dep) 
         }
         else if (this->station[i]) { // station
@@ -181,6 +183,169 @@ string EVRPInstance::node_to_str(uint id, float load, float energy)
 
     return string(buffer);
 }
+
+vector<uint> EVRPInstance::repair_func(const vector<uint> &permutation)
+{
+    vector<uint> tsp_route; // only customers
+    for (auto x: permutation) {
+        if (x != this->depot_id || this->station[x]) {
+            tsp_route.push_back(x);
+        }
+    }
+
+    return this->zga_repair(tsp_route);
+}
+
+
+vector<uint> EVRPInstance::zga_repair(const vector<uint> &tsp_tour)
+{
+    cout << "zga_repair" << endl;
+    vector<uint> ervp_tour;
+    uint next_id = 0;
+    uint best_station, target;
+    float load, charge, req_en, req_en_closest;
+    bool found;
+    
+    ervp_tour.push_back(0);
+
+    while (next_id < tsp_tour.size() || ervp_tour.back() != this->depot_id) {
+        // try to get to next customer else get to depot
+        if (next_id < tsp_tour.size()) {
+            target = tsp_tour[next_id];
+        }
+        else {
+            target = this->depot_id;
+        }
+        
+        // if we run out of load we go to depot
+        load = this->calc_load(ervp_tour).back();
+        if (load < this->demands[target]) { // ran out of demands
+            target = this->depot_id;
+        }
+
+        charge = this->calc_charge(ervp_tour).back();
+        req_en = this->energy_req(ervp_tour.back(), target);
+        if (target != this->depot_id) { 
+            req_en_closest = this->energy_req(target, this->closest_station(target));
+        }
+        else {
+            req_en_closest = 0;
+        }
+        
+        if (charge >= req_en + req_en_closest) {
+            ervp_tour.push_back(target);
+            if (target != this->depot_id) {
+                next_id++;
+            }
+        }
+        else { // need to find station in reach, if none exists backtrack
+            while (true) {
+                charge = this->calc_charge(ervp_tour).back();
+                found = this->closest_station_in_reach(best_station, target, ervp_tour.back(), charge);
+                if (found) {
+                    ervp_tour.push_back(best_station);
+                    break;
+                }
+                else {
+                    ervp_tour.pop_back();
+                    next_id--;
+                }
+            }
+        }
+    }
+
+    return ervp_tour;
+}
+
+
+bool EVRPInstance::closest_station_in_reach(uint &best_station, uint closest_to, uint in_reach, float charge)
+{
+    float best_dist = INFINITY, dist, req_en;
+    bool found = false;
+
+    for (auto &x : this->station_ids) {
+        req_en = this->energy_req(x, in_reach);
+        if (req_en <= charge && x != in_reach) {
+            dist = this->dist_mat(x, closest_to);
+            if (dist < best_dist) {
+                best_dist = dist;
+                best_station = x;
+                found = true;
+            }
+        }
+    }
+
+    return found;
+}
+
+uint EVRPInstance::closest_station(uint closest_to)
+{
+    float best_dist = INFINITY, dist;
+    uint best_station = 0;
+    for (auto &x : this->station_ids) {
+        if (x == closest_to) continue;
+
+        dist = this->dist_mat(x, closest_to);
+        if (dist < best_dist) {
+            best_dist = dist;
+            best_station = x;
+        }
+    }
+
+    return best_station;
+}
+
+vector<float> EVRPInstance::calc_load(const vector<uint> &tour)
+{
+    float curr_load = this->capacity;
+    vector<float> load(tour.size());
+    for (auto &x : tour) {
+        curr_load -= this->demands[x];
+        load.push_back(curr_load);
+
+        if (x == this->depot_id) {
+            curr_load = this->capacity;
+        }
+    }
+
+    return load;
+}
+
+vector<float> EVRPInstance::calc_charge(const vector<uint> &tour)
+{
+    float curr_charge = this->energy_cap;
+    vector<float> charge(tour.size());
+    uint from = this->depot_id, to;
+    for(int i = 0; i + 1 < tour.size(); i++) {
+        from = tour[i];
+        to = tour[i + 1];
+        curr_charge -= this->dist_mat(from, to)*this->energy_cons;
+        charge.push_back(curr_charge);
+
+        if (to == this->depot_id || this->station[to]) {
+            curr_charge = this->energy_cap;
+        }
+    }
+
+    charge.push_back(curr_charge);
+
+    return charge;
+}
+
+float EVRPInstance::tour_dist(vector<uint> tour)
+{
+    float dist = 0;
+    uint from, to;
+
+    for (int i = 0; i + 1 < tour.size(); i++) {
+        from = tour[i];
+        to = tour[i + 1];
+        dist += this->dist_mat(from, to);
+    }
+
+    return dist;
+}
+
 
 void EVRPInstance::print_solution(Solution *solution, std::basic_ostream<char>& outf)
 {

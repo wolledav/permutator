@@ -21,6 +21,15 @@ LS_optimizer::LS_optimizer(Instance *inst, json config, uint seed) {
     this->setPerturbations(this->config["perturbation"].get<vector<string>>());
     this->setOperators(this->config["operators"].get<vector<string>>());
     omp_set_num_threads(this->config["num_threads"]);
+
+    // repair func parameter
+    try {
+        this->use_repair_func = this->config["use_repair_func"].get<bool>();
+    }
+    catch(const std::exception& e) {
+        this->use_repair_func = false;
+    }
+    
 }
 
 std::mt19937* LS_optimizer::init_rng(uint seed) {
@@ -931,6 +940,12 @@ void LS_optimizer::ILS() {
             return;
         }
 
+        // use repair func if set and solution not feasible
+        if (this->use_repair_func && !this->best_known_solution.is_feasible) {
+            vector <uint> perm = this->instance->repair_func(this->current_solution.permutation);
+            this->current_solution = Solution(perm, *this->instance);
+        }
+
         // Perform local search on this->current_solution, ev. update this->best_known_solution
         this->local_search();
 
@@ -973,6 +988,12 @@ void LS_optimizer::basicVNS() {
         if (config["stop_on_feasible"] && this->best_known_solution.is_feasible) {
             std::cout << str(format("%1% found a feasible solution in %2% seconds ") % __func__ % this->get_runtime()) << std::endl;
             return;
+        }
+
+        // use repair func if set and solution not feasible
+        if (this->use_repair_func && !this->best_known_solution.is_feasible) {
+            vector <uint> perm = this->instance->repair_func(this->current_solution.permutation);
+            this->current_solution = Solution(perm, *this->instance);
         }
 
         // Perform local search on this->current_solution, ev. update this->best_known_solution
@@ -1026,6 +1047,13 @@ void LS_optimizer::calibratedVNS() {
         for (const auto &pert: this->perturbation_list) {
             this->perturbation_call(pert, k);
         }
+
+        // use repair func if set and solution not feasible
+        if (this->use_repair_func && !this->best_known_solution.is_feasible) {
+            vector <uint> perm = this->instance->repair_func(this->current_solution.permutation);
+            this->current_solution = Solution(perm, *this->instance);
+        }
+        
         // Perform local search on this->solution, ev. update this->best_known_solution
         this->local_search();
 

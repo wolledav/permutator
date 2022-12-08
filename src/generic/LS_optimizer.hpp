@@ -28,6 +28,7 @@ class LS_optimizer
         json config;
         uint timeout_s;
         std::chrono::steady_clock::time_point start, last_improvement;
+        bool use_repair_func;
         Instance* instance;
         Solution initial_solution, current_solution, best_known_solution;
         std::mt19937 *rng;

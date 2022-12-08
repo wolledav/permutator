@@ -25,7 +25,9 @@ class Instance
         string name, type = "no-type";
         uint fitness_evals = 0;
         virtual bool compute_fitness(const vector<uint> &permutation, fitness_t* fitness) = 0;
+        virtual vector<uint> repair_func(const vector<uint> &permutation) { return permutation; };
+
         fitness_t get_lb_penalty(const vector<uint> &frequency);
         bool frequency_in_bounds(const vector<uint> &frequency);
-
+        
 };
