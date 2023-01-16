@@ -2,6 +2,13 @@
 
 #include <utility>
 
+using permutator::fitness_t;
+using boost::format;
+using std::pair;
+using std::vector;
+using std::string;
+using nlohmann::json;
+
 //**********************************************************************************************************************
 // INITIALIZATION
 //**********************************************************************************************************************
@@ -33,6 +40,7 @@ std::mt19937* LS_optimizer::init_rng(uint seed) {
 
 void LS_optimizer::setInitSolution(vector<uint> init_solution) {
     this->initial_solution = Solution(init_solution, *this->instance);
+    this->initial_solution.print();
 }
 
 

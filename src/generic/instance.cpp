@@ -1,5 +1,8 @@
 #include "instance.hpp"
 
+using namespace permutator;
+using std::string;
+
 Instance::Instance(const string& name, uint node_count) {
     this->name = name;
     this->node_cnt = node_count;
@@ -22,7 +25,7 @@ Instance::Instance(const string& name, uint node_count, uint common_lb, uint com
     }
 }
 
-fitness_t Instance::get_lb_penalty(const vector<uint> &frequency) {
+fitness_t Instance::get_lb_penalty(const std::vector<uint> &frequency) {
     uint sum = 0;
     for (uint i = 0; i < this->node_cnt; i++) {
         sum += std::max((int)this->lbs[i] - (int)frequency[i], 0);
@@ -30,7 +33,7 @@ fitness_t Instance::get_lb_penalty(const vector<uint> &frequency) {
     return sum * LB_PENALTY;
 }
 
-bool Instance::frequency_in_bounds(const vector<uint> &frequency) {
+bool Instance::frequency_in_bounds(const std::vector<uint> &frequency) {
     for (uint i = 0; i < this->node_cnt; i++){
         if (frequency[i] < this->lbs[i] || frequency[i] > this->ubs[i])
             return false;

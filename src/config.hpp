@@ -1,6 +1,3 @@
-//
-// Created by honza on 06.03.22.
-//
 #pragma once
 
 #include <string>
@@ -12,9 +9,9 @@
 
 // Compile time config macros
 #define GUROBI_THREAD_CNT 1
-#define STDOUT_ENABLED 0
-namespace metaopt {
-    typedef unsigned int uint;
+#define STDOUT_ENABLED 1
+namespace permutator {
+    typedef unsigned int uint_t;
 #ifdef FITNESS_TYPE
     typedef FITNESS_TYPE fitness_t;
 #else
@@ -24,13 +21,9 @@ namespace metaopt {
 }
 #define LB_PENALTY 10000000
 
-
-using json = nlohmann::json;
-using string = std::string;
-
 class Config {
 private:
 public:
     explicit Config() = default;
-    static json read_default_config(const string& problem_type);
+    static nlohmann::json read_default_config(const std::string& problem_type);
 };

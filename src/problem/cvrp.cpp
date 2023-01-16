@@ -3,6 +3,9 @@
 #include <iostream>
 #include <algorithm>
 
+using std::vector;
+using permutator::fitness_t;
+
 // ----------------------------------------------------------------------
 // CVRPInstance
 // ----------------------------------------------------------------------

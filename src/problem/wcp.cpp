@@ -1,8 +1,9 @@
-//
-// Created by wolledav on 24.8.22.
-//
-
 #include "wcp.hpp"
+
+using std::vector;
+using std::string;
+using permutator::fitness_t;
+using nlohmann::json;
 
 uint WCPInstance::get_internal_id(const string& id) {
     return std::stoi(id) - 1;

@@ -1,8 +1,9 @@
-//
-// Created by wolledav on 24.8.22.
-//
-
 #include "scp.hpp"
+
+using std::vector;
+using std::string;
+using permutator::fitness_t;
+using json = nlohmann::json;
 
 uint SCPInstance::get_internal_id(const string &id) {
     return std::stoi(id) - 1;
@@ -88,6 +89,7 @@ bool SCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
                     del_mat(node1, node2) * DELETED_EDGE_PENALTY + (1 - del_mat(node1, node2)) * dist_mat(node1, node2);
             valid = valid && !del_mat(node1, node2);
 
+//            std::cout << node1 + 1 << "--" << node2 + 1 << " : " << dist_mat(node1, node2) << std::endl;
             // Evaluate edge [node1, node2]
 //            bool deleted = false;
 //            auto edge = get_edge(node1, node2);
@@ -107,15 +109,18 @@ bool SCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fi
 
 uint SCPInstance::compute_dist(uint id1, uint id2) {
     if (id1 == id2) { return 0; }
-    uint xdiff = this->positions[id1].x - this->positions[id2].x;
-    uint ydiff = this->positions[id1].y - this->positions[id2].y;
+    int xdiff = this->positions[id1].x - this->positions[id2].x;
+    int ydiff = this->positions[id1].y - this->positions[id2].y;
     double distance = sqrt(xdiff * xdiff + ydiff * ydiff);
+
     return (uint) round(distance);
 }
 
 void SCPInstance::compute_dist_mat() {
     for (uint i = 0; i < this->node_cnt; i++) {
         for (uint j = 0; j <= i; j++) {
+
+
             this->dist_mat(i, j) = this->compute_dist(i, j);
             this->dist_mat(j, i) = this->dist_mat(i, j);
         }

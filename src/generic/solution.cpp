@@ -1,8 +1,8 @@
-//
-// Created by honza on 21.11.21.
-//
 #include <iostream>
 #include "solution.hpp"
+
+using permutator::fitness_t;
+using nlohmann::json;
 
 Solution::Solution() = default;
 
@@ -23,7 +23,7 @@ Solution::Solution(uint node_cnt) {
  * Initialize a solution based on given permutation.
  * Fitness is not evaluated from scratch.
  */
-Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible) {
+Solution::Solution(uint node_cnt, std::vector<uint> &perm, fitness_t fit, bool is_feasible) {
     this->frequency.reserve(node_cnt);
     this->permutation = std::move(perm);
     this->fitness = fit;
@@ -36,9 +36,9 @@ Solution::Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_fea
 /*
  * Initialize a solution based on given permutation.
  */
-Solution::Solution(vector<uint> &perm, Instance &instance) {
+Solution::Solution(std::vector<uint> &perm, Instance &instance) {
     this->permutation = perm;
-    this->frequency = vector<uint>(instance.node_cnt, 0);
+    this->frequency = std::vector<uint>(instance.node_cnt, 0);
     for (auto id:this->permutation) {
         this->frequency[id]++;
     }

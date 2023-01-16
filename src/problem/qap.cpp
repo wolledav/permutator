@@ -1,8 +1,6 @@
-//
-// Created by honza on 05.12.21.
-//
-
 #include "qap.hpp"
+
+using std::vector;
 
 QAPInstance::QAPInstance(const char *path, uint count)
  : Instance(generate_name(path, "qap"), count, 1, 1){
@@ -25,7 +23,7 @@ void QAPInstance::read(const char *path) {
             ifs >> dist_mat(i, j);
 }
 
-bool QAPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fitness) {
+bool QAPInstance::compute_fitness(const vector<uint> &permutation, permutator::fitness_t *fitness) {
     *fitness = 0;
     if (permutation.size() == this->node_cnt) {
         for (uint i = 0; i < this->node_cnt; i++) {

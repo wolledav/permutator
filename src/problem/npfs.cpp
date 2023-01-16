@@ -1,8 +1,9 @@
-//
-// Created by honza on 16.02.22.
-//
-
 #include "npfs.hpp"
+
+using std::vector;
+using std::string;
+using permutator::fitness_t;
+using boost::format;
 
 NPFSInstance::NPFSInstance(const string& path, uint jobs, uint machines)
         : Instance(generate_name(path, "npfs"), jobs, machines, machines){

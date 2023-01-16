@@ -1,9 +1,4 @@
-//
-// Created by honza on 21.11.21.
-//
-
-#ifndef METAOPT_SOLUTION_H
-#define METAOPT_SOLUTION_H
+#pragma once
 
 #include <vector>
 #include <limits>
@@ -12,26 +7,23 @@
 #include "../utils.hpp"
 #include "instance.hpp"
 
-using std::vector;
-using namespace metaopt;
-
 class Solution
 {
 public:
-    fitness_t fitness;
+    permutator::fitness_t fitness;
     bool is_feasible = false;
-    vector<uint> permutation;
-    vector<uint> frequency;
+    std::vector<uint> permutation;
+    std::vector<uint> frequency;
 
     // Constructors
     Solution();
     explicit Solution(uint node_cnt);
-    Solution(vector<uint> &perm, Instance &instance);
-    Solution(uint node_cnt, vector<uint> &perm, fitness_t fit, bool is_feasible);
+    Solution(std::vector<uint> &perm, Instance &instance);
+    Solution(uint node_cnt, std::vector<uint> &perm, permutator::fitness_t fit, bool is_feasible);
 
     // Utils
     uint getSize() const {return this->permutation.size();}
-    void save_to_json(json& obj);
+    void save_to_json(nlohmann::json& obj);
     void print();
 
     // operator overloads
@@ -42,5 +34,3 @@ public:
     bool operator>= (const Solution& other) const;
     bool operator[] (uint idx);
 };
-
-#endif //METAOPT_SOLUTION_H

@@ -17,28 +17,24 @@
 #include "solution.hpp"
 #include "utils.hpp"
 
-using boost::format;
-using std::pair;
-using std::vector;
-using std::string;
 
 class LS_optimizer
 {
     private:
-        json config;
+        nlohmann::json config;
         uint timeout_s;
         std::chrono::steady_clock::time_point start, last_improvement;
         Instance* instance;
         Solution initial_solution, current_solution, best_known_solution;
         std::mt19937 *rng;
-        vector<string> operation_list;
-        vector<string> perturbation_list;
+        std::vector<std::string> operation_list;
+    std::vector<std::string> perturbation_list;
         std::function<void()> construction;
         std::function<void()> metaheuristic;
         std::function<void()> local_search;
         std::basic_ostream<char> *log_stream = nullptr;
-        vector<pair<long, fitness_t>> steps;
-        const std::map<string, std::function<bool()>> operation_map = {
+    std::vector<std::pair<long, permutator::fitness_t>> steps;
+        const std::map<std::string, std::function<bool()>> operation_map = {
             {"insert_1",      [this](){return this->insert1();}},
             {"remove_1",      [this](){return this->remove1();}},
             {"two_opt",       [this](){return this->two_opt();}},
@@ -79,7 +75,7 @@ class LS_optimizer
             {"move_all_by_4",    [this](){return this->move_all(4);}},
             {"move_all_by_10",    [this](){return this->move_all(10);}},
         };
-        const std::map<string, std::function<void(uint)>> perturbation_map = {
+        const std::map<std::string, std::function<void(uint)>> perturbation_map = {
             {"double_bridge",        [this](uint k){this->double_bridge(k, true);}},
             {"random_double_bridge", [this](uint k){this->double_bridge(k, false);}},
             {"reinsert",             [this](uint k){this->reinsert(k);}},
@@ -118,28 +114,28 @@ class LS_optimizer
         void basicVNS();
         void calibratedVNS();
         // Utils
-        void perturbation_call(const string &perturbation_name, uint k);
-        bool operation_call(const string &operation_name);
+        void perturbation_call(const std::string &perturbation_name, uint k);
+        bool operation_call(const std::string &operation_name);
         long get_runtime();
         bool timeout();
         void random_reverse(std::vector<uint>::iterator, std::vector<uint>::iterator);
-        void print_operation(const string& msg);
+        void print_operation(const std::string& msg);
         void print_result(bool update);
     public:
-        std::map<string, std::pair<uint, uint>> operation_histogram = {};
+        std::map<std::string, std::pair<uint, uint>> operation_histogram = {};
         // Initialization
-        explicit LS_optimizer(Instance* inst, json config, uint seed=0);
+        explicit LS_optimizer(Instance* inst, nlohmann::json config, uint seed=0);
         ~LS_optimizer() = default;
         static std::mt19937* init_rng(uint seed);
         void setLogger(std::basic_ostream<char>& logs);
-        void setInitSolution(vector<uint> init_solution);
-        void setConstruction(const string& constr);
-        void setMetaheuristic(const string& meta);
-        void setLocalSearch(const string& loc_method);
-        void setOperators(const vector<string>& operations);
-        void setPerturbations(const vector<string>& perturbations);
+        void setInitSolution(std::vector<uint> init_solution);
+        void setConstruction(const std::string& constr);
+        void setMetaheuristic(const std::string& meta);
+        void setLocalSearch(const std::string& loc_method);
+        void setOperators(const std::vector<std::string>& operations);
+        void setPerturbations(const std::vector<std::string>& perturbations);
         void run();
         // Output
         Solution getSolution() {return this->best_known_solution;}
-        void save_to_json(json& container);
+        void save_to_json(nlohmann::json& container);
 };

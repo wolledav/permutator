@@ -1,9 +1,11 @@
-//
-// Created by honza on 11.03.22.
-//
 #include "sudoku.hpp"
 
-SudokuInstance::SudokuInstance(const string& path, uint nodes)
+using std::vector;
+using permutator::fitness_t;
+using boost::format;
+using boost::numeric::ublas::matrix;
+
+SudokuInstance::SudokuInstance(const std::string& path, uint nodes)
         : Instance(generate_name(path, "sudoku"), nodes, nodes, nodes) {
     this->grid.resize(nodes, nodes);
     this->read(path.c_str());
