@@ -4,10 +4,10 @@
 
 #include "generic/LS_optimizer.hpp"
 #include "problem/cvrp.hpp"
-#include "lib/tinyxml/tinyxml.h"
 
 using std::string;
 using std::vector;
+using nlohmann::json;
 
 void parse_filename(string name, uint *N, uint *k) {
     int start, i, len = 0;

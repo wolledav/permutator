@@ -1,6 +1,3 @@
-//
-// Created by honza on 12.12.21.
-//
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <fstream>

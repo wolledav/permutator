@@ -1,7 +1,3 @@
-//
-// Created by wolledav on 24.8.22.
-//
-
 #include <iostream>
 #include <string>
 
@@ -9,6 +5,7 @@
 #include "problem/scp.hpp"
 
 using std::string;
+using nlohmann::json;
 
 void show_usage(){
     std::cout << "Usage: scp_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
@@ -19,7 +16,7 @@ int main (int argc, char *argv[]) {
     string data_path, output_path, conf_path, init_path;
     std::ofstream log_file, output_file;
     int opt;
-    json config, output;
+    nlohmann::json config, output;
 
     // Parse arguments
     while ((opt = getopt(argc, argv, "d:t:s:o:c:i:")) != -1) {

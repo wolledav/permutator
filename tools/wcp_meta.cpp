@@ -1,7 +1,3 @@
-//
-// Created by wolledav on 24.8.22.
-//
-
 #include <iostream>
 #include <string>
 
@@ -9,6 +5,7 @@
 #include "problem/wcp.hpp"
 
 using std::string;
+using nlohmann::json;
 
 void show_usage(){
     std::cout << "Usage: wcp_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path [-i] initial solution path\n";

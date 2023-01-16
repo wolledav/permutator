@@ -1,6 +1,3 @@
-//
-// Created by honza on 11.03.22.
-//
 #include <iostream>
 #include <string>
 #include <boost/algorithm/string.hpp>
@@ -10,6 +7,7 @@
 
 using std::string;
 using std::vector;
+using nlohmann::json;
 
 void parse_filename(string name, uint *N) {
     int start, i, len = 0;
