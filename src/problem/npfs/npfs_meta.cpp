@@ -3,13 +3,13 @@
 #include <boost/algorithm/string.hpp>
 
 #include "generic/optimizer.hpp"
-#include "problem/qap.hpp"
+#include "src/problem/npfs/npfs.hpp"
 
 using std::string;
 using std::vector;
 using nlohmann::json;
 
-void parse_filename(string name, uint *N) {
+void parse_filename(string name, uint *N, uint *M) {
     int start, i, len = 0;
     string temp;
     for (i = 0; name[i] < '0' || name[i] > '9'; i++) {}
@@ -17,17 +17,22 @@ void parse_filename(string name, uint *N) {
     for (; name[i] >= '0' && name[i] <= '9'; i++, len++) {}
     temp = name.substr(start, len);
     *N = stoi(temp);
+    for (; name[i] < '0' || name[i] > '9'; i++) {}
+    start = i; len = 0;
+    for (; name[i] >= '0' && name[i] <= '9'; i++, len++) {}
+    temp = name.substr(start, len);
+    *M = stoi(temp);
 }
 
 void show_usage(){
-    std::cout << "Usage: qap_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
+    std::cout << "Usage: npfs_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
 }
 
 int main (int argc, char *argv[])
 {
-    uint node_cnt, seed = 0, timeout_s = 0;
+    uint job_cnt, machine_cnt, seed = 0, timeout_s = 0;
     string data_path, output_path, conf_path;
-    std::ofstream log_file, output_file;
+    std::ofstream output_file, log_file;
     int opt;
     json config, output;
     // Parse arguments
@@ -62,7 +67,7 @@ int main (int argc, char *argv[])
     if (!conf_path.empty()) {
         config = readJson(conf_path);
     } else {
-        config = Config::readDefaultConfig("qap");
+        config = Config::readDefaultConfig("npfs");
     }
 
     if (timeout_s != 0) {
@@ -70,8 +75,8 @@ int main (int argc, char *argv[])
     }
 
     string filename = getFilename(data_path);
-    parse_filename(filename, &node_cnt);
-    QAPInstance inst = QAPInstance(data_path.c_str(), node_cnt);
+    parse_filename(filename, &job_cnt, &machine_cnt);
+    NPFSInstance inst = NPFSInstance(data_path, job_cnt, machine_cnt);
     std::cout << "Solving " << inst.name << std::endl;
     Optimizer optimizer = Optimizer(&inst, config, seed);
     optimizer.run();

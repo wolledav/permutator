@@ -3,7 +3,7 @@
 #include <numeric>      // std::iota
 
 #include "generic/solution.hpp"
-#include "problem/npfs.hpp"
+#include "src/problem/npfs/npfs.hpp"
 #include "gurobi_c++.h"
 
 using namespace std;

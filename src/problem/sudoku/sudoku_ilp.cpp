@@ -20,7 +20,7 @@
 #include <sstream>
 
 #include "generic/solution.hpp"
-#include "problem/sudoku.hpp"
+#include "src/problem/sudoku/sudoku.hpp"
 #include "gurobi_c++.h"
 
 using namespace std;

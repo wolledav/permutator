@@ -3,7 +3,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include "generic/optimizer.hpp"
-#include "problem/sudoku.hpp"
+#include "src/problem/qap/qap.hpp"
 
 using std::string;
 using std::vector;
@@ -62,7 +62,7 @@ int main (int argc, char *argv[])
     if (!conf_path.empty()) {
         config = readJson(conf_path);
     } else {
-        config = Config::readDefaultConfig("sudoku");
+        config = Config::readDefaultConfig("qap");
     }
 
     if (timeout_s != 0) {
@@ -71,7 +71,7 @@ int main (int argc, char *argv[])
 
     string filename = getFilename(data_path);
     parse_filename(filename, &node_cnt);
-    SudokuInstance inst = SudokuInstance(data_path, node_cnt);
+    QAPInstance inst = QAPInstance(data_path.c_str(), node_cnt);
     std::cout << "Solving " << inst.name << std::endl;
     Optimizer optimizer = Optimizer(&inst, config, seed);
     optimizer.run();
@@ -86,4 +86,3 @@ int main (int argc, char *argv[])
     }
     return 0;
 }
-

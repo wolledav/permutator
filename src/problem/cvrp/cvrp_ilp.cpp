@@ -3,7 +3,7 @@
 #include <fstream>
 
 #include "generic/solution.hpp"
-#include "problem/cvrp.hpp"
+#include "src/problem/cvrp/cvrp.hpp"
 #include "lib/tinyxml/tinyxml.h"
 #include "gurobi_c++.h"
 

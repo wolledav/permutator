@@ -3,36 +3,31 @@
 #include <boost/algorithm/string.hpp>
 
 #include "generic/optimizer.hpp"
-#include "problem/cvrp.hpp"
+#include "src/problem/sudoku/sudoku.hpp"
 
 using std::string;
 using std::vector;
 using nlohmann::json;
 
-void parse_filename(string name, uint *N, uint *k) {
+void parse_filename(string name, uint *N) {
     int start, i, len = 0;
     string temp;
-    for (i = 0; name[i] != 'n'; i++) {}
-    start = i+1;
-    for (i++; name[i] >= '0' && name[i] <= '9'; i++, len++) {}
+    for (i = 0; name[i] < '0' || name[i] > '9'; i++) {}
+    start = i;
+    for (; name[i] >= '0' && name[i] <= '9'; i++, len++) {}
     temp = name.substr(start, len);
     *N = stoi(temp);
-    for (i++; name[i] != 'k'; i++) {}
-    start = i+1; len = 0;
-    for (i++; name[i] >= '0' && name[i] <= '9'; i++, len++) {}
-    temp = name.substr(start, len);
-    *k = stoi(temp);
 }
 
 void show_usage(){
-    std::cout << "Usage: cvrp_meta -d data_path [-c] config_path [-t] timeout(sec) [-s] seed [-o] output_file_path\n";
+    std::cout << "Usage: qap_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
 }
 
 int main (int argc, char *argv[])
 {
-    uint node_cnt, tours, seed = 0, timeout_s = 0;
+    uint node_cnt, seed = 0, timeout_s = 0;
     string data_path, output_path, conf_path;
-    std::ofstream output_file, log_file;
+    std::ofstream log_file, output_file;
     int opt;
     json config, output;
     // Parse arguments
@@ -59,34 +54,27 @@ int main (int argc, char *argv[])
                 exit(EXIT_FAILURE);
         }
     }
-
-    // Display usage instructions
     if (data_path.empty()) {
         show_usage();
         exit(EXIT_FAILURE);
     }
 
-    // Load config
     if (!conf_path.empty()) {
         config = readJson(conf_path);
     } else {
-        config = Config::readDefaultConfig("cvrp");
+        config = Config::readDefaultConfig("sudoku");
     }
 
-    // Rewrite timeout
     if (timeout_s != 0) {
         config["timeout"] = timeout_s;
     }
 
-    // Parse and solve instance
     string filename = getFilename(data_path);
-    parse_filename(filename, &node_cnt, &tours);
-    CVRPInstance inst = CVRPInstance(data_path.c_str(), node_cnt, tours);
+    parse_filename(filename, &node_cnt);
+    SudokuInstance inst = SudokuInstance(data_path, node_cnt);
     std::cout << "Solving " << inst.name << std::endl;
     Optimizer optimizer = Optimizer(&inst, config, seed);
     optimizer.run();
-
-    // Export solution
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {
         output_file.open(output_path);
@@ -97,4 +85,5 @@ int main (int argc, char *argv[])
         std::cout << sol.fitness << std::endl;
     }
     return 0;
-} 
+}
+

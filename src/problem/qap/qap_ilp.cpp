@@ -3,7 +3,7 @@
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
 #include "generic/solution.hpp"
-#include "problem/qap.hpp"
+#include "src/problem/qap/qap.hpp"
 #include "gurobi_c++.h"
 
 using namespace std;

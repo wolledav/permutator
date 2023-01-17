@@ -2,13 +2,13 @@
 #include <string>
 
 #include "generic/optimizer.hpp"
-#include "problem/scp.hpp"
+#include "src/problem/wcp/wcp.hpp"
 
 using std::string;
 using nlohmann::json;
 
 void show_usage(){
-    std::cout << "Usage: scp_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
+    std::cout << "Usage: wcp_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path [-i] initial solution path\n";
 }
 
 int main (int argc, char *argv[]) {
@@ -16,7 +16,7 @@ int main (int argc, char *argv[]) {
     string data_path, output_path, conf_path, init_path;
     std::ofstream log_file, output_file;
     int opt;
-    nlohmann::json config, output;
+    json config, output;
 
     // Parse arguments
     while ((opt = getopt(argc, argv, "d:t:s:o:c:i:")) != -1) {
@@ -55,7 +55,7 @@ int main (int argc, char *argv[]) {
     if (!conf_path.empty()) {
         config = readJson(conf_path);
     } else {
-        config = Config::readDefaultConfig("scp");
+        config = Config::readDefaultConfig("wcp");
     }
 
     if (timeout_s != 0) {
@@ -63,13 +63,13 @@ int main (int argc, char *argv[]) {
     }
 
     // Load instance
-    SCPInstance inst = SCPInstance(data_path.c_str());
+    WCPInstance inst = WCPInstance(data_path.c_str());
     Optimizer optimizer = Optimizer(&inst, config, seed);
 
     if (!init_path.empty()) {
         std::cout << "Initial solution read from " + init_path << std::endl;
         json data = readJson(init_path);
-        std::vector<uint> init_solution = data["solution"]["route"];
+        std::vector<uint> init_solution = data["solution"]["permutation"];
         if (std::find(init_solution.begin(), init_solution.end(), 0) == init_solution.end()) {
             std::cout << "Reindexing initial solution" << std::endl;
             for (auto &i:init_solution) i--;
@@ -85,7 +85,8 @@ int main (int argc, char *argv[]) {
     if (!output_path.empty()) {
         output_file.open(output_path);
         optimizer.saveToJson(output);
-        SCPInstance::export_perm_orig_ids(sol.permutation, output);
+        WCPInstance::export_perm_orig_ids(sol.permutation, output);
+        inst.export_walk_orig_ids(sol.permutation, output);
         output_file << output.dump(4);
     } else {
         sol.print();

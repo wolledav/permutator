@@ -37,9 +37,9 @@ class Optimizer
         const std::map<std::string, std::function<bool()>> operation_map = {
             {"insert_1",      [this](){return this->insert1();}},
             {"remove_1",      [this](){return this->remove1();}},
-            {"twoOpt",       [this](){return this->twoOpt();}},
-            {"exchangeIds",  [this](){return this->exchangeIds();}},
-            {"exchangeNIds",  [this](){return this->exchangeNIds();}},
+            {"two_opt",       [this](){return this->twoOpt();}},
+            {"exchange_ids",  [this](){return this->exchangeIds();}},
+            {"exchange_n_ids",  [this](){return this->exchangeNIds();}},
             {"exchange_1_1",  [this](){return this->exchange(1, 1, false);}},
             {"exchange_1_2",  [this](){return this->exchange(1, 2, false);}},
             {"exchange_2_2",  [this](){return this->exchange(2, 2, false);}},

@@ -25,12 +25,12 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 # add the executables
 add_executable(cvrp_meta
-        tools/cvrp_meta.cpp
+        src/problem/cvrp/cvrp_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/cvrp.cpp
+        src/problem/cvrp/cvrp.cpp
         lib/tinyxml/tinyxml.cpp
         lib/tinyxml/tinyxmlerror.cpp
         lib/tinyxml/tinyxmlparser.cpp
@@ -38,47 +38,47 @@ add_executable(cvrp_meta
         )
 
 add_executable(qap_meta
-        tools/qap_meta.cpp
+        src/problem/qap/qap_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/qap.cpp
+        src/problem/qap/qap.cpp
         )
 
 add_executable(npfs_meta
-        tools/npfs_meta.cpp
+        src/problem/npfs/npfs_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/npfs.cpp
+        src/problem/npfs/npfs.cpp
         )
 
 add_executable(sudoku_meta
-        tools/sudoku_meta.cpp
+        src/problem/sudoku/sudoku_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/sudoku.cpp
+        src/problem/sudoku/sudoku.cpp
         )
 
 add_executable(scp_meta
-        tools/scp_meta.cpp
+        src/problem/scp/scp_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/scp.cpp)
+        src/problem/scp/scp.cpp)
 
 add_executable(wcp_meta
-        tools/wcp_meta.cpp
+        src/problem/wcp/wcp_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/wcp.cpp)
+        src/problem/wcp/wcp.cpp)
 
 target_include_directories(cvrp_meta PUBLIC
                            "${PROJECT_BINARY_DIR}/../"
