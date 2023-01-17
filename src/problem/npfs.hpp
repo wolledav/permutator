@@ -20,7 +20,7 @@ public:
 
     NPFSInstance(const std::string& path, uint jobs, uint machines);
     ~NPFSInstance() = default;
-    bool compute_fitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) override;
+    bool computeFitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) override;
     void read(const char* path);
     void print_nodes();
     void print_solution(Solution *solution, std::basic_ostream<char>& outf = std::cout) const;

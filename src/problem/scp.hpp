@@ -26,7 +26,7 @@ public:
     static void export_perm_orig_ids(std::vector<uint>& perm, nlohmann::json& container);
 
     explicit SCPInstance(const char* path);
-    bool compute_fitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) override;
+    bool computeFitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) override;
 
 };
 

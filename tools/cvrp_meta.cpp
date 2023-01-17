@@ -2,7 +2,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "generic/LS_optimizer.hpp"
+#include "generic/optimizer.hpp"
 #include "problem/cvrp.hpp"
 
 using std::string;
@@ -68,9 +68,9 @@ int main (int argc, char *argv[])
 
     // Load config
     if (!conf_path.empty()) {
-        config = read_json(conf_path);
+        config = readJson(conf_path);
     } else {
-        config = Config::read_default_config("cvrp");
+        config = Config::readDefaultConfig("cvrp");
     }
 
     // Rewrite timeout
@@ -79,18 +79,18 @@ int main (int argc, char *argv[])
     }
 
     // Parse and solve instance
-    string filename = get_filename(data_path);
+    string filename = getFilename(data_path);
     parse_filename(filename, &node_cnt, &tours);
     CVRPInstance inst = CVRPInstance(data_path.c_str(), node_cnt, tours);
     std::cout << "Solving " << inst.name << std::endl;
-    LS_optimizer optimizer = LS_optimizer(&inst, config, seed);
+    Optimizer optimizer = Optimizer(&inst, config, seed);
     optimizer.run();
 
     // Export solution
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {
         output_file.open(output_path);
-        optimizer.save_to_json(output);
+        optimizer.saveToJson(output);
         output_file << output.dump(4);
     } else {
         inst.print_solution(&sol, std::cout);

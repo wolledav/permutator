@@ -23,7 +23,7 @@ public:
 
     // Utils
     uint getSize() const {return this->permutation.size();}
-    void save_to_json(nlohmann::json& obj);
+    void saveToJson(nlohmann::json& obj);
     void print();
 
     // operator overloads

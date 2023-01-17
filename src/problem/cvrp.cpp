@@ -11,7 +11,7 @@ using permutator::fitness_t;
 // ----------------------------------------------------------------------
 
 CVRPInstance::CVRPInstance(const char* path, uint count, uint tours)
-        : Instance(generate_name(path, "cvrp"), count, 1, 1) {
+        : Instance(generateName(path, "cvrp"), count, 1, 1) {
     this->quantities = new uint[count];
     this->positions = new coords[count];
     this->tours = tours;
@@ -90,7 +90,7 @@ void CVRPInstance::parseDataFrom(const char* path) {
 	}
 }
 
-bool CVRPInstance::compute_fitness(const vector<uint> &permutation, fitness_t* fitness) {
+bool CVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t* fitness) {
     uint curr_tour = 0, idx = 0;
     uint cargo_load = this->car_capacity;
     uint unsatisfied = this->total_requests;

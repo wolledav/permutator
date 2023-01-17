@@ -6,7 +6,7 @@ using boost::format;
 using boost::numeric::ublas::matrix;
 
 SudokuInstance::SudokuInstance(const std::string& path, uint nodes)
-        : Instance(generate_name(path, "sudoku"), nodes, nodes, nodes) {
+        : Instance(generateName(path, "sudoku"), nodes, nodes, nodes) {
     this->grid.resize(nodes, nodes);
     this->read(path.c_str());
 }
@@ -44,7 +44,7 @@ void SudokuInstance::fill_grid(matrix<int>& target_grid, const vector<uint> &per
     }
 }
 
-bool SudokuInstance::compute_fitness(const vector<uint> &permutation, fitness_t* fitness) {
+bool SudokuInstance::computeFitness(const vector<uint> &permutation, fitness_t* fitness) {
     uint si, sj, i, j;
     matrix<int> new_grid(this->grid);
     this->fill_grid(new_grid, permutation);

@@ -1,7 +1,3 @@
-//
-// Created by honza on 11.03.22.
-//
-
 /* Copyright 2022, Gurobi Optimization, LLC */
 /*
   Sudoku example.

@@ -26,7 +26,7 @@ std::pair<uint, uint> get_edge(uint id1, uint id2) {
 }
 
 SCPInstance::SCPInstance(const char *path) : Instance() {
-    json data = read_json(path);
+    json data = readJson(path);
 
     // Fill Instance attributes
     this->type = "scp";
@@ -67,7 +67,7 @@ SCPInstance::SCPInstance(const char *path) : Instance() {
     }
 }
 
-bool SCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fitness) {
+bool SCPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fitness) {
     *fitness = 0;
     bool valid = true;
 

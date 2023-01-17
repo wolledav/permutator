@@ -1,7 +1,3 @@
-//
-// Created by honza on 12.12.21.
-//
-
 #include <iostream>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>

@@ -22,8 +22,8 @@ class Instance
         std::string name, type = "no-type";
         uint fitness_evals = 0;
 
-        virtual bool compute_fitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) = 0;
-        permutator::fitness_t get_lb_penalty(const std::vector<uint> &frequency);
-        bool frequency_in_bounds(const std::vector<uint> &frequency);
+        virtual bool computeFitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) = 0;
+        permutator::fitness_t getLBPenalty(const std::vector<uint> &frequency);
+        bool FrequencyInBounds(const std::vector<uint> &frequency);
 
 };

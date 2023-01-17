@@ -22,7 +22,7 @@ void WCPInstance::export_perm_orig_ids(vector<uint> &perm, json &container) {
 }
 
 WCPInstance::WCPInstance(const char *path) : Instance() {
-    json data = read_json(path);
+    json data = readJson(path);
 
     // Fill Instance attributes
     this->type = "wcp";
@@ -51,7 +51,7 @@ WCPInstance::WCPInstance(const char *path) : Instance() {
     }
 }
 
-bool WCPInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fitness) {
+bool WCPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fitness) {
     *fitness = 0;
     bool valid = true;
 

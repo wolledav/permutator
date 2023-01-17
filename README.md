@@ -56,11 +56,11 @@ cp libgurobi_c++.a ../../lib/
 ### Perturbations
 | Name            | Parameters     |
 |-----------------|----------------|
-| double_bridge   | k, reverse_all |
+| doubleBridge   | k, reverse_all |
 | reinsert        | k              |
-| random_swap     | k              |
-| random_move     | k              |
-| random_move_all | k              |
+| randomSwap     | k              |
+| randomMove     | k              |
+| randomMoveAll | k              |
 
 ### Local search heuristics
 | Name            | Parameters | Neighborhood order |
@@ -79,9 +79,9 @@ cp libgurobi_c++.a ../../lib/
 | relocate          | x, reverse    |
 | exchange          | x, y, reverse |
 | centered exchange | x             |
-| move_all          | x             |
-| exchange_ids      | none          |
-| exchange_n_ids    | none          |
+| moveAll          | x             |
+| exchangeIds      | none          |
+| exchangeNIds    | none          |
 
 ### Construction procedures
 | Name             | Parameters |

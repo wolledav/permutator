@@ -1,7 +1,3 @@
-//
-// Created by honza on 21.2.22.
-//
-
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <numeric>      // std::iota

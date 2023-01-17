@@ -6,7 +6,7 @@ using permutator::fitness_t;
 using boost::format;
 
 NPFSInstance::NPFSInstance(const string& path, uint jobs, uint machines)
-        : Instance(generate_name(path, "npfs"), jobs, machines, machines){
+        : Instance(generateName(path, "npfs"), jobs, machines, machines){
     this->big_m = 0;
     this->job_mat.resize(machines, jobs);
     this->read(path.c_str());
@@ -34,7 +34,7 @@ void NPFSInstance::read(const char *path) {
     this->empty_machine_penalty = 3*this->job_cnt*this->big_m;
 }
 
-bool NPFSInstance::compute_fitness(const vector<uint> &permutation, fitness_t *fitness) {
+bool NPFSInstance::computeFitness(const vector<uint> &permutation, fitness_t *fitness) {
     uint perm_idx, end, curr_job, prev_job, last_machine = 0;
     vector<bool> processed_jobs (this->job_cnt, false);
     *fitness = 0;

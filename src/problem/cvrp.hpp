@@ -28,7 +28,7 @@ class CVRPInstance: public Instance
 
         CVRPInstance(const char* path, uint count, uint tours);
         ~CVRPInstance();
-        bool compute_fitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) override;
+        bool computeFitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) override;
         void parseDataFrom(const char* path);
         void print_nodes();
         void print_solution(Solution *solution, std::basic_ostream<char>& outf = std::cout);

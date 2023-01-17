@@ -27,7 +27,7 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_executable(cvrp_meta
         tools/cvrp_meta.cpp
         src/config.cpp
-        src/generic/LS_optimizer.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/cvrp.cpp
@@ -40,7 +40,7 @@ add_executable(cvrp_meta
 add_executable(qap_meta
         tools/qap_meta.cpp
         src/config.cpp
-        src/generic/LS_optimizer.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/qap.cpp
@@ -49,7 +49,7 @@ add_executable(qap_meta
 add_executable(npfs_meta
         tools/npfs_meta.cpp
         src/config.cpp
-        src/generic/LS_optimizer.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/npfs.cpp
@@ -58,7 +58,7 @@ add_executable(npfs_meta
 add_executable(sudoku_meta
         tools/sudoku_meta.cpp
         src/config.cpp
-        src/generic/LS_optimizer.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/sudoku.cpp
@@ -67,7 +67,7 @@ add_executable(sudoku_meta
 add_executable(scp_meta
         tools/scp_meta.cpp
         src/config.cpp
-        src/generic/LS_optimizer.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/scp.cpp)
@@ -75,7 +75,7 @@ add_executable(scp_meta
 add_executable(wcp_meta
         tools/wcp_meta.cpp
         src/config.cpp
-        src/generic/LS_optimizer.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/wcp.cpp)

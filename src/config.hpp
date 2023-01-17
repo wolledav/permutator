@@ -25,5 +25,5 @@ class Config {
 private:
 public:
     explicit Config() = default;
-    static nlohmann::json read_default_config(const std::string& problem_type);
+    static nlohmann::json readDefaultConfig(const std::string& problem_type);
 };

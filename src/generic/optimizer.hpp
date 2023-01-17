@@ -18,7 +18,7 @@
 #include "utils.hpp"
 
 
-class LS_optimizer
+class Optimizer
 {
     private:
         nlohmann::json config;
@@ -28,18 +28,18 @@ class LS_optimizer
         Solution initial_solution, current_solution, best_known_solution;
         std::mt19937 *rng;
         std::vector<std::string> operation_list;
-    std::vector<std::string> perturbation_list;
+        std::vector<std::string> perturbation_list;
         std::function<void()> construction;
         std::function<void()> metaheuristic;
         std::function<void()> local_search;
         std::basic_ostream<char> *log_stream = nullptr;
-    std::vector<std::pair<long, permutator::fitness_t>> steps;
+        std::vector<std::pair<long, permutator::fitness_t>> steps;
         const std::map<std::string, std::function<bool()>> operation_map = {
             {"insert_1",      [this](){return this->insert1();}},
             {"remove_1",      [this](){return this->remove1();}},
-            {"two_opt",       [this](){return this->two_opt();}},
-            {"exchange_ids",  [this](){return this->exchange_ids();}},
-            {"exchange_n_ids",  [this](){return this->exchange_n_ids();}},
+            {"twoOpt",       [this](){return this->twoOpt();}},
+            {"exchangeIds",  [this](){return this->exchangeIds();}},
+            {"exchangeNIds",  [this](){return this->exchangeNIds();}},
             {"exchange_1_1",  [this](){return this->exchange(1, 1, false);}},
             {"exchange_1_2",  [this](){return this->exchange(1, 2, false);}},
             {"exchange_2_2",  [this](){return this->exchange(2, 2, false);}},
@@ -55,11 +55,11 @@ class LS_optimizer
             {"rexchange_3_3", [this](){return this->exchange(3, 3, true);}},
             {"rexchange_3_4", [this](){return this->exchange(3, 4, true);}},
             {"rexchange_4_4", [this](){return this->exchange(4, 4, true);}},
-            {"centered_exchange_1",    [this](){return this->centered_exchange(1);}},
-            {"centered_exchange_2",    [this](){return this->centered_exchange(2);}},
-            {"centered_exchange_3",    [this](){return this->centered_exchange(3);}},
-            {"centered_exchange_4",    [this](){return this->centered_exchange(4);}},
-            {"centered_exchange_5",    [this](){return this->centered_exchange(5);}},
+            {"centered_exchange_1",    [this](){return this->centeredExchange(1);}},
+            {"centered_exchange_2",    [this](){return this->centeredExchange(2);}},
+            {"centered_exchange_3",    [this](){return this->centeredExchange(3);}},
+            {"centered_exchange_4",    [this](){return this->centeredExchange(4);}},
+            {"centered_exchange_5",    [this](){return this->centeredExchange(5);}},
             {"relocate_1",    [this](){return this->relocate(1, false);}},
             {"relocate_2",    [this](){return this->relocate(2, false);}},
             {"relocate_3",    [this](){return this->relocate(3, false);}},
@@ -69,40 +69,40 @@ class LS_optimizer
             {"rrelocate_3",   [this](){return this->relocate(3, true);}},
             {"rrelocate_4",   [this](){return this->relocate(4, true);}},
             {"rrelocate_5",   [this](){return this->relocate(5, true);}},
-            {"move_all_by_1",    [this](){return this->move_all(1);}},
-            {"move_all_by_2",    [this](){return this->move_all(2);}},
-            {"move_all_by_3",    [this](){return this->move_all(3);}},
-            {"move_all_by_4",    [this](){return this->move_all(4);}},
-            {"move_all_by_10",    [this](){return this->move_all(10);}},
+            {"move_all_by_1",    [this](){return this->moveAll(1);}},
+            {"move_all_by_2",    [this](){return this->moveAll(2);}},
+            {"move_all_by_3",    [this](){return this->moveAll(3);}},
+            {"move_all_by_4",    [this](){return this->moveAll(4);}},
+            {"move_all_by_10",    [this](){return this->moveAll(10);}},
         };
         const std::map<std::string, std::function<void(uint)>> perturbation_map = {
-            {"double_bridge",        [this](uint k){this->double_bridge(k, true);}},
-            {"random_double_bridge", [this](uint k){this->double_bridge(k, false);}},
+            {"doubleBridge",        [this](uint k){ this->doubleBridge(k, true);}},
+            {"random_double_bridge", [this](uint k){ this->doubleBridge(k, false);}},
             {"reinsert",             [this](uint k){this->reinsert(k);}},
-            {"random_move_all",      [this](uint k){this->random_move_all(k);}},
-            {"random_move",          [this](uint k){this->random_move(k);}},
-            {"random_swap",          [this](uint k){this->random_swap(k);}}
+            {"randomMoveAll",      [this](uint k){ this->randomMoveAll(k);}},
+            {"randomMove",          [this](uint k){ this->randomMove(k);}},
+            {"randomSwap",          [this](uint k){ this->randomSwap(k);}}
         };
         // Initial solution constructions
-        void construct_greedy();
-        void construct_random();
-        void construct_random_replicate();
+        void constructGreedy();
+        void constructRandom();
+        void constructRandomReplicate();
         // Local search operators
         bool insert1();
         bool remove1();
         bool relocate(uint x, bool reverse=false);
         bool exchange(uint x, uint y, bool reverse=false);
-        bool centered_exchange(uint x);
-        bool move_all(uint x);
-        bool exchange_ids();
-        bool exchange_n_ids();
-        bool two_opt();
+        bool centeredExchange(uint x);
+        bool moveAll(uint x);
+        bool exchangeIds();
+        bool exchangeNIds();
+        bool twoOpt();
         // Perturbations
-        void double_bridge(uint k, bool reverse_all);
+        void doubleBridge(uint k, bool reverse_all);
         void reinsert(uint k);
-        void random_swap(uint k);
-        void random_move(uint k);
-        void random_move_all(uint k);
+        void randomSwap(uint k);
+        void randomMove(uint k);
+        void randomMoveAll(uint k);
         // Local search heuristics
         void basicVND();
         void pipeVND();
@@ -114,19 +114,19 @@ class LS_optimizer
         void basicVNS();
         void calibratedVNS();
         // Utils
-        void perturbation_call(const std::string &perturbation_name, uint k);
-        bool operation_call(const std::string &operation_name);
-        long get_runtime();
+        void perturbationCall(const std::string &perturbation_name, uint k);
+        bool operationCall(const std::string &operation_name);
+        long getRuntime();
         bool timeout();
-        void random_reverse(std::vector<uint>::iterator, std::vector<uint>::iterator);
-        void print_operation(const std::string& msg);
-        void print_result(bool update);
+        void randomReverse(std::vector<uint>::iterator, std::vector<uint>::iterator);
+        void printOperation(const std::string& msg);
+        void printResult(bool update);
     public:
         std::map<std::string, std::pair<uint, uint>> operation_histogram = {};
         // Initialization
-        explicit LS_optimizer(Instance* inst, nlohmann::json config, uint seed=0);
-        ~LS_optimizer() = default;
-        static std::mt19937* init_rng(uint seed);
+        explicit Optimizer(Instance* inst, nlohmann::json config, uint seed=0);
+        ~Optimizer() = default;
+        static std::mt19937* initRng(uint seed);
         void setLogger(std::basic_ostream<char>& logs);
         void setInitSolution(std::vector<uint> init_solution);
         void setConstruction(const std::string& constr);
@@ -137,5 +137,5 @@ class LS_optimizer
         void run();
         // Output
         Solution getSolution() {return this->best_known_solution;}
-        void save_to_json(nlohmann::json& container);
+        void saveToJson(nlohmann::json& container);
 };

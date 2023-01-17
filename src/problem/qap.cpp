@@ -3,7 +3,7 @@
 using std::vector;
 
 QAPInstance::QAPInstance(const char *path, uint count)
- : Instance(generate_name(path, "qap"), count, 1, 1){
+ : Instance(generateName(path, "qap"), count, 1, 1){
     this->dist_mat.resize(count, count);
     this->flow_mat.resize(count, count);
     read(path);
@@ -23,7 +23,7 @@ void QAPInstance::read(const char *path) {
             ifs >> dist_mat(i, j);
 }
 
-bool QAPInstance::compute_fitness(const vector<uint> &permutation, permutator::fitness_t *fitness) {
+bool QAPInstance::computeFitness(const vector<uint> &permutation, permutator::fitness_t *fitness) {
     *fitness = 0;
     if (permutation.size() == this->node_cnt) {
         for (uint i = 0; i < this->node_cnt; i++) {

@@ -42,15 +42,15 @@ Solution::Solution(std::vector<uint> &perm, Instance &instance) {
     for (auto id:this->permutation) {
         this->frequency[id]++;
     }
-    this->is_feasible = instance.compute_fitness(permutation, &this->fitness) &&
-                               instance.frequency_in_bounds(this->frequency);
+    this->is_feasible = instance.computeFitness(permutation, &this->fitness) &&
+            instance.FrequencyInBounds(this->frequency);
 
 }
 
-void Solution::save_to_json(json& container) {
-    container["solution"]["fitness"] = this->fitness;
-    container["solution"]["is_feasible"] = this->is_feasible;
-    container["solution"]["permutation"] = this->permutation;
+void Solution::saveToJson(json& obj) {
+    obj["solution"]["fitness"] = this->fitness;
+    obj["solution"]["is_feasible"] = this->is_feasible;
+    obj["solution"]["permutation"] = this->permutation;
 }
 
 void Solution::print() {
