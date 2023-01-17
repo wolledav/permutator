@@ -981,7 +981,6 @@ void LS_optimizer::basicVNS() {
     uint min_k = config["bvns_min_k"].get<uint>();
     uint max_k = config["bvns_max_k"].get<uint>();
     uint k = min_k;
-
     Solution current_best_solution = this->current_solution; // needed, as this->best_known_solution is updated internally
     while (!this->timeout()) {
         // Terminate, if stop_on_feasible set on true

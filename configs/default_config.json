@@ -139,10 +139,10 @@
     "bvns_min_k": 4,
     "bvns_max_k": 8,
     "cvns_it_per_k": 5,
-    "ils_k": 4,
+    "ils_k": 8,
     "construction": "random",
     "metaheuristic": "BVNS",
-    "local_search": "PVND",
+    "local_search": "RPVND",
     "operators": [
       "insert_1",
       "remove_1",
@@ -150,13 +150,13 @@
       "exchange_1_1",
       "exchange_1_2",
       "exchange_2_2",
+      "exchange_2_3",
       "exchange_3_3",
-      "exchange_3_4",
-      "exchange_4_4",
+      "rexchange_1_2",
       "rexchange_2_2",
       "rexchange_2_3",
-      "rexchange_4_4"
+      "rexchange_3_3"
     ],
-    "perturbation" : ["double_bridge"]
+    "perturbation" : ["random_double_bridge"]
   }
 }

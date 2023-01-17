@@ -4,17 +4,18 @@
 #include "generic/solution.hpp"
 #include <vector>
 #include <boost/numeric/ublas/matrix.hpp>
+#include <boost/format.hpp>
 
-#define CAPACITY_PENALTY 50000
-#define ENERGY_PENALTY 200000
+#define CAPACITY_PENALTY 100000
+#define ENERGY_PENALTY 50000
 #define INVALID_SOL_PENALTY 1000000
 
 using namespace std;
 
 struct Point{
     float x, y;
-    float distance(const Point &p) const {
-        return sqrt((this->x - p.x)*(this->x - p.x) + (this->x - p.y)*(this->x - p.y)); }
+    float distance(const Point &p) {
+        return sqrt((this->x - p.x)*(this->x - p.x) + (this->y - p.y)*(this->y - p.y)); }
 };
 
 
@@ -52,11 +53,15 @@ class EVRPInstance: public Instance
         float energy_req(uint from, uint to) { return this->dist_mat(from, to)*this->energy_cons; }
         float tour_dist(vector<uint> tour);
 
-        vector<uint> zga_repair(const vector<uint> &permutation);
+        vector<uint> zga_repair(vector<uint> &tsp_tour);
 
         void get_to_target(vector<uint> &ervp_tour, uint target);
-        bool closest_station_in_reach(uint &best_station, uint closest_to, uint in_reach, float charge);
-        uint closest_station (uint closest_to);
+        uint closest_station_in_reach(uint in_reach, uint closest_to, float charge);
+        bool station_reachable(uint in_reach, float charge);
+        uint closest_station(uint closest_to);
+
+        bool is_depot(uint idx) { return (idx == this->depot_id); }
+        bool is_recharge(uint idx) { return (this->is_depot(idx) || this->station[idx]); }
 
     public:
         string type = "evrp";

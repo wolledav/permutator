@@ -36,6 +36,8 @@ for i in range(0, len(params), 2):
         config[param] = int(value)
     elif param == "stop_on_feasible":
         config[param] = bool(int(value))
+    elif param == "use_repair_func":
+        config[param] = bool(int(value))
     else:
         print(sys.argv[0], "unknown parameter:", param)
 

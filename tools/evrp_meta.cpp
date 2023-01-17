@@ -82,6 +82,9 @@ int main (int argc, char *argv[])
     } else {
         std::cout << sol.fitness << std::endl;
     }
-    inst.print_solution(&sol, std::cout);
+
+    if (STDOUT_ENABLED) {
+        inst.print_solution(&sol, std::cout);
+    }
     return 0;
 } 
