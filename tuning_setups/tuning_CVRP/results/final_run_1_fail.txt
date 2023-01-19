@@ -1,0 +1,64 @@
+#------------------------------------------------------------------------------
+# irace: An implementation in R of (Elitist) Iterated Racing
+# Version: 3.4.1.9fcaeaf
+# Copyright (C) 2010-2020
+# Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+# Jeremie Dubois-Lacoste  
+# Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+#
+# This is free software, and you are welcome to redistribute it under certain
+# conditions.  See the GNU General Public License for details. There is NO
+# WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# irace builds upon previous code from the race package:
+#     race: Racing methods for the selection of the best
+#     Copyright (C) 2003 Mauro Birattari
+#------------------------------------------------------------------------------
+# installed at: /usr/local/lib/R/site-library/irace
+# called with: 
+Warning: A default scenario file './scenario.txt' has been found and will be read
+# 2 expression(s) specifying forbidden configurations read from '/root/Projects/permutator/tuning_CVRP/forbidden.txt'
+# Read 3 configuration(s) from file '/root/Projects/permutator/tuning_CVRP/configurations.txt'
+# 2022-06-17 13:31:34 CEST: Initialization
+# Elitist race
+# Elitist new instances: 1
+# Elitist limit: 2
+# nbIterations: 7
+# minNbSurvival: 7
+# nbParameters: 46
+# seed: 548505476
+# confidence level: 0.95
+# budget: 4000
+# mu: 5
+# deterministic: FALSE
+
+# 2022-06-17 13:31:34 CEST: Iteration 1 of 7
+# experimentsUsedSoFar: 0
+# remainingBudget: 4000
+# currentBudget: 571
+# nbConfigurations: 95
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Error : == irace == The output of targetRunner should not be more than two numbers!
+== irace == The call to targetRunner was:
+/root/Projects/permutator/tuning_CVRP/target-runner 54 3 1753899695 /root/Projects/permutator/data/cvrp/cvrp-20/A-n44-k06.xml   timeout 300   metaheuristic BVNS bvns_min_k 1 bvns_max_k 3 construction random_replicate perturbation random_move_all allow_infeasible 1 local_search RPVND op_insert_1 0 op_remove_1 1 op_two_opt 1 op_exchange_ids 1 op_exchange_1_1 0 op_exchange_1_2 1 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 1 op_exchange_3_4 1 op_exchange_4_4 0 op_rexchange_1_2 1 op_rexchange_2_2 1 op_rexchange_2_3 0 op_rexchange_2_4 0 op_rexchange_3_3 1 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 0 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 0 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 1 op_relocate_4 0 op_relocate_5 1 op_rrelocate_2 0 op_rrelocate_3 0 op_rrelocate_4 0 op_rrelocate_5 0 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 0 op_move_all_by_4 1 op_move_all_by_10 1
+== irace == The output was:
+/root/Projects/permutator/tuning_CVRP/target-runner: line 53:  3512 Segmentation fault      (core dumped) $EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE > ${STDOUT} 2> ${STDERR}
+
+== irace == This is not a bug in irace, but means that something failed when running the command(s) above or they were terminated before completion. Try to run the command(s) above from the execution directory '/root/Projects/permutator/tuning_CVRP' to investigate the issue. See also Appendix B (targetRunner troubleshooting checklist) of the User Guide (https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).
+Error: == irace == A child process triggered a fatal error
+In addition: Warning message:
+In parallel::mclapply(experiments, exec.target.runner, mc.preschedule = !scenario$loadBalancing,  :
+  1 function calls resulted in an error
+Execution halted
+
+./target-runner 54 3 1753899695 ../data/cvrp/cvrp-20/A-n44-k06.xml   timeout 300   metaheuristic BVNS bvns_min_k 1 bvns_max_k 3 construction random_replicate perturbation randomMoveAll allow_infeasible 1 local_search RPVND op_insert_1 0 op_remove_1 1 op_two_opt 1 op_exchange_ids 1 op_exchange_1_1 0 op_exchange_1_2 1 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 1 op_exchange_3_4 1 op_exchange_4_4 0 op_rexchange_1_2 1 op_rexchange_2_2 1 op_rexchange_2_3 0 op_rexchange_2_4 0 op_rexchange_3_3 1 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 0 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 0 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 1 op_relocate_4 0 op_relocate_5 1 op_rrelocate_2 0 op_rrelocate_3 0 op_rrelocate_4 0 op_rrelocate_5 0 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 0 op_move_all_by_4 1 op_move_all_by_10 1

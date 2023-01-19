@@ -1,0 +1,554 @@
+#------------------------------------------------------------------------------
+# irace: An implementation in R of (Elitist) Iterated Racing
+# Version: 3.4.1.9fcaeaf
+# Copyright (C) 2010-2020
+# Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+# Jeremie Dubois-Lacoste  
+# Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+#
+# This is free software, and you are welcome to redistribute it under certain
+# conditions.  See the GNU General Public License for details. There is NO
+# WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# irace builds upon previous code from the race package:
+#     race: Racing methods for the selection of the best
+#     Copyright (C) 2003 Mauro Birattari
+#------------------------------------------------------------------------------
+# installed at: /usr/local/lib/R/site-library/irace
+# called with: 
+Warning: A default scenario file './scenario.txt' has been found and will be read
+# 2 expression(s) specifying forbidden configurations read from '/root/Projects/permutator/tuning_SCP/forbidden.txt'
+# Read 8 configuration(s) from file '/root/Projects/permutator/tuning_SCP/configurations.txt'
+# 2022-10-27 04:24:32 CEST: Initialization
+# Elitist race
+# Elitist new instances: 1
+# Elitist limit: 2
+# nbIterations: 7
+# minNbSurvival: 7
+# nbParameters: 47
+# seed: 550970387
+# confidence level: 0.95
+# budget: 10000
+# mu: 5
+# deterministic: FALSE
+
+# 2022-10-27 04:24:32 CEST: Iteration 1 of 7
+# experimentsUsedSoFar: 0
+# remainingBudget: 10000
+# currentBudget: 1428
+# nbConfigurations: 238
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          1|        238|         92|    629.0000000|        238|01:01:03|   NA|  NA|    NA|
+|x|          2|        238|        143|    632.5000000|        476|01:01:03|+0.71|0.86|0.3051|
+|x|          3|        238|         56|    2610.333333|        714|01:01:03|+0.72|0.81|0.3136|
+|x|          4|        238|          6|    2648.250000|        952|10:01:07|+0.51|0.63|0.6109|
+|-|          5|         57|          6|    3430.800000|       1190|01:01:03|+0.00|0.20|0.9809|
+|=|          6|         57|          6|    9273.833333|       1247|15:00:16|-0.00|0.17|1.0134|
+|=|          7|         57|          6|    8254.142857|       1304|02:30:19|+0.04|0.18|0.9820|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:           6    mean value:     8254.142857
+Description of the best-so-far configuration:
+  .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+6    6          BVNS       greedy     reinsert                1         CVND        1        1       1            0              1            1            1            1            0            0            0            0            1             0             1             0             1             0             0             0                   1                   0                   1                   0                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              0    NA          7         11       NA
+
+# 2022-10-28 12:00:29 CEST: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+6            BVNS       greedy     reinsert                1         CVND        1        1       1            0              1            1            1            1            0            0            0            0            1             0             1             0             1             0             0             0                   1                   0                   1                   0                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              0    NA          7         11
+138          BVNS       greedy  random_swap                1         BVND        1        0       1            0              0            1            0            1            1            0            0            1            1             0             0             0             0             0             1             1                   0                   0                   0                   0                   0          1          0          0          0          0           1           1           1           1             1             0             1             1              1    NA          6          9
+219          BVNS       greedy     reinsert                0        RPVND        0        0       1            0              1            0            1            1            0            1            0            0            1             1             1             1             0             0             1             1                   0                   0                   1                   0                   0          1          0          0          1          1           1           1           0           0             1             0             1             0              1    NA          2          4
+5            BVNS       greedy     reinsert                0         RVND        1        1       1            1              1            1            1            1            1            0            0            0            1             1             0             0             1             1             0             0                   1                   0                   1                   0                   0          1          1          1          1          1           1           1           0           1             0             1             1             1              0    NA          7          9
+124           ILS       greedy  random_move                0         PVND        0        0       1            0              1            0            0            0            0            0            0            1            0             1             0             0             0             1             1             0                   0                   0                   0                   0                   1          1          1          1          0          0           1           0           1           1             1             1             0             0              1     3         NA         NA
+74            ILS       greedy  random_swap                0         CVND        1        0       1            1              0            0            0            1            0            0            0            1            0             1             0             0             0             0             1             0                   0                   0                   0                   1                   1          1          0          1          1          0           0           0           0           1             1             0             0             0              1     3         NA         NA
+7            BVNS       greedy  random_swap                1         PVND        1        0       1            1              1            0            0            0            1            0            0            0            0             0             1             0             1             0             1             0                   0                   1                   0                   1                   0          1          0          1          0          0           1           1           1           1             1             1             1             1              0    NA          2         11
+# 2022-10-28 12:00:29 CEST: Iteration 2 of 7
+# experimentsUsedSoFar: 1304
+# remainingBudget: 8696
+# currentBudget: 1449
+# nbConfigurations: 187
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          8|        187|        418|    631.0000000|        187|00:47:49|   NA|  NA|    NA|
+|x|          1|        187|        293|    634.0000000|        367|00:45:47|+0.53|0.76|0.3355|
+|x|          3|        187|        294|    2632.666667|        547|00:45:47|+0.63|0.75|0.2848|
+|x|          7|        187|          6|    2496.750000|        727|07:30:59|+0.48|0.61|0.4583|
+|-|          2|         52|          6|    2125.600000|        907|00:45:47|-0.05|0.16|1.0506|
+|=|          5|         52|          6|    2864.833333|        952|00:12:12|+0.02|0.18|0.9904|
+|=|          4|         52|          6|    2847.857143|        997|02:00:13|+0.04|0.18|0.9760|
+|-|          6|         22|          6|    7303.000000|       1042|12:00:12|-0.04|0.09|0.8674|
+|=|          9|         22|          6|    6339997.667|       1064|01:00:10|-0.03|0.08|0.8700|
+|=|         10|         22|        289|    5606659.700|       1086|00:06:06|-0.01|0.09|0.8661|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         289    mean value:     5606659.700
+Description of the best-so-far configuration:
+    .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+289  289           ILS       greedy  random_move                0         PVND        0        0       1            1              0            0            0            1            0            0            1            1            0             1             0             1             1             0             0             1                   1                   1                   1                   1                   0          1          0          1          1          0           1           0           0           1             1             1             1             1              0     8         NA         NA       74
+
+# 2022-10-29 13:55:37 CEST: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+289           ILS       greedy  random_move                0         PVND        0        0       1            1              0            0            0            1            0            0            1            1            0             1             0             1             1             0             0             1                   1                   1                   1                   1                   0          1          0          1          1          0           1           0           0           1             1             1             1             1              0     8         NA         NA
+6            BVNS       greedy     reinsert                1         CVND        1        1       1            0              1            1            1            1            0            0            0            0            1             0             1             0             1             0             0             0                   1                   0                   1                   0                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              0    NA          7         11
+124           ILS       greedy  random_move                0         PVND        0        0       1            0              1            0            0            0            0            0            0            1            0             1             0             0             0             1             1             0                   0                   0                   0                   0                   1          1          1          1          0          0           1           0           1           1             1             1             0             0              1     3         NA         NA
+219          BVNS       greedy     reinsert                0        RPVND        0        0       1            0              1            0            1            1            0            1            0            0            1             1             1             1             0             0             1             1                   0                   0                   1                   0                   0          1          0          0          1          1           1           1           0           0             1             0             1             0              1    NA          2          4
+138          BVNS       greedy  random_swap                1         BVND        1        0       1            0              0            1            0            1            1            0            0            1            1             0             0             0             0             0             1             1                   0                   0                   0                   0                   0          1          0          0          0          0           1           1           1           1             1             0             1             1              1    NA          6          9
+359          BVNS       greedy  random_swap                1         CVND        1        0       1            0              0            1            1            1            1            0            0            0            0             0             0             0             1             0             1             1                   1                   0                   0                   0                   1          1          1          1          0          0           1           1           0           0             0             0             0             0              0    NA          3          7
+74            ILS       greedy  random_swap                0         CVND        1        0       1            1              0            0            0            1            0            0            0            1            0             1             0             0             0             0             1             0                   0                   0                   0                   1                   1          1          0          1          1          0           0           0           0           1             1             0             0             0              1     3         NA         NA
+# 2022-10-29 13:55:37 CEST: Iteration 3 of 7
+# experimentsUsedSoFar: 2390
+# remainingBudget: 7610
+# currentBudget: 1522
+# nbConfigurations: 144
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         11|        144|        451|    2092.000000|        144|06:00:47|   NA|  NA|    NA|
+|x|          3|        144|        219|    4356.500000|        281|00:35:36|+0.37|0.68|0.5856|
+|x|          4|        144|        219|    3816.000000|        418|05:50:39|+0.53|0.69|0.5557|
+|x|          6|        144|        219|    12484.25000|        555|11:00:37|+0.60|0.70|0.4423|
+|-|          2|         58|        124|    10133.80000|        692|00:35:36|-0.00|0.20|0.7955|
+|=|          9|         58|        124|    9342021.000|        743|02:10:22|-0.03|0.14|0.8503|
+|=|          8|         58|        124|    8007538.143|        794|00:13:13|-0.01|0.13|0.8554|
+|=|          1|         58|        124|    7006675.750|        845|00:13:13|+0.02|0.14|0.8526|
+|=|          7|         58|          6|    6339509.222|        896|02:10:16|-0.01|0.10|0.8781|
+|=|          5|         58|          6|    5706214.400|        947|00:13:13|+0.03|0.13|0.8569|
+|-|         10|         37|        124|    5097163.818|        998|00:13:13|-0.02|0.07|0.8940|
+|=|         12|         37|        505|    4756276.417|       1035|00:10:10|-0.02|0.07|0.8981|
+|=|         13|         37|        459|    4390456.462|       1072|00:10:10|-0.02|0.06|0.9024|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         459    mean value:     4390456.462
+Description of the best-so-far configuration:
+    .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+459  459           ILS       greedy  random_swap                0         RVND        1        1       1            1              1            1            1            0            0            1            0            0            1             0             1             0             1             0             0             0                   1                   0                   1                   0                   1          1          1          0          1          0           1           1           0           1             0             0             1             0              1     5         NA         NA        6
+
+# 2022-10-31 18:32:51 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic construction         perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+459           ILS       greedy          random_swap                0         RVND        1        1       1            1              1            1            1            0            0            1            0            0            1             0             1             0             1             0             0             0                   1                   0                   1                   0                   1          1          1          0          1          0           1           1           0           1             0             0             1             0              1     5         NA         NA
+555          BVNS       greedy             reinsert                0         PVND        1        0       1            0              1            1            1            1            0            1            0            0            0             0             1             0             1             0             0             0                   1                   1                   1                   0                   0          1          0          1          1          0           1           1           1           1             1             1             1             1              0    NA          6          9
+289           ILS       greedy          random_move                0         PVND        0        0       1            1              0            0            0            1            0            0            1            1            0             1             0             1             1             0             0             1                   1                   1                   1                   1                   0          1          0          1          1          0           1           0           0           1             1             1             1             1              0     8         NA         NA
+6            BVNS       greedy             reinsert                1         CVND        1        1       1            0              1            1            1            1            0            0            0            0            1             0             1             0             1             0             0             0                   1                   0                   1                   0                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              0    NA          7         11
+473           ILS       greedy random_double_bridge                1        RPVND        1        0       1            1              1            1            1            1            0            1            0            0            1             0             1             1             1             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           1           1             0             1             0             0              0     6         NA         NA
+505          BVNS       greedy          random_move                1         RVND        1        0       1            0              1            0            0            1            1            1            1            0            1             0             0             1             0             1             1             1                   0                   0                   0                   0                   0          1          0          0          0          1           1           1           1           1             1             0             0             0              1    NA          4         12
+432          BVNS       greedy      randomMoveAll                1         CVND        1        1       1            0              1            1            0            1            0            0            1            1            0             0             0             0             1             1             1             0                   1                   0                   0                   1                   0          1          0          0          1          0           1           1           0           1             0             1             1             1              1    NA          2         10
+# 2022-10-31 18:32:51 CET: Iteration 4 of 7
+# experimentsUsedSoFar: 3462
+# remainingBudget: 6538
+# currentBudget: 1634
+# nbConfigurations: 123
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         14|        123|        586|    633.0000000|        123|00:31:32|   NA|  NA|    NA|
+|x|          4|        123|        586|    1690.000000|        239|04:50:32|+0.09|0.54|0.6429|
+|x|          8|        123|        586|    1341.000000|        355|00:29:30|+0.23|0.49|0.6219|
+|x|          6|        123|        586|    10628.00000|        471|05:00:31|+0.26|0.45|0.6366|
+|-|          7|         58|        651|    8927.800000|        587|04:50:37|-0.05|0.16|0.8180|
+|=|         13|         58|        592|    7552.333333|        638|00:13:13|-0.01|0.16|0.8269|
+|=|         11|         58|        592|    6777.571429|        689|02:10:16|+0.00|0.14|0.8532|
+|=|          2|         58|        611|    6014.375000|        740|00:13:13|+0.00|0.13|0.8641|
+|=|          5|         58|        611|    6074.444444|        791|00:13:13|+0.03|0.14|0.8477|
+|=|         10|         58|        611|    6121.900000|        842|00:13:13|+0.03|0.13|0.8547|
+|-|          3|         40|        611|    6168.909091|        893|00:13:13|-0.05|0.04|0.9354|
+|=|         12|         40|        611|    6200.833333|        926|00:09:09|-0.04|0.05|0.9291|
+|=|          1|         40|        643|    5768.000000|        959|00:09:09|-0.03|0.05|0.9266|
+|=|          9|         40|        643|    4076895.643|        992|01:30:15|-0.02|0.05|0.9248|
+|=|         15|         40|        643|    3805145.200|       1032|00:10:10|-0.01|0.06|0.9191|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         643    mean value:     3805145.200
+Description of the best-so-far configuration:
+    .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+643  643          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            1            0            0            0            0            1             1             0             0             0             1             0             0                   0                   0                   1                   1                   0          1          0          0          1          1           1           1           0           1             1             1             0             0              1    NA          2         10      432
+
+# 2022-11-02 15:30:47 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic construction  perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+643          BVNS       greedy      reinsert                1         CVND        1        1       1            0              0            0            0            1            0            0            0            0            1             1             0             0             0             1             0             0                   0                   0                   1                   1                   0          1          0          0          1          1           1           1           0           1             1             1             0             0              1    NA          2         10
+639          BVNS       greedy doubleBridge                1         CVND        1        1       1            0              1            0            1            0            0            0            0            1            1             1             1             1             0             0             0             0                   0                   0                   0                   0                   0          1          0          0          1          0           1           1           0           1             0             1             0             1              0    NA          3          9
+603           ILS       greedy      reinsert                1         CVND        1        1       1            0              1            1            1            1            0            0            0            0            1             0             1             0             1             0             0             0                   0                   0                   1                   0                   0          1          0          0          1          0           1           1           1           0             1             1             1             0              0     5         NA         NA
+611          BVNS       greedy      reinsert                0         PVND        1        1       1            0              1            1            0            1            0            1            1            0            1             0             1             1             1             0             0             1                   1                   1                   1                   0                   0          1          1          0          1          0           1           0           1           1             1             1             0             1              0    NA          7         10
+459           ILS       greedy   randomSwap                0         RVND        1        1       1            1              1            1            1            0            0            1            0            0            1             0             1             0             1             0             0             0                   1                   0                   1                   0                   1          1          1          0          1          0           1           1           0           1             0             0             1             0              1     5         NA         NA
+6            BVNS       greedy      reinsert                1         CVND        1        1       1            0              1            1            1            1            0            0            0            0            1             0             1             0             1             0             0             0                   1                   0                   1                   0                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              0    NA          7         11
+632           ILS       greedy   randomMove                0         PVND        1        0       1            1              0            0            1            1            0            0            1            1            0             1             0             1             1             0             0             0                   0                   1                   1                   1                   1          1          0          1          0          1           1           0           1           1             1             1             1             1              0     7         NA         NA
+# 2022-11-02 15:30:47 CET: Iteration 5 of 7
+# experimentsUsedSoFar: 4494
+# remainingBudget: 5506
+# currentBudget: 1835
+# nbConfigurations: 121
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         16|        121|        643|    38489.00000|        121|07:00:33|   NA|  NA|    NA|
+|x|          7|        121|        781|    20298.50000|        235|04:50:37|+0.34|0.67|0.0320|
+|x|         10|        121|        688|    15727.00000|        349|00:29:30|+0.16|0.44|0.4660|
+|x|         14|        121|        611|    11956.25000|        463|00:29:30|+0.10|0.32|0.6765|
+|-|         13|         75|        459|    9694.400000|        577|00:29:30|-0.08|0.14|0.8570|
+|=|          6|         75|        459|    14493.50000|        645|17:00:18|-0.06|0.11|0.7029|
+|=|          4|         75|        762|    12818.71429|        713|02:50:19|-0.04|0.11|0.7251|
+|=|          1|         75|        643|    11297.62500|        781|00:17:17|-0.03|0.10|0.7572|
+|=|         11|         75|        643|    10278.88889|        849|02:50:21|-0.03|0.08|0.7865|
+|=|         15|         75|        643|    9314.900000|        917|00:17:17|-0.03|0.08|0.8095|
+|=|         12|         75|        643|    9064.727273|        985|00:17:17|-0.02|0.07|0.8195|
+|=|          5|         75|        643|    8856.666667|       1053|00:17:17|-0.00|0.08|0.8209|
+|=|          2|         75|        643|    8225.230769|       1121|00:17:17|-0.01|0.07|0.8368|
+|=|          8|         75|        726|    7694.571429|       1189|00:17:18|-0.01|0.06|0.8464|
+|=|          3|         75|        713|    7609.066667|       1257|00:17:17|-0.00|0.06|0.8512|
+|=|          9|         75|        713|    3569724.562|       1325|02:50:29|-0.00|0.06|0.8596|
+|=|         17|         75|        713|    3359901.706|       1400|03:10:21|+0.01|0.07|0.8560|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         713    mean value:     3359901.706
+Description of the best-so-far configuration:
+    .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 twoOpt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+713  713          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              1    NA          2         10      643
+
+# 2022-11-05 11:33:26 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchangeIds exchangeNIds exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+713          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              1    NA          2         10
+726          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            1            0            1            1            0            0            0            1             1             0             1             0             1             0             0                   0                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             0             0             1              1    NA          2         11
+643          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            1            0            0            0            0            1             1             0             0             0             1             0             0                   0                   0                   1                   1                   0          1          0          0          1          1           1           1           0           1             1             1             0             0              1    NA          2         10
+705           ILS       greedy     reinsert                1         CVND        1        1       1            0              1            1            1            1            0            0            0            0            0             0             1             0             1             0             0             0                   0                   0                   1                   0                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              0     6         NA         NA
+694          BVNS       greedy     reinsert                0         PVND        1        1       1            0              1            1            1            1            0            0            1            0            1             0             1             1             1             0             0             1                   1                   1                   1                   0                   0          1          1          0          1          0           1           1           1           1             1             1             0             1              0    NA          7          9
+782          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            1             1             0             0             0             1             0             0                   0                   0                   1                   1                   0          1          0          0          1          0           1           1           0           0             1             1             1             0              0    NA          3          9
+774           ILS       greedy     reinsert                1         CVND        1        1       1            0              1            1            0            0            0            0            0            0            0             1             0             0             0             0             1             0                   0                   0                   1                   1                   0          1          0          0          1          1           1           1           0           1             1             1             0             0              1     4         NA         NA
+# 2022-11-05 11:33:26 CET: Iteration 6 of 7
+# experimentsUsedSoFar: 5894
+# remainingBudget: 4106
+# currentBudget: 2053
+# nbConfigurations: 120
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         18|        120|        810|    55001457.00|        120|05:00:51|   NA|  NA|    NA|
+|x|          8|        120|        804|    28001048.50|        233|00:29:30|-0.12|0.44|0.8153|
+|x|          3|        120|        865|    18669549.33|        346|00:29:30|-0.03|0.31|0.8860|
+|x|         12|        120|        877|    13753829.50|        459|00:29:30|+0.02|0.26|0.8899|
+|-|         14|         88|        705|    11203177.40|        572|00:29:30|-0.11|0.12|1.0983|
+|=|          4|         88|        705|    9336438.333|        653|03:30:23|-0.05|0.12|1.0380|
+|=|          6|         88|        705|    8008159.857|        734|21:00:22|-0.04|0.11|0.8827|
+|=|          9|         88|        837|    14007318.50|        815|03:30:36|-0.02|0.11|0.8795|
+|=|         15|         88|        897|    12673244.89|        896|00:21:22|-0.02|0.09|0.8884|
+|=|          7|         88|        897|    11406134.90|        977|03:30:26|-0.01|0.09|0.8749|
+|=|         11|         88|        798|    10369419.36|       1058|03:30:27|-0.02|0.08|0.8901|
+|=|          5|         88|        798|    9505846.750|       1139|00:21:22|-0.01|0.07|0.8955|
+|=|          1|         88|        798|    8774676.154|       1220|00:21:22|-0.01|0.07|0.8943|
+|=|         17|         88|        798|    8148109.000|       1301|03:30:23|+0.01|0.08|0.8829|
+|=|         16|         88|        798|    7607467.667|       1382|21:00:22|+0.01|0.08|0.8263|
+|=|          2|         88|        798|    7132040.438|       1463|00:21:22|+0.01|0.07|0.8392|
+|=|         13|         88|        798|    6712546.059|       1544|00:21:22|+0.01|0.07|0.8462|
+|-|         10|         18|        798|    6339990.667|       1625|00:21:22|-0.03|0.03|0.8688|
+|=|         19|         18|        798|    6006658.632|       1643|00:05:05|-0.03|0.03|0.8719|
+|=|         20|         18|        798|    5706653.250|       1661|00:05:05|-0.02|0.03|0.8717|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         798    mean value:     5706653.250
+Description of the best-so-far configuration:
+    .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+798  798          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          1          7      713
+
+# 2022-11-08 08:23:47 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+798          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          1          7
+713          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              1    NA          2         10
+877          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          3          7
+694          BVNS       greedy     reinsert                0         PVND        1        1       1            0              1            1            1            1            0            0            1            0            1             0             1             1             1             0             0             1                   1                   1                   1                   0                   0          1          1          0          1          0           1           1           1           1             1             1             0             1              0    NA          7          9
+797          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            1             1             0             0             0             0             0             0                   0                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          3          9
+818           ILS       greedy     reinsert                1         CVND        1        1       1            0              1            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   0                   0                   0                   1                   0          1          0          0          1          1           1           1           0           1             1             1             0             0              0     5         NA         NA
+839          BVNS       greedy     reinsert                0         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          3          8
+# 2022-11-08 08:23:47 CET: Iteration 7 of 7
+# experimentsUsedSoFar: 7555
+# remainingBudget: 2445
+# currentBudget: 2445
+# nbConfigurations: 123
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         21|        123|        959|    629.0000000|        123|00:31:32|   NA|  NA|    NA|
+|x|         16|        123|        959|    19559.00000|        239|05:00:31|+0.07|0.53|0.7866|
+|x|         19|        123|        877|    15223.66667|        355|00:29:30|+0.15|0.43|0.6294|
+|x|          4|        123|        877|    12101.75000|        471|04:50:32|+0.21|0.41|0.6584|
+|-|          7|         46|        899|    10106.40000|        587|04:50:37|-0.05|0.16|0.8379|
+|=|         14|         46|        936|    8524.833333|        626|00:10:10|-0.05|0.13|0.8625|
+|=|         20|         46|        972|    8255.000000|        665|00:10:10|-0.04|0.11|0.8680|
+|=|         11|         46|        967|    7487.375000|        704|01:40:12|-0.02|0.11|0.8651|
+|=|          9|         46|        967|    6340150.667|        743|01:40:17|+0.00|0.11|0.8625|
+|=|         17|         46|        967|    5706409.200|        782|01:40:11|+0.00|0.10|0.8733|
+|=|          6|         46|        967|    5191143.727|        821|10:00:10|+0.00|0.09|0.7945|
+|=|          5|         46|        967|    4759094.333|        860|00:10:10|+0.01|0.09|0.8053|
+|=|         18|         46|        899|    8777738.769|        899|01:40:17|+0.01|0.08|0.8089|
+|=|         12|         46|        908|    8008368.857|        938|00:10:10|+0.00|0.07|0.8194|
+|=|          2|         46|        997|    7607855.733|        977|00:10:10|+0.00|0.07|0.8319|
+|=|         15|         46|        972|    7069913.125|       1016|00:10:10|+0.01|0.07|0.8354|
+|=|         10|         46|        972|    6654421.294|       1055|00:10:10|+0.02|0.08|0.8295|
+|-|          3|         30|        972|    6285097.389|       1094|00:10:10|-0.02|0.04|0.8696|
+|=|         13|         30|        972|    5954336.053|       1117|00:06:06|-0.02|0.03|0.8704|
+|=|          8|         30|        972|    5656651.250|       1140|00:06:06|-0.02|0.03|0.8755|
+|=|          1|         30|        972|    5387317.095|       1163|00:06:06|-0.01|0.03|0.8783|
+|=|         22|         30|        972|    5142540.727|       1193|01:20:10|-0.01|0.03|0.8836|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         972    mean value:     5142540.727
+Description of the best-so-far configuration:
+    .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+972  972          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             0              1    NA          8          9      877
+
+# 2022-11-10 19:47:36 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+972          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             0              1    NA          8          9
+967          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1          7
+997          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              1    NA          2          9
+798          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          1          7
+992          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          3          8
+936          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          3          9
+877          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          3          7
+# 2022-11-10 19:47:36 CET: Iteration 8 of 8
+# experimentsUsedSoFar: 8748
+# remainingBudget: 1252
+# currentBudget: 1252
+# nbConfigurations: 61
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         23|         61|       1021|    2716.000000|         61|02:40:18|   NA|  NA|    NA|
+|x|         12|         61|       1040|    4639.000000|        115|00:14:14|+0.40|0.70|0.5819|
+|x|         22|         61|       1042|    3809.000000|        169|02:20:18|+0.37|0.58|0.3952|
+|x|         13|         61|       1042|    3014.250000|        223|00:14:14|+0.26|0.45|0.6942|
+|-|         11|         23|       1037|    2842.000000|        277|02:20:18|-0.07|0.14|1.0857|
+|=|         21|         23|       1037|    2475.000000|        293|00:04:04|-0.03|0.15|1.0186|
+|=|          9|         23|        967|    8145187.571|        309|00:40:06|-0.04|0.11|0.9975|
+|=|         16|         23|        967|    7131850.250|        325|04:00:04|-0.03|0.10|0.8677|
+|=|         14|         23|        967|    6339493.222|        341|00:04:04|-0.01|0.10|0.8671|
+|=|          7|         23|        967|    5705758.800|        357|00:40:05|+0.01|0.11|0.8644|
+|=|          8|         23|        967|    5187111.818|        373|00:04:04|+0.02|0.11|0.8588|
+|=|         10|         23|        967|    4755399.833|        389|00:04:04|+0.05|0.13|0.8510|
+|-|          5|         15|        967|    4390103.769|        405|00:04:04|-0.02|0.06|0.8896|
+|=|          6|         15|        967|    4079274.143|        413|02:00:02|-0.02|0.06|0.8240|
+|=|          1|         15|        967|    3807364.667|        421|00:02:02|-0.00|0.06|0.8246|
+|=|         20|         15|        967|    3569814.938|        429|00:02:02|+0.01|0.07|0.8231|
+|=|         17|         15|       1048|    3301163.529|        437|00:20:02|+0.02|0.08|0.8189|
+|=|         19|         15|       1048|    3118129.389|        445|00:02:02|+0.03|0.08|0.8211|
+|=|         15|         15|       1048|    2954050.947|        453|00:02:02|+0.03|0.08|0.8227|
+|-|          3|         10|       1048|    2806676.750|        461|00:02:02|-0.02|0.03|0.8263|
+|=|          4|         10|       1048|    2673154.810|        464|00:10:01|-0.01|0.03|0.8190|
+|=|         18|         10|       1048|    5278986.727|        467|00:10:01|-0.02|0.03|0.8278|
+|=|          2|         10|       1048|    5049493.174|        470|00:01:01|-0.02|0.03|0.8265|
+|=|         24|         10|       1048|    4839124.500|        480|00:03:03|-0.02|0.02|0.8344|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:        1048    mean value:     4839124.500
+Description of the best-so-far configuration:
+     .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+1048 1048          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          8         10      972
+
+# 2022-11-11 12:12:01 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+     metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+1048          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          8         10
+967           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1          7
+972           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             0              1    NA          8          9
+798           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          1          7
+997           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             1              1    NA          2          9
+992           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          3          8
+936           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          3          9
+# 2022-11-11 12:12:01 CET: Iteration 9 of 9
+# experimentsUsedSoFar: 9228
+# remainingBudget: 772
+# currentBudget: 772
+# nbConfigurations: 37
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         25|         37|       1081|    6537.000000|         37|00:10:10|   NA|  NA|    NA|
+|x|          7|         37|       1077|    4338.500000|         67|01:20:10|+0.18|0.59|0.7840|
+|x|         22|         37|       1083|    3616.000000|         97|01:20:10|+0.06|0.37|0.6663|
+|x|          6|         37|       1083|    12334.25000|        127|08:00:08|+0.04|0.28|0.5764|
+|-|          8|         27|       1083|    9995.200000|        157|00:08:08|-0.08|0.13|0.8135|
+|=|          4|         27|       1091|    8781.166667|        177|00:50:05|-0.03|0.14|0.8268|
+|=|         10|         27|       1083|    8467.428571|        197|00:05:05|-0.02|0.13|0.8479|
+|=|         19|         27|       1081|    8228.750000|        217|00:05:05|+0.01|0.14|0.8432|
+|=|          9|         27|       1081|    6340820.556|        237|00:50:08|-0.01|0.11|0.8633|
+|=|         20|         27|       1048|    5607389.900|        257|00:05:05|-0.01|0.09|0.8705|
+|=|         16|         27|       1048|    5101126.182|        277|05:00:05|-0.01|0.09|0.7910|
+|=|         11|         27|       1089|    4759545.417|        297|00:50:06|+0.00|0.09|0.8005|
+|=|         17|         27|       1048|    4316713.000|        317|00:50:05|+0.00|0.08|0.8094|
+|=|          1|         27|       1048|    4008421.571|        337|00:05:05|+0.00|0.07|0.8199|
+|=|          3|         27|       1048|    3741631.267|        357|00:05:05|+0.01|0.08|0.8231|
+|=|          2|         27|       1048|    3507819.000|        377|00:05:05|+0.01|0.08|0.8275|
+|=|         23|         27|       1048|    3301636.471|        397|00:50:05|+0.03|0.08|0.8233|
+|-|         13|         21|       1048|    3118247.389|        417|00:05:05|-0.03|0.03|0.8639|
+|=|         21|         21|       1048|    2954162.579|        431|00:04:04|-0.03|0.03|0.8672|
+|=|         15|         21|       1048|    2806486.400|        445|00:04:04|-0.03|0.02|0.8723|
+|=|         14|         21|       1048|    2672874.810|        459|00:04:04|-0.02|0.03|0.8732|
+|=|         24|         21|        967|    2596863.409|        473|00:04:04|-0.02|0.02|0.8766|
+|=|          5|         21|       1048|    2440763.652|        487|00:04:04|-0.02|0.02|0.8739|
+|=|         12|         21|       1048|    2339338.667|        501|00:04:04|-0.02|0.02|0.8776|
+|=|         18|         21|       1048|    4645823.400|        515|00:40:06|-0.02|0.02|0.8773|
+|=|         26|         21|       1048|    6659501.615|        536|01:00:10|-0.02|0.02|0.8755|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:        1048    mean value:     6659501.615
+Description of the best-so-far configuration:
+     .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+1048 1048          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          8         10      972
+
+# 2022-11-12 11:01:46 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+     metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+1048          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          8         10
+1081          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             0              1    NA          8         11
+967           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1          7
+1074          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1         10
+1086          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             1             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          4         10
+798           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          1          7
+1088          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          3          8
+# 2022-11-12 11:01:46 CET: Iteration 10 of 10
+# experimentsUsedSoFar: 9764
+# remainingBudget: 236
+# currentBudget: 236
+# nbConfigurations: 15
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         27|         15|       1099|    6538.000000|         15|00:04:04|   NA|  NA|    NA|
+|x|          3|         15|       1104|    6559.500000|         23|00:02:02|-0.30|0.35|1.0577|
+|x|          9|         15|       1104|    19004890.00|         31|00:20:03|-0.17|0.22|1.0474|
+|x|         26|         15|        798|    28004042.00|         39|00:20:03|-0.09|0.18|0.9935|
+|=|         12|         15|       1086|    22804525.20|         47|00:02:02|-0.11|0.12|0.9714|
+|=|         22|         15|       1086|    19004129.17|         55|00:20:02|-0.05|0.12|0.9535|
+|=|         17|         15|       1086|    16289641.57|         63|00:20:02|-0.02|0.13|0.9426|
+|=|         25|         15|       1086|    14254269.38|         71|00:02:02|-0.04|0.09|0.9729|
+|=|          2|         15|       1081|    12670534.11|         79|00:02:02|-0.03|0.09|0.9484|
+|=|          1|         15|        798|    11203548.70|         87|00:02:02|-0.00|0.10|0.9075|
+|=|         19|         15|       1081|    10367453.91|         95|00:02:02|+0.00|0.09|0.9275|
+|=|         10|         15|       1081|    9504045.417|        103|00:02:02|+0.01|0.09|0.9202|
+|=|         21|         15|       1081|    8773013.538|        111|00:02:02|+0.03|0.10|0.9056|
+|=|         23|         15|       1081|    8146565.143|        119|00:20:02|+0.03|0.10|0.9082|
+|=|         14|         15|       1081|    7603503.533|        127|00:02:02|+0.05|0.11|0.8933|
+|=|          6|         15|       1081|    7130690.125|        135|02:00:02|+0.05|0.10|0.8400|
+|=|         11|         15|        967|    6711358.588|        143|00:20:02|+0.03|0.09|0.8538|
+|=|         24|         15|        967|    6338540.722|        151|00:02:02|+0.04|0.09|0.8484|
+|-|          4|         11|       1104|    6005088.105|        159|00:20:02|-0.02|0.03|0.8722|
+|=|          7|         11|       1104|    5704941.150|        163|00:10:01|-0.01|0.04|0.8619|
+|=|         13|         11|        967|    5433297.524|        167|00:01:01|-0.01|0.04|0.8639|
+|=|         15|         11|        967|    5186358.500|        171|00:01:01|-0.02|0.03|0.8745|
+|=|         16|         11|        967|    4962538.087|        175|01:00:01|-0.02|0.03|0.8362|
+|=|          5|         11|        967|    4756038.625|        179|00:01:01|-0.01|0.03|0.8289|
+|=|         18|         11|        967|    6845863.920|        183|00:10:01|-0.01|0.03|0.8336|
+|=|         20|         11|       1104|    6582817.154|        187|00:01:01|-0.01|0.03|0.8280|
+|=|          8|         11|       1104|    6339033.000|        191|00:01:01|-0.01|0.03|0.8333|
+|=|         28|         11|        967|    6112869.500|        202|00:03:03|-0.01|0.03|0.8332|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         967    mean value:     6112869.500
+Description of the best-so-far configuration:
+    .ID. metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k .PARENT.
+967  967          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1          7      877
+
+# 2022-11-12 17:14:46 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+     metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+967           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1          7
+1081          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             0              1    NA          8         11
+1074          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1         10
+1104          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          7          9
+1048          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          8         10
+1086          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             1             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          4         10
+798           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          1          7
+# 2022-11-12 17:14:46 CET: Stopped because there is not enough budget left to race more than the minimum (7)
+# You may either increase the budget or set 'minNbSurvival' to a lower value
+# Iteration: 11
+# nbIterations: 11
+# experimentsUsedSoFar: 9966
+# timeUsed: 0
+# remainingBudget: 34
+# currentBudget: 34
+# number of elites: 7
+# nbConfigurations: 7
+# Best configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+     metaheuristic construction perturbation allow_infeasible local_search insert_1 remove_1 two_opt exchange_ids exchange_n_ids exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 rexchange_1_2 rexchange_2_2 rexchange_2_3 rexchange_2_4 rexchange_3_3 rexchange_3_4 rexchange_4_4 centered_exchange_1 centered_exchange_2 centered_exchange_3 centered_exchange_4 centered_exchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 rrelocate_2 rrelocate_3 rrelocate_4 rrelocate_5 move_all_by_1 move_all_by_2 move_all_by_3 move_all_by_4 move_all_by_10 ils_k bvns_min_k bvns_max_k
+967           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1          7
+1081          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             0              1    NA          8         11
+1074          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             1             0              1    NA          1         10
+1104          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          7          9
+1048          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          8         10
+1086          BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             0             0             1             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          0          0           1           1           0           0             1             1             0             0              1    NA          4         10
+798           BVNS       greedy     reinsert                1         CVND        1        1       1            0              0            0            0            0            0            0            0            0            0             1             0             0             0             0             0             0                   1                   0                   1                   1                   0          1          0          0          1          0           1           1           0           1             1             1             0             1              1    NA          1          7
+# Best configurations as commandlines (first number is the configuration ID; same order as above):
+967   metaheuristic BVNS bvns_min_k 1 bvns_max_k 7 construction greedy perturbation reinsert allow_infeasible 1 local_search CVND op_insert_1 1 op_remove_1 1 op_two_opt 1 op_exchange_ids 0 op_exchange_n_ids 0 op_exchange_1_1 0 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 0 op_exchange_3_4 0 op_exchange_4_4 0 op_rexchange_1_2 0 op_rexchange_2_2 0 op_rexchange_2_3 0 op_rexchange_2_4 0 op_rexchange_3_3 0 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 1 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 1 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 0 op_relocate_4 1 op_relocate_5 0 op_rrelocate_2 1 op_rrelocate_3 1 op_rrelocate_4 0 op_rrelocate_5 1 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 1 op_move_all_by_4 0 op_move_all_by_10 1
+1081  metaheuristic BVNS bvns_min_k 8 bvns_max_k 11 construction greedy perturbation reinsert allow_infeasible 1 local_search CVND op_insert_1 1 op_remove_1 1 op_two_opt 1 op_exchange_ids 0 op_exchange_n_ids 0 op_exchange_1_1 0 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 0 op_exchange_3_4 0 op_exchange_4_4 0 op_rexchange_1_2 0 op_rexchange_2_2 0 op_rexchange_2_3 0 op_rexchange_2_4 0 op_rexchange_3_3 0 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 1 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 1 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 0 op_relocate_4 1 op_relocate_5 0 op_rrelocate_2 1 op_rrelocate_3 1 op_rrelocate_4 0 op_rrelocate_5 1 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 0 op_move_all_by_4 0 op_move_all_by_10 1
+1074  metaheuristic BVNS bvns_min_k 1 bvns_max_k 10 construction greedy perturbation reinsert allow_infeasible 1 local_search CVND op_insert_1 1 op_remove_1 1 op_two_opt 1 op_exchange_ids 0 op_exchange_n_ids 0 op_exchange_1_1 0 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 0 op_exchange_3_4 0 op_exchange_4_4 0 op_rexchange_1_2 0 op_rexchange_2_2 0 op_rexchange_2_3 0 op_rexchange_2_4 0 op_rexchange_3_3 0 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 1 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 1 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 0 op_relocate_4 1 op_relocate_5 0 op_rrelocate_2 1 op_rrelocate_3 1 op_rrelocate_4 0 op_rrelocate_5 1 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 1 op_move_all_by_4 0 op_move_all_by_10 1
+1104  metaheuristic BVNS bvns_min_k 7 bvns_max_k 9 construction greedy perturbation reinsert allow_infeasible 1 local_search CVND op_insert_1 1 op_remove_1 1 op_two_opt 1 op_exchange_ids 0 op_exchange_n_ids 0 op_exchange_1_1 0 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 0 op_exchange_3_4 0 op_exchange_4_4 0 op_rexchange_1_2 0 op_rexchange_2_2 0 op_rexchange_2_3 0 op_rexchange_2_4 0 op_rexchange_3_3 0 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 1 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 1 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 0 op_relocate_4 0 op_relocate_5 0 op_rrelocate_2 1 op_rrelocate_3 1 op_rrelocate_4 0 op_rrelocate_5 0 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 0 op_move_all_by_4 0 op_move_all_by_10 1
+1048  metaheuristic BVNS bvns_min_k 8 bvns_max_k 10 construction greedy perturbation reinsert allow_infeasible 1 local_search CVND op_insert_1 1 op_remove_1 1 op_two_opt 1 op_exchange_ids 0 op_exchange_n_ids 0 op_exchange_1_1 0 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 0 op_exchange_3_4 0 op_exchange_4_4 0 op_rexchange_1_2 0 op_rexchange_2_2 0 op_rexchange_2_3 0 op_rexchange_2_4 0 op_rexchange_3_3 0 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 1 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 1 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 0 op_relocate_4 0 op_relocate_5 0 op_rrelocate_2 1 op_rrelocate_3 1 op_rrelocate_4 0 op_rrelocate_5 0 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 0 op_move_all_by_4 0 op_move_all_by_10 1
+1086  metaheuristic BVNS bvns_min_k 4 bvns_max_k 10 construction greedy perturbation reinsert allow_infeasible 1 local_search CVND op_insert_1 1 op_remove_1 1 op_two_opt 1 op_exchange_ids 0 op_exchange_n_ids 0 op_exchange_1_1 0 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 0 op_exchange_3_4 0 op_exchange_4_4 0 op_rexchange_1_2 0 op_rexchange_2_2 0 op_rexchange_2_3 1 op_rexchange_2_4 0 op_rexchange_3_3 0 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 1 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 1 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 0 op_relocate_4 0 op_relocate_5 0 op_rrelocate_2 1 op_rrelocate_3 1 op_rrelocate_4 0 op_rrelocate_5 0 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 0 op_move_all_by_4 0 op_move_all_by_10 1
+798   metaheuristic BVNS bvns_min_k 1 bvns_max_k 7 construction greedy perturbation reinsert allow_infeasible 1 local_search CVND op_insert_1 1 op_remove_1 1 op_two_opt 1 op_exchange_ids 0 op_exchange_n_ids 0 op_exchange_1_1 0 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 0 op_exchange_2_4 0 op_exchange_3_3 0 op_exchange_3_4 0 op_exchange_4_4 0 op_rexchange_1_2 1 op_rexchange_2_2 0 op_rexchange_2_3 0 op_rexchange_2_4 0 op_rexchange_3_3 0 op_rexchange_3_4 0 op_rexchange_4_4 0 op_centered_exchange_1 1 op_centered_exchange_2 0 op_centered_exchange_3 1 op_centered_exchange_4 1 op_centered_exchange_5 0 op_relocate_1 1 op_relocate_2 0 op_relocate_3 0 op_relocate_4 1 op_relocate_5 0 op_rrelocate_2 1 op_rrelocate_3 1 op_rrelocate_4 0 op_rrelocate_5 1 op_move_all_by_1 1 op_move_all_by_2 1 op_move_all_by_3 0 op_move_all_by_4 1 op_move_all_by_10 1
+
