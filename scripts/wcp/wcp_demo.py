@@ -18,8 +18,8 @@ PROBLEMS = ["fl417-160.6"]
 TIMEOUTS = [4170]
 
 
-SEED_FIRST = 3
-SEED_LAST = 10
+SEED_FIRST = 1
+SEED_LAST = 2
 
 
 for seed in range(SEED_FIRST, SEED_LAST + 1):
