@@ -8,18 +8,15 @@ CMD = "./cmake-build-release/wcp_meta"
 CONFIG = "./configs/SCP_config_opt_random.json"
 PROBLEM_TYPE = "WCP"
 
-DATASET_DIR = "./wcp_demo/"
-LOG_DIR = "./wcp_demo/"
+DATASET_DIR = "./data/datasets/TSPSD/tsplib_11/"
+LOG_DIR = "./data/results/weak_TSP-SD/heuristic_only/"
 
-# PROBLEMS = ["burma14-2.20", "ulysses22-3.80", "berlin52-5.00", "berlin52-8.30", "eil101-18.00", "gr202-50.00", "lin318-70.00", "fl417-130.00", "d657-290.00", "rat783-460.00", "vm1084-840.00"]
-# TIMEOUTS = [140, 220, 520, 520, 1010, 2020, 3180, 4170, 6570, 7830, 10840]
-
-PROBLEMS = ["fl417-160.6"]
-TIMEOUTS = [4170]
+PROBLEMS = ["burma14-3.1", "ulysses22-5.5", "berlin52-10.4", "berlin52-13.2", "eil101-27.5", "gr202-67.3", "lin318-99.3", "fl417-160.6", "d657-322.7", "rat783-481.4", "vm1084-848.9"]
+TIMEOUTS = [140, 220, 520, 520, 1010, 2020, 3180, 4170, 6570, 7830, 10840]
 
 
 SEED_FIRST = 1
-SEED_LAST = 2
+SEED_LAST = 55
 
 
 for seed in range(SEED_FIRST, SEED_LAST + 1):
