@@ -1,7 +1,5 @@
 ## Permutator 
-### generic metaheuristic solver for problems with permutative representation 
-
----
+### metaheuristic solver for problems with permutative representation 
 
 **Maintaners:** [David Woller](http://imr.ciirc.cvut.cz/People/David)
 
@@ -11,7 +9,6 @@
 
 **Contact:** wolledav@ciirc.cvut.cz
 
----
 
 ## Introduction
 
@@ -19,6 +16,18 @@ The **permutator** solver implements several highly configurable metaheuristic a
 A problem solution must be possible to encode as an ordered sequence of nodes.
 The sequence length can be variable, and individual nodes can reoccur.
 Additional problem-specific properties and constraints are treated using a penalization mechanism.
+
+Currently, the following **problems** are formulated: 
+
+- Capacitated Vehicle Routing Problem (CVRP)
+- Non-Permutation Flowshop Scheduling (NPFS)
+- Quadratic Assignment Problem (QAP)
+- Sudoku
+- Travelling Salesman Problem on Self-Deleting Graphs (TSP-SD)
+- weak Travelling Salesman Problem on Self-Deleting Graphs (weak TSP-SD)
+
+All **datasets** and experimental **results** are stored separately in a publicly available [Google Drive repository](https://drive.google.com/drive/folders/1BAbfwAIO1iAvtP9s4yG5JJ_jpsE_qtyS?usp=sharing).
+
 
 **Keywords:** permutative representation, metaheuristics, Iterated Local Search, Variable Neighborhood Search
 
@@ -40,7 +49,7 @@ git clone git@github.com:wolledav/permutator.git
 
 ### Compilation
 
-Go to the permutator/ directory and run
+In the permutator/ directory, run
 
 ```
 cmake -DCMAKE_BUILD_TYPE=Release -S . -B"./cmake-build-release_"
@@ -50,14 +59,6 @@ cmake --build cmake-build-debug_ -j
 ```
 
 ### Usage
-In the permutator/ directory, run
-```
-./cmake-build-debug_/scp_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json
-```
-or
-```
-./cmake-build-release_/wcp_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json -i ./data_demo/results/TSPSD/berlin52-13.2_init.json -o ./data_demo/results/wTSPSD/berlin52-13.2.json  -c ./configs/SCP_config_opt.json -t 60
-```
 Parameters:
 
 -d . . . path to a problem instance
@@ -71,30 +72,35 @@ Parameters:
 -c . . . solver configuration file (optional)
 
 
-### Gurobi installation
-1) Download and extract Gurobi to /opt
-2) Add to ~/.bashrc:
+In the permutator/ directory, run
 ```
-export GUROBI_HOME="/opt/gurobi951/linux64"
-export PATH="${PATH}:${GUROBI_HOME}/bin"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${GUROBI_HOME}/lib"
+./cmake-build-debug_/scp_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json
 ```
-3) Run
+The solver prints details about the search progress to the console in debug mode.
+
+To run in release mode and with all optional parameters, run
+
 ```
-cd /opt/gurobi951/linux64/src/build
-make
-cp libgurobi_c++.a ../../lib/
+./cmake-build-release_/wcp_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json -i ./data_demo/results/TSPSD/berlin52-13.2_init.json -o ./data_demo/results/wTSPSD/berlin52-13.2.json  -c ./configs/SCP_config_opt.json -t 60
 ```
+
+
+
+
+
+
 
 
 ## Components overview
+
+The solver implements several metaheuristic algorithms, perturbations, local search heuristics, local search operators and construction procedures. 
+Problem-specific configuration of the solver can be obtained from offline tuning, which is currently using the [irace](https://mlopez-ibanez.github.io/irace/) package. 
 
 ### Metaheuristics
 | Name            | Parameters                            |
 |-----------------|---------------------------------------|
 | ILS             | ils_k                                 |
 | basic VNS       | bvns_min_k, bvns_max_k                |
-| calibrating VNS | cvns_min_k, cvns_max_k, cvns_it_per_k |
 
 ### Perturbations
 | Name            | Parameters     |
@@ -132,5 +138,32 @@ cp libgurobi_c++.a ../../lib/
 | greedy           | none       |
 | random           | none       |
 | random replicate | none       |
+
+
+
+
+## Gurobi benchmark
+
+Some of the addressed problems were formulated as MILP and the permutator was compared with the Gurobi optimizer.
+The experiment can be replicated using the following instructions.
+
+TODO UPDATE
+
+### Gurobi installation
+1) Download and extract Gurobi to /opt
+2) Add to ~/.bashrc:
+```
+export GUROBI_HOME="/opt/gurobi951/linux64"
+export PATH="${PATH}:${GUROBI_HOME}/bin"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${GUROBI_HOME}/lib"
+```
+3) Run
+```
+cd /opt/gurobi951/linux64/src/build
+make
+cp libgurobi_c++.a ../../lib/
+```
+
+
 
 
