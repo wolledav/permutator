@@ -9,7 +9,12 @@
 
 // Compile time config macros
 #define GUROBI_THREAD_CNT 1
+#ifdef NDEBUG
+#define STDOUT_ENABLED 0
+#else
 #define STDOUT_ENABLED 1
+#endif
+
 namespace permutator {
     typedef unsigned int uint_t;
 #ifdef FITNESS_TYPE
