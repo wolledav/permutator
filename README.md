@@ -1,21 +1,62 @@
-# Permutator
+## Permutator 
+### generic metaheuristic solver for problems with permutative representation 
 
-Clone the repository. Then, go to the permutator/ directory and run
+---
+
+**Maintaners:** [David Woller](http://imr.ciirc.cvut.cz/People/David)
+
+**Creators:** [David Woller](http://imr.ciirc.cvut.cz/People/David), Jan Hrazdíra
+
+**Contributors:** [David Woller](http://imr.ciirc.cvut.cz/People/David), Jan Hrazdíra, David Kolečkář, Jan Švrčina
+
+**Contact:** wolledav@ciirc.cvut.cz
+
+---
+
+## Introduction
+
+The **permutator** solver implements several highly configurable metaheuristic algorithms that can be readily applied to a large class of problems with permutative solution representation.
+A problem solution must be possible to encode as an ordered sequence of nodes.
+The sequence length can be variable, and individual nodes can reoccur.
+Additional problem-specific properties and constraints are treated using a penalization mechanism.
+
+**Keywords:** permutative representation, metaheuristics, Iterated Local Search, Variable Neighborhood Search
+
+**Relevant literature:**
+
+1. Woller, D., Hrazdíra, J., Kulich, M. (2023). Metaheuristic Solver for Problems with Permutative Representation. Intelligent Computing & Optimization. ICO 2022. Lecture Notes in Networks and Systems, vol 569. Springer, Cham. https://doi.org/10.1007/978-3-031-19958-5_5
+
+
+
+
+## Usage
+
+Clone or download the repository. 
+
+```
+git clone git@github.com:wolledav/permutator.git
+```
+
 
 ### Compilation
+
+Go to the permutator/ directory and run
+
 ```
-cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" -S . -B"./cmake-build-release"
-cmake --build cmake-build-release --target all -- -j 6
+cmake -DCMAKE_BUILD_TYPE=Release -S . -B"./cmake-build-release_"
+cmake --build cmake-build-release_ -j
+cmake -DCMAKE_BUILD_TYPE=Debug -S . -B"./cmake-build-debug_"
+cmake --build cmake-build-debug_ -j
 ```
 
 ### Usage
 In the permutator/ directory, run
 ```
-./cmake-build-release/scp_meta -d ./data/tspsd/berlin52_distance/berlin52_sd1_distance.json -o ./log/scp-meta/solution.out -t 10
+./cmake-build-debug_/scp_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json
 ```
 or
 ```
-./cmake-build-release/wcp_meta -d ./data/tspsd/berlin52_distance/berlin52_sd1_distance.json -o ./log/wcp-meta/solution.out -t 10
+./cmake-build-release_/wcp_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json -i ./data_demo/results/TSPSD/berlin52-13.2_init.json -o ./data_demo/results/wTSPSD/berlin52-13.2.json  -c ./configs/SCP_config_opt.json -t 60
 ```
 Parameters:
 
@@ -23,7 +64,9 @@ Parameters:
 
 -o . . . path to an output file (optional)
 
--t . . . timeout is seconds (optional)
+-i . . . initial solution (optional)
+
+-t . . . timeout in seconds (optional)
 
 -c . . . solver configuration file (optional)
 
