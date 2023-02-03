@@ -8,22 +8,22 @@
     "local_search": "RPVND",
     "operators": [
         "insert_1",
-        "exchange_ids",
+        "exchangeIds",
         "exchange_1_1",
-        "rexchange_1_2",
-        "rexchange_2_2",
-        "rexchange_3_3",
-        "centered_exchange_1",
-        "centered_exchange_2",
-        "centered_exchange_3",
-        "centered_exchange_4",
+        "revExchange_1_2",
+        "revExchange_2_2",
+        "revExchange_3_3",
+        "centExchange_1",
+        "centExchange_2",
+        "centExchange_3",
+        "centExchange_4",
         "relocate_3",
         "relocate_4",
-        "move_all_by_1",
-        "move_all_by_2",
-        "move_all_by_4"
+        "moveAll_1",
+        "moveAll_2",
+        "moveAll_4"
     ],
     "perturbation": [
-        "random_swap"
+        "randomSwap"
     ]
 }

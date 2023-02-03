@@ -49,7 +49,7 @@ void Optimizer::setConstruction(const string& constr) {
         this->construction = [this] { constructGreedy(); };
     else if (constr == "random")
         this->construction = [this] { constructRandom(); };
-    else if (constr == "random_replicate")
+    else if (constr == "randomReplicate")
         this->construction = [this] { constructRandomReplicate(); };
     else
         throw std::system_error(EINVAL, std::system_category(), constr);
