@@ -93,8 +93,7 @@ To run in release mode and with all optional parameters, run
 
 ## Components overview
 
-The solver implements several metaheuristic algorithms, perturbations, local search heuristics, local search operators and construction procedures. 
-Problem-specific configuration of the solver can be obtained from offline tuning, which is currently using the [irace](https://mlopez-ibanez.github.io/irace/) package. 
+The solver implements several metaheuristic algorithms, perturbations, local search heuristics, local search operators and construction procedures.
 
 ### Metaheuristics
 | Name            | Parameters                            |
@@ -138,6 +137,14 @@ Problem-specific configuration of the solver can be obtained from offline tuning
 | greedy           | none       |
 | random           | none       |
 | random replicate | none       |
+
+
+
+## Tuning
+
+The **permutator** can be automatically tuned to achieve optimal performance on a given problem and dataset.
+For this purpose, the [irace](https://mlopez-ibanez.github.io/irace/) package is used.
+Tuning setups for individual problems are prepared in the permutator/tuning_setups/ directory.
 
 
 
