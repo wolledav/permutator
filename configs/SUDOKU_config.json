@@ -1,4 +1,5 @@
 {
+    "timeout": 60,
     "stop_on_feasible": false,
     "num_threads": 8,
     "metaheuristic": "ILS",
