@@ -60,8 +60,6 @@ void Optimizer::setMetaheuristic(const string& meta) {
         this->metaheuristic = [this] { ILS(); };
     else if (meta == "BVNS")
         this->metaheuristic = [this] { basicVNS(); };
-    else if (meta == "CVNS")
-        this->metaheuristic = [this] { calibratedVNS(); };
     else
         throw std::system_error(EINVAL, std::system_category(), meta);
 }
@@ -1000,61 +998,6 @@ void Optimizer::basicVNS() {
         for (const auto &pert : this->perturbation_list) {
             this->perturbationCall(pert, k);
         }
-    }
-    std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
-}
-
-/*
- * Calibrated Variable Neighborhood Search metaheuristic (custom).
- * TODO think through intended logic.
- * Parameters:
- * cvns_min_k . . . initial value of k
- * cvns_max_k . . . max value of k
- * cvns_it_per_k . . . ???
- */
-void Optimizer::calibratedVNS() {
-#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->printOperation(str(format("MH: %1%") % __func__));
-    std::cout << std::endl;
-#endif
-
-    uint min_k = config["cvns_min_k"].get<uint>();
-    uint max_k = config["cvns_max_k"].get<uint>();
-    uint it_per_k = config["cvns_it_per_k"].get<uint>();
-    uint same_sol_cnt = 0;
-    uint k = min_k;
-    this->local_search();
-
-    Solution current_best_solution = this->current_solution;
-    while (!this->timeout()) {
-        // Apply perturbation to this->solution
-        for (const auto &pert: this->perturbation_list) {
-            this->perturbationCall(pert, k);
-        }
-        // Perform local search on this->solution, ev. update this->best_known_solution
-        this->local_search();
-
-        if (this->current_solution < current_best_solution) { // Improving solution -> reset k
-            current_best_solution=this->current_solution;
-            k = min_k;
-        }
-        if (this->current_solution.fitness == current_best_solution.fitness){ // Improving or same solution found
-            if (++same_sol_cnt == it_per_k) { // Increase k after it_per_k
-                same_sol_cnt = 0;
-                k = k < max_k ? k + 1 : max_k;
-            }
-        } else { // Worse solution found
-            if (same_sol_cnt > 0) {
-                same_sol_cnt--;
-            } else {
-                //k = k > min_k ? k - 1 : min_k;
-            }
-        }
-        // TODO this should never happen
-        if (this->best_known_solution.fitness != current_best_solution.fitness)
-            std::cerr << str(format("ERROR: %1% bks != best_solution") % __func__ ) << std::endl;
-        // Reset this->solution to this->best_known_solution
-        this->current_solution=this->best_known_solution;
     }
     std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
 }

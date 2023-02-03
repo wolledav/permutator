@@ -25,7 +25,7 @@
     "cvns_it_per_k": 2,
     "ils_k": 3,
     "construction": "random",
-    "metaheuristic": "CVNS",
+    "metaheuristic": "BVNS",
     "local_search": "RPVND",
     "operators": ["relocate_1", "relocate_2", "revRelocate_2", "relocate_3",  "revRelocate_3", "exchange_1_1", "exchange_1_2",
                   "revExchange_1_2", "exchange_2_2", "revExchange_2_2", "exchange_2_3", "revExchange_2_3", "exchange_3_3", "revExchange_3_3",

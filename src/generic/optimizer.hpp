@@ -112,7 +112,6 @@ class Optimizer
         // Metaheuristics
         void ILS();
         void basicVNS();
-        void calibratedVNS();
         // Utils
         void perturbationCall(const std::string &perturbation_name, uint k);
         bool operationCall(const std::string &operation_name);
