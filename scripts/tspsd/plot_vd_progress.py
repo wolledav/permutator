@@ -12,8 +12,8 @@ def get_data(json_path):
 
 
 PROBLEM_DIR = "./data/tspsd/random24_ov_100/"
-LOG_DIR = "./log/scp-meta/random24_ov_100_SCP_3s/"
-FIG_DIR = "./figures/scp/hamiltonicity/"
+LOG_DIR = "./log/TSPSD-meta/random24_ov_100_TSPSD_3s/"
+FIG_DIR = "./figures/TSPSD/hamiltonicity/"
 STEP1 = 1
 STEP2 = 24
 

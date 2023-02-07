@@ -24,93 +24,93 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 # ************************************
 
 # add the executables
-add_executable(cvrp_meta
-        src/problem/cvrp/cvrp_meta.cpp
+add_executable(CVRP_meta
+        src/problem/CVRP/CVRP_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/cvrp/cvrp.cpp
+        src/problem/CVRP/CVRP.cpp
         lib/tinyxml/tinyxml.cpp
         lib/tinyxml/tinyxmlerror.cpp
         lib/tinyxml/tinyxmlparser.cpp
         lib/tinyxml/tinystr.cpp
         )
 
-add_executable(qap_meta
-        src/problem/qap/qap_meta.cpp
+add_executable(QAP_meta
+        src/problem/QAP/QAP_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/qap/qap.cpp
+        src/problem/QAP/QAP.cpp
         )
 
-add_executable(npfs_meta
-        src/problem/npfs/npfs_meta.cpp
+add_executable(NPFS_meta
+        src/problem/NPFS/NPFS_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/npfs/npfs.cpp
+        src/problem/NPFS/NPFS.cpp
         )
 
-add_executable(sudoku_meta
-        src/problem/sudoku/sudoku_meta.cpp
+add_executable(SUDOKU_meta
+        src/problem/SUDOKU/SUDOKU_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/sudoku/sudoku.cpp
+        src/problem/SUDOKU/SUDOKU.cpp
         )
 
-add_executable(scp_meta
-        src/problem/scp/scp_meta.cpp
+add_executable(TSPSD_meta
+        src/problem/TSPSD/TSPSD_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/scp/scp.cpp)
+        src/problem/TSPSD/TSPSD.cpp)
 
-add_executable(wcp_meta
-        src/problem/wcp/wcp_meta.cpp
+add_executable(wTSPSD_meta
+        src/problem/wTSPSD/wTSPSD_meta.cpp
         src/config.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/wcp/wcp.cpp)
+        src/problem/wTSPSD/wTSPSD.cpp)
 
-target_include_directories(cvrp_meta PUBLIC
+target_include_directories(CVRP_meta PUBLIC
                            "${PROJECT_BINARY_DIR}/../"
                            "${PROJECT_BINARY_DIR}/../src"
                            "${PROJECT_BINARY_DIR}/../lib/nlohmann"
                            )
 
-target_include_directories(qap_meta PUBLIC
+target_include_directories(QAP_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
         )
 
-target_include_directories(npfs_meta PUBLIC
+target_include_directories(NPFS_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
         )
 
-target_include_directories(sudoku_meta PUBLIC
+target_include_directories(SUDOKU_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
         )
 
-target_include_directories(scp_meta PUBLIC
+target_include_directories(TSPSD_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
         )
 
-target_include_directories(wcp_meta PUBLIC
+target_include_directories(wTSPSD_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
@@ -120,41 +120,41 @@ target_include_directories(wcp_meta PUBLIC
 ##       ILP EXECS
 ## ************************************
 #
-#add_executable(cvrp_ilp
-#        tools/cvrp_ilp.cpp
+#add_executable(CVRP_ilp
+#        tools/CVRP_ilp.cpp
 #        src/config.cpp
 #        src/generic/LS_optimizer.cpp
 #        src/generic/instance.cpp
 #        src/generic/solution.cpp
-#        src/problem/cvrp.cpp
+#        src/problem/CVRP.cpp
 #        lib/tinyxml/tinyxml.cpp
 #        lib/tinyxml/tinyxmlerror.cpp
 #        lib/tinyxml/tinyxmlparser.cpp
 #        lib/tinyxml/tinystr.cpp
 #        )
 #
-#add_executable(qap_ilp
-#        tools/qap_ilp.cpp
+#add_executable(QAP_ilp
+#        tools/QAP_ilp.cpp
 #        src/config.cpp
 #        src/generic/LS_optimizer.cpp
 #        src/generic/instance.cpp
 #        src/generic/solution.cpp
-#        src/problem/qap.cpp
+#        src/problem/QAP.cpp
 #        )
 #
-#add_executable(npfs_ilp
-#        src/problem/qap.cpp
-#        tools/npfs_ilp.cpp
+#add_executable(NPFS_ilp
+#        src/problem/QAP.cpp
+#        tools/NPFS_ilp.cpp
 #        src/config.cpp
 #        src/generic/LS_optimizer.cpp
 #        src/generic/instance.cpp
 #        src/generic/solution.cpp
-#        src/problem/npfs.cpp
+#        src/problem/NPFS.cpp
 #        )
 #
-#add_executable(sudoku_ilp
-#        tools/sudoku_ilp.cpp
-#        src/problem/sudoku.cpp
+#add_executable(SUDOKU_ilp
+#        tools/SUDOKU_ilp.cpp
+#        src/problem/SUDOKU.cpp
 #        src/config.cpp
 #        src/generic/instance.cpp
 #        src/generic/solution.cpp
@@ -162,35 +162,35 @@ target_include_directories(wcp_meta PUBLIC
 #
 ## gurobi
 #find_package(GUROBI REQUIRED)
-#target_link_libraries(cvrp_ilp optimized ${GUROBI_CXX_LIBRARY} debug ${GUROBI_CXX_DEBUG_LIBRARY})
-#target_link_libraries(cvrp_ilp ${GUROBI_LIBRARY})
-#target_link_libraries(qap_ilp optimized ${GUROBI_CXX_LIBRARY} debug ${GUROBI_CXX_DEBUG_LIBRARY})
-#target_link_libraries(qap_ilp ${GUROBI_LIBRARY})
-#target_link_libraries(npfs_ilp optimized ${GUROBI_CXX_LIBRARY} debug ${GUROBI_CXX_DEBUG_LIBRARY})
-#target_link_libraries(npfs_ilp ${GUROBI_LIBRARY})
-#target_link_libraries(sudoku_ilp optimized ${GUROBI_CXX_LIBRARY} debug ${GUROBI_CXX_DEBUG_LIBRARY})
-#target_link_libraries(sudoku_ilp ${GUROBI_LIBRARY})
+#target_link_libraries(CVRP_ilp optimized ${GUROBI_CXX_LIBRARY} debug ${GUROBI_CXX_DEBUG_LIBRARY})
+#target_link_libraries(CVRP_ilp ${GUROBI_LIBRARY})
+#target_link_libraries(QAP_ilp optimized ${GUROBI_CXX_LIBRARY} debug ${GUROBI_CXX_DEBUG_LIBRARY})
+#target_link_libraries(QAP_ilp ${GUROBI_LIBRARY})
+#target_link_libraries(NPFS_ilp optimized ${GUROBI_CXX_LIBRARY} debug ${GUROBI_CXX_DEBUG_LIBRARY})
+#target_link_libraries(NPFS_ilp ${GUROBI_LIBRARY})
+#target_link_libraries(SUDOKU_ilp optimized ${GUROBI_CXX_LIBRARY} debug ${GUROBI_CXX_DEBUG_LIBRARY})
+#target_link_libraries(SUDOKU_ilp ${GUROBI_LIBRARY})
 #
 #message(STATUS "gurobi include dir: ${GUROBI_LIBRARY}")
 #
-#target_include_directories(cvrp_ilp PUBLIC
+#target_include_directories(CVRP_ilp PUBLIC
 #        "${PROJECT_BINARY_DIR}/../"
 #        "${PROJECT_BINARY_DIR}/../src"
 #        "${GUROBI_INCLUDE_DIRS}"
 #        )
-#target_include_directories(qap_ilp PUBLIC
-#        "${PROJECT_BINARY_DIR}/../"
-#        "${PROJECT_BINARY_DIR}/../src"
-#        "${GUROBI_INCLUDE_DIRS}"
-#        )
-#
-#target_include_directories(npfs_ilp PUBLIC
+#target_include_directories(QAP_ilp PUBLIC
 #        "${PROJECT_BINARY_DIR}/../"
 #        "${PROJECT_BINARY_DIR}/../src"
 #        "${GUROBI_INCLUDE_DIRS}"
 #        )
 #
-#target_include_directories(sudoku_ilp PUBLIC
+#target_include_directories(NPFS_ilp PUBLIC
+#        "${PROJECT_BINARY_DIR}/../"
+#        "${PROJECT_BINARY_DIR}/../src"
+#        "${GUROBI_INCLUDE_DIRS}"
+#        )
+#
+#target_include_directories(SUDOKU_ilp PUBLIC
 #        "${PROJECT_BINARY_DIR}/../"
 #        "${PROJECT_BINARY_DIR}/../src"
 #        "${GUROBI_INCLUDE_DIRS}"

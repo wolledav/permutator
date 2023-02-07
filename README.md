@@ -23,8 +23,8 @@ Currently, the following **problems** are formulated:
 - Non-Permutation Flowshop Scheduling (NPFS)
 - Quadratic Assignment Problem (QAP)
 - Sudoku
-- Travelling Salesman Problem on Self-Deleting Graphs (TSP-SD)
-- weak Travelling Salesman Problem on Self-Deleting Graphs (weak TSP-SD)
+- Travelling Salesman Problem on Self-Deleting Graphs (TSPSD)
+- weak Travelling Salesman Problem on Self-Deleting Graphs (weak TSPSD)
 
 All **datasets** and experimental **results** are stored separately in a publicly available [Google Drive repository](https://drive.google.com/drive/folders/1BAbfwAIO1iAvtP9s4yG5JJ_jpsE_qtyS?usp=sharing).
 
@@ -52,10 +52,10 @@ git clone git@github.com:wolledav/permutator.git
 In the permutator/ directory, run
 
 ```
-cmake -DCMAKE_BUILD_TYPE=Release -S . -B"./cmake-build-release_"
-cmake --build cmake-build-release_ -j
-cmake -DCMAKE_BUILD_TYPE=Debug -S . -B"./cmake-build-debug_"
-cmake --build cmake-build-debug_ -j
+cmake -DCMAKE_BUILD_TYPE=Release -S . -B"./cmake-build-release"
+cmake --build cmake-build-release -j
+cmake -DCMAKE_BUILD_TYPE=Debug -S . -B"./cmake-build-debug"
+cmake --build cmake-build-debug -j
 ```
 
 ### Usage
@@ -74,14 +74,14 @@ Parameters:
 
 In the permutator/ directory, run
 ```
-./cmake-build-debug_/scp_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json
+./cmake-build-debug/TSPSD_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json
 ```
 The solver prints details about the search progress to the console in debug mode.
 
 To run in release mode and with all optional parameters, run
 
 ```
-./cmake-build-release_/wcp_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json -i ./data_demo/results/TSPSD/berlin52-13.2_init.json -o ./data_demo/results/wTSPSD/berlin52-13.2.json  -c ./configs/SCP_config_opt.json -t 60
+./cmake-build-release/wTSPSD_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json -i ./data_demo/results/TSPSD/berlin52-13.2_init.json -o ./data_demo/results/wTSPSD/berlin52-13.2.json  -c ./configs/TSPSD_config_opt.json -t 60
 ```
 
 

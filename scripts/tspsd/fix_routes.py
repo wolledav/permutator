@@ -2,7 +2,7 @@
 import os
 import json
 
-path = "./log/scp-exact/selected_12h/eil101-18.00.json"
+path = "./log/TSPSD-exact/selected_12h/eil101-27.5.json"
 
 with open(path, 'r') as file:
     data = json.load(file)

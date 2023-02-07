@@ -21,7 +21,7 @@ error() {
     exit 1
 }
 
-EXE=../cmake-build-release/cvrp_meta
+EXE=../cmake-build-release/CVRP_meta
 FIXED_PARAMS="num_threads 1"
 
 CONFIG_ID=$1

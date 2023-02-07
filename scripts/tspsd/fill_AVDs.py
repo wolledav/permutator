@@ -8,7 +8,7 @@ from tspsd_common import *
 
 # TODO works only with exact solutions
 DATA_DIR = "./data/tspsd/ham_bound_v1/random150_ov_50_v2/"
-LOG_DIR = "./log/scp-exact/ham_bound_v1/random150_ov_50_v2/"
+LOG_DIR = "./log/TSPSD-exact/ham_bound_v1/random150_ov_50_v2/"
 FIRST_EAVD = 1
 
 problems = os.listdir(DATA_DIR)

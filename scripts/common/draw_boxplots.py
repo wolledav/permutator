@@ -1,5 +1,5 @@
 # USAGE
-# python3 ./tools/draw_boxplots.py ./log/cvrp-meta/test/A-n65-k09/
+# python3 ./tools/draw_boxplots.py ./log/CVRP-meta/test/A-n65-k09/
 
 import os
 import sys

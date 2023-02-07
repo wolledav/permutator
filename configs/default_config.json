@@ -1,5 +1,5 @@
 {
-  "cvrp" : {
+  "CVRP" : {
     "timeout": 60,
     "stop_on_feasible": false,
     "num_threads": 8,
@@ -15,7 +15,7 @@
                   "exchange_2_2", "exchange_2_3", "exchange_2_4", "exchange_3_3", "exchange_3_4", "exchange_4_4"],
     "perturbation" : ["doubleBridge"]
   },
-  "qap" : {
+  "QAP" : {
     "timeout": 60,
     "stop_on_feasible": false,
     "num_threads": 8,
@@ -32,7 +32,7 @@
                   "exchange_3_4", "revExchange_3_4","twoOpt"],
     "perturbation" : ["randomSwap"]
   },
-  "npfs" : {
+  "NPFS" : {
     "timeout": 60,
     "stop_on_feasible": false,
     "num_threads": 8,
@@ -47,7 +47,7 @@
     "operators": ["exchangeIds", "moveAll_10", "exchangeNIds"],
     "perturbation" : ["randomMoveAll"]
   },
-  "sudoku" : {
+  "SUDOKU" : {
     "timeout": 60,
     "stop_on_feasible": false,
     "num_threads": 8,
@@ -62,7 +62,7 @@
     "operators": ["relocate_1", "twoOpt", "exchange_1_1"],
     "perturbation" : ["randomMove"]
   },
-  "scp" : {
+  "TSPSD" : {
     "timeout": 60,
     "stop_on_feasible": true,
     "num_threads": 8,
@@ -96,7 +96,7 @@
       "randomDoubleBridge"
     ]
   },
-  "wcp" : {
+  "wTSPSD" : {
     "timeout": 60,
     "stop_on_feasible": true,
     "num_threads": 8,

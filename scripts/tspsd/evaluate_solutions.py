@@ -5,9 +5,9 @@ import subprocess
 import time
 
 PROBLEM_DIR = "./data/tspsd/tsplib_10/selected/"
-LOG_DIR = "./log/scp-exact/selected_12h/"
-# LOG_DIR = "./log/scp-exact/first_valid/"
-CMD = "./cmake-build-release/scp_meta"
+LOG_DIR = "./log/TSPSD-exact/selected_12h/"
+# LOG_DIR = "./log/TSPSD-exact/first_valid/"
+CMD = "./cmake-build-release/TSPSD_meta"
 
 
 problems = os.listdir(PROBLEM_DIR)

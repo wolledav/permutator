@@ -4,12 +4,12 @@ from tools.tspsd.tspsd_common import *
 import pandas as pd
 
 # Hamiltonicity on random24 dataset
-LOG_DIRS = [ "./log/scp-exact/dense_sampling/random24_tsp_100_HCP/", "./log/scp-exact/dense_sampling/random24_ov_100_AVD_SCP/", "./log/scp-meta/dense_sampling/random24_ov_AVD_100_SCP_24s/", "./log/wcp-meta/dense_sampling/random24_ov_AVD_100_WCP_24s/"]
+LOG_DIRS = [ "./log/TSPSD-exact/dense_sampling/random24_tsp_100_HCP/", "./log/TSPSD-exact/dense_sampling/random24_ov_100_AVD_TSPSD/", "./log/TSPSD-meta/dense_sampling/random24_ov_AVD_100_TSPSD_24s/", "./log/wTSPSD-meta/dense_sampling/random24_ov_AVD_100_wTSPSD_24s/"]
 PROBLEM_DIRS = ["./data/tspsd/tsp/random24_tsp_100/", "./data/tspsd/dense_sampling/random24_ov_AVD_100/", "./data/tspsd/dense_sampling/random24_ov_AVD_100/", "./data/tspsd/dense_sampling/random24_ov_AVD_100/"]
 LEGENDS = ["HCP (exact)", "HCP-SD (exact)", "HCP-SD (heuristic)", "weak HCP-SD (heuristic)"]
 WINDOW_SIZES = [14, 8, 8, 8]
 TITLE = "(a) random24-100 dataset"
-FIG_DIR = "./figures/scp/hamiltonicity/"
+FIG_DIR = "./figures/TSPSD/hamiltonicity/"
 calculate_AVD = False
 BOUNDS_FILE = "./demo.json"
 PROBLEM_TYPE = "all"
@@ -17,51 +17,51 @@ COLORS = ["tab:blue", "tab:orange", "gold", "tab:green"]
 
 
 
-# Calculating bounds: scp-exact
-# # LOG_DIRS = ["./log/scp-exact/ham_bound_v1/random10_ov_50/", "./log/scp-exact/ham_bound_v1/random20_ov_50/", "./log/scp-exact/ham_bound_v1/random30_ov_50/", "./log/scp-exact/ham_bound_v1/random40_ov_50/", "./log/scp-exact/ham_bound_v1/random50_ov_50/", "./log/scp-exact/ham_bound_v1/random60_ov_50/", "./log/scp-exact/ham_bound_v1/random70_ov_50/", "./log/scp-exact/ham_bound_v1/random80_ov_50/", "./log/scp-exact/ham_bound_v1/random90_ov_50/", "./log/scp-exact/ham_bound_v1/random100_ov_50/", "./log/scp-exact/ham_bound_v1/random200_ov_50/"]
-# LOG_DIRS = ["./log/scp-exact/ham_bound_v1/random150_ov_50_v2/"]
+# Calculating bounds: TSPSD-exact
+# # LOG_DIRS = ["./log/TSPSD-exact/ham_bound_v1/random10_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random20_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random30_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random40_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random50_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random60_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random70_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random80_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random90_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random100_ov_50/", "./log/TSPSD-exact/ham_bound_v1/random200_ov_50/"]
+# LOG_DIRS = ["./log/TSPSD-exact/ham_bound_v1/random150_ov_50_v2/"]
 # # PROBLEM_DIRS = ["./data/tspsd/ham_bound_v1/random10_ov_50/", "./data/tspsd/ham_bound_v1/random20_ov_50/", "./data/tspsd/ham_bound_v1/random30_ov_50/", "./data/tspsd/ham_bound_v1/random40_ov_50/", "./data/tspsd/ham_bound_v1/random50_ov_50/", "./data/tspsd/ham_bound_v1/random60_ov_50/", "./data/tspsd/ham_bound_v1/random70_ov_50/", "./data/tspsd/ham_bound_v1/random80_ov_50/", "./data/tspsd/ham_bound_v1/random90_ov_50/", "./data/tspsd/ham_bound_v1/random100_ov_50/", "./data/tspsd/ham_bound_v1/random200_ov_50/"]
 # PROBLEM_DIRS = ["./data/tspsd/ham_bound_v1/random150_ov_50_v2/"]
 # # LEGENDS = ["random10", "random20", "random30", "random40", "random50", "random60", "random70", "random80", "random90", "random100", "random200"]
 # LEGENDS = ["random150"]
 # # WINDOW_SIZES = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 # WINDOW_SIZES = [2]
-# TITLE = "SCP_ham_bound_v1"
-# FIG_DIR = "./figures/scp/hamiltonicity/"
-# BOUNDS_FILE = "./log/scp-exact/ham_bound_v1/bounds_AVD_new.json"
-# PROBLEM_TYPE = "SCP"
+# TITLE = "TSPSD_ham_bound_v1"
+# FIG_DIR = "./figures/TSPSD/hamiltonicity/"
+# BOUNDS_FILE = "./log/TSPSD-exact/ham_bound_v1/bounds_AVD_new.json"
+# PROBLEM_TYPE = "TSPSD"
 # calculate_AVD = True
 
 
-# # Calculating bounds: wcp-meta
-# # LOG_DIRS = ["./log/wcp-meta/ham_bound_v1/random10_ov_50_WCP_10s/", "./log/wcp-meta/ham_bound_v1/random20_ov_50_WCP_20s/", "./log/wcp-meta/ham_bound_v1/random30_ov_50_WCP_30s/", "./log/wcp-meta/ham_bound_v1/random40_ov_50_WCP_40s/", "./log/wcp-meta/ham_bound_v1/random50_ov_50_WCP_50s/", "./log/wcp-meta/ham_bound_v1/random60_ov_50_WCP_60s/", "./log/wcp-meta/ham_bound_v1/random70_ov_50_WCP_70s/", "./log/wcp-meta/ham_bound_v1/random80_ov_50_WCP_80s/", "./log/wcp-meta/ham_bound_v1/random90_ov_50_WCP_90s/", "./log/wcp-meta/ham_bound_v1/random100_ov_50_WCP_100s/", "./log/wcp-meta/ham_bound_v1/random200_ov_50_WCP_200s/"]
-# LOG_DIRS = ["./log/wcp-meta/ham_bound_v1/random150_ov_50_v2_WCP_150s/"]
+# # Calculating bounds: wTSPSD-meta
+# # LOG_DIRS = ["./log/wTSPSD-meta/ham_bound_v1/random10_ov_50_wTSPSD_10s/", "./log/wTSPSD-meta/ham_bound_v1/random20_ov_50_wTSPSD_20s/", "./log/wTSPSD-meta/ham_bound_v1/random30_ov_50_wTSPSD_30s/", "./log/wTSPSD-meta/ham_bound_v1/random40_ov_50_wTSPSD_40s/", "./log/wTSPSD-meta/ham_bound_v1/random50_ov_50_wTSPSD_50s/", "./log/wTSPSD-meta/ham_bound_v1/random60_ov_50_wTSPSD_60s/", "./log/wTSPSD-meta/ham_bound_v1/random70_ov_50_wTSPSD_70s/", "./log/wTSPSD-meta/ham_bound_v1/random80_ov_50_wTSPSD_80s/", "./log/wTSPSD-meta/ham_bound_v1/random90_ov_50_wTSPSD_90s/", "./log/wTSPSD-meta/ham_bound_v1/random100_ov_50_wTSPSD_100s/", "./log/wTSPSD-meta/ham_bound_v1/random200_ov_50_wTSPSD_200s/"]
+# LOG_DIRS = ["./log/wTSPSD-meta/ham_bound_v1/random150_ov_50_v2_wTSPSD_150s/"]
 # # PROBLEM_DIRS = ["./data/tspsd/ham_bound_v1/random10_ov_50/", "./data/tspsd/ham_bound_v1/random20_ov_50/", "./data/tspsd/ham_bound_v1/random30_ov_50/", "./data/tspsd/ham_bound_v1/random40_ov_50/", "./data/tspsd/ham_bound_v1/random50_ov_50/", "./data/tspsd/ham_bound_v1/random60_ov_50/", "./data/tspsd/ham_bound_v1/random70_ov_50/", "./data/tspsd/ham_bound_v1/random80_ov_50/", "./data/tspsd/ham_bound_v1/random90_ov_50/", "./data/tspsd/ham_bound_v1/random100_ov_50/", "./data/tspsd/ham_bound_v1/random200_ov_50/"]
 # PROBLEM_DIRS = ["./data/tspsd/ham_bound_v1/random150_ov_50_v2/"]
 # # LEGENDS = ["random10", "random20", "random30", "random40", "random50", "random60", "random70", "random80", "random90", "random100", "random200"]
 # LEGENDS = ["random150"]
 # # WINDOW_SIZES = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 # WINDOW_SIZES = [2]
-# TITLE = "WCP_ham_bound_v1"
-# FIG_DIR = "./figures/wcp/hamiltonicity/"
-# BOUNDS_FILE = "./log/wcp-meta/ham_bound_v1/bounds_AVD_new.json"
-# PROBLEM_TYPE = "WCP"
+# TITLE = "wTSPSD_ham_bound_v1"
+# FIG_DIR = "./figures/wTSPSD/hamiltonicity/"
+# BOUNDS_FILE = "./log/wTSPSD-meta/ham_bound_v1/bounds_AVD_new.json"
+# PROBLEM_TYPE = "wTSPSD"
 # calculate_AVD = True
 
 
-# Calculating bounds: scp-meta
-# LOG_DIRS = ["./log/scp-meta/ham_bound_v1/random10_ov_50_SCP_10s/", "./log/scp-meta/ham_bound_v1/random20_ov_50_SCP_20s/", "./log/scp-meta/ham_bound_v1/random30_ov_50_SCP_30s/", "./log/scp-meta/ham_bound_v1/random40_ov_50_SCP_40s/", "./log/scp-meta/ham_bound_v1/random50_ov_50_SCP_50s/", "./log/scp-meta/ham_bound_v1/random60_ov_50_SCP_60s/", "./log/scp-meta/ham_bound_v1/random70_ov_50_SCP_70s/", "./log/scp-meta/ham_bound_v1/random80_ov_50_SCP_80s/", "./log/scp-meta/ham_bound_v1/random90_ov_50_SCP_90s/", "./log/scp-meta/ham_bound_v1/random100_ov_50_SCP_100s/", "./log/scp-meta/ham_bound_v1/random150_ov_50_SCP_150s/"]
-# LOG_DIRS = ["./log/scp-meta/ham_bound_v1/random200_ov_50_v2_SCP_200s/"]
+# Calculating bounds: TSPSD-meta
+# LOG_DIRS = ["./log/TSPSD-meta/ham_bound_v1/random10_ov_50_TSPSD_10s/", "./log/TSPSD-meta/ham_bound_v1/random20_ov_50_TSPSD_20s/", "./log/TSPSD-meta/ham_bound_v1/random30_ov_50_TSPSD_30s/", "./log/TSPSD-meta/ham_bound_v1/random40_ov_50_TSPSD_40s/", "./log/TSPSD-meta/ham_bound_v1/random50_ov_50_TSPSD_50s/", "./log/TSPSD-meta/ham_bound_v1/random60_ov_50_TSPSD_60s/", "./log/TSPSD-meta/ham_bound_v1/random70_ov_50_TSPSD_70s/", "./log/TSPSD-meta/ham_bound_v1/random80_ov_50_TSPSD_80s/", "./log/TSPSD-meta/ham_bound_v1/random90_ov_50_TSPSD_90s/", "./log/TSPSD-meta/ham_bound_v1/random100_ov_50_TSPSD_100s/", "./log/TSPSD-meta/ham_bound_v1/random150_ov_50_TSPSD_150s/"]
+# LOG_DIRS = ["./log/TSPSD-meta/ham_bound_v1/random200_ov_50_v2_TSPSD_200s/"]
 # PROBLEM_DIRS = ["./data/tspsd/ham_bound_v1/random10_ov_50/", "./data/tspsd/ham_bound_v1/random20_ov_50/", "./data/tspsd/ham_bound_v1/random30_ov_50/", "./data/tspsd/ham_bound_v1/random40_ov_50/", "./data/tspsd/ham_bound_v1/random50_ov_50/", "./data/tspsd/ham_bound_v1/random60_ov_50/", "./data/tspsd/ham_bound_v1/random70_ov_50/", "./data/tspsd/ham_bound_v1/random80_ov_50/", "./data/tspsd/ham_bound_v1/random90_ov_50/", "./data/tspsd/ham_bound_v1/random100_ov_50/", "./data/tspsd/ham_bound_v1/random150_ov_50/"]
 # PROBLEM_DIRS = ["./data/tspsd/ham_bound_v1/random200_ov_50_v2/"]
 # LEGENDS = ["random10", "random20", "random30", "random40", "random50", "random60", "random70", "random80", "random90", "random100", "random150"]
 # LEGENDS = ["random200"]
 # WINDOW_SIZES = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4]
 # WINDOW_SIZES = [14]
-# TITLE = "SCP_ham_bound_v1"
-# FIG_DIR = "./figures/scp/hamiltonicity/"
-# BOUNDS_FILE = "./log/scp-meta/ham_bound_v1/bounds_AVD_new.json"
-# PROBLEM_TYPE = "SCP"
+# TITLE = "TSPSD_ham_bound_v1"
+# FIG_DIR = "./figures/TSPSD/hamiltonicity/"
+# BOUNDS_FILE = "./log/TSPSD-meta/ham_bound_v1/bounds_AVD_new.json"
+# PROBLEM_TYPE = "TSPSD"
 # calculate_AVD = True
 
 

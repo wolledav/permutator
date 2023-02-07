@@ -5,8 +5,8 @@ import numpy as np
 
 
 
-LOG_DIRS = "./log/wcp-meta/tsplib_10/selected_init/"
-# LOG_DIR = "./log/wcp-meta/tsplib_10/selected_init/vm1084-840.00_10840s/"
+LOG_DIRS = "./log/wTSPSD-meta/tsplib_10/selected_init/"
+# LOG_DIR = "./log/wTSPSD-meta/tsplib_10/selected_init/vm1084-848.9_10840s/"
 
 dirs = os.listdir(LOG_DIRS)
 for dir in dirs:

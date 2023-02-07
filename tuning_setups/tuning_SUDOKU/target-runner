@@ -21,7 +21,7 @@ error() {
     exit 1
 }
 
-EXE=../cmake-build-release/sudoku_meta
+EXE=../cmake-build-release/SUDOKU_meta
 FIXED_PARAMS="num_threads 1"
 
 CONFIG_ID=$1

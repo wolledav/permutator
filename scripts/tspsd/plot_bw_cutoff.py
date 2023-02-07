@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 plt.figure(figsize=[6.4, 3.6])
 
 # Plots infeasibility detection ratio in different depths
-LOG_DIR = "./log/scp-exact/dense_sampling/random24_ov_100_AVD_SCP_v2/"
+LOG_DIR = "./log/TSPSD-exact/dense_sampling/random24_ov_100_AVD_TSPSD_v2/"
 TITLE = "(a) random24-100 dataset"
-FIG_OUTPUT = "./figures/scp/hamiltonicity/bw_cutoff_random24_ov_100_AVD.pdf"
+FIG_OUTPUT = "./figures/TSPSD/hamiltonicity/bw_cutoff_random24_ov_100_AVD.pdf"
 MAX_DEPTHS = [1, 2, 3, 5, 10]
 SIZE = 24
 

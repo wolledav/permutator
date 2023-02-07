@@ -2,7 +2,7 @@
 import os
 import json
 
-LOG_DIR = "./log/scp-exact/ham_bound_v1/random100_ov_50/"
+LOG_DIR = "./log/TSPSD-exact/ham_bound_v1/random100_ov_50/"
 MAX_DEPTH = 100
 
 logs = os.listdir(LOG_DIR)

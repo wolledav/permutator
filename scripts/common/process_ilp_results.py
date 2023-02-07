@@ -1,8 +1,8 @@
 # USAGE
-# python3 ./tools/process_ilp_results.py ./log/cvrp-ilp/cvrp-10_results/ ./data/cvrp/cvrp-10_BKSs.json
-# python3 ./tools/process_ilp_results.py ./log/npfs-ilp/npfs-10_results/ ./data/npfs-vfr/npfs-10_BKSs.json
-# python3 ./tools/process_ilp_results.py ./log/qap-ilp/qap-10_results/ ./data/qap/qap-10_BKSs.json
-# python3 ./tools/process_ilp_results.py ./log/sudoku-ilp/sudoku-10_results/ ./data/sudoku/sudoku-10_BKSs.json
+# python3 ./tools/process_ilp_results.py ./log/CVRP-ilp/CVRP-10_results/ ./data/CVRP/CVRP-10_BKSs.json
+# python3 ./tools/process_ilp_results.py ./log/NPFS-ilp/NPFS-10_results/ ./data/NPFS-vfr/NPFS-10_BKSs.json
+# python3 ./tools/process_ilp_results.py ./log/QAP-ilp/QAP-10_results/ ./data/QAP/QAP-10_BKSs.json
+# python3 ./tools/process_ilp_results.py ./log/SUDOKU-ilp/SUDOKU-10_results/ ./data/SUDOKU/SUDOKU-10_BKSs.json
 
 import os
 import sys

@@ -1,5 +1,5 @@
 # USAGE
-# python3 ./tools/process_meta_results.py ./log/cvrp-meta/test/ ./data/cvrp/cvrp-10_BKSs.json
+# python3 ./tools/process_meta_results.py ./log/CVRP-meta/test/ ./data/CVRP/CVRP-10_BKSs.json
 
 import os
 import sys

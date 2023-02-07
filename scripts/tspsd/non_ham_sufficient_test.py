@@ -44,7 +44,7 @@ def test_instance(path, k):
 
 
 PROBLEM_DIR = "./data/tspsd/dense_sampling/random24_ov_100/"
-SOLUTION_DIR = "./log/scp-meta/dense_sampling/random24_ov_100_SCP_3s/"
+SOLUTION_DIR = "./log/TSPSD-meta/dense_sampling/random24_ov_100_TSPSD_3s/"
 k = 2
 
 total = 0
