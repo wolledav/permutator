@@ -55,7 +55,7 @@ int main (int argc, char *argv[]) {
     if (!conf_path.empty()) {
         config = readJson(conf_path);
     } else {
-        config = Config::readDefaultConfig("TSPSD");
+        config = Config::readDefaultConfig();
     }
 
     if (timeout_s != 0) {

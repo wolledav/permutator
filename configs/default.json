@@ -1,0 +1,34 @@
+{
+  "timeout": 60,
+  "stop_on_feasible": false,
+  "num_threads": 8,
+  "metaheuristic": "ILS",
+  "ils_k": 6,
+  "construction": "randomReplicate",
+  "allow_infeasible": true,
+  "local_search": "CVND",
+  "operators": [
+    "insert_1",
+    "remove_1",
+    "twoOpt",
+    "exchangeIds",
+    "exchange_1_2",
+    "exchange_2_2",
+    "exchange_3_3",
+    "exchange_3_4",
+    "exchange_4_4",
+    "revExchange_2_2",
+    "revExchange_2_3",
+    "revExchange_4_4",
+    "centExchange_1",
+    "relocate_1",
+    "relocate_5",
+    "revRelocate_3",
+    "revRelocate_4",
+    "moveAll_1",
+    "moveAll_2"
+  ],
+  "perturbation": [
+    "randomDoubleBridge"
+  ]
+}

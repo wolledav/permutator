@@ -70,7 +70,7 @@ int main (int argc, char *argv[])
     if (!conf_path.empty()) {
         config = readJson(conf_path);
     } else {
-        config = Config::readDefaultConfig("CVRP");
+        config = Config::readDefaultConfig();
     }
 
     // Rewrite timeout

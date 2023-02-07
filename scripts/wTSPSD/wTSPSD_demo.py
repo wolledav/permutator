@@ -5,7 +5,7 @@ import subprocess
 import time
 
 CMD = "./cmake-build-release/wTSPSD_meta_stable"
-CONFIG = "./configs/TSPSD_config_opt_random.json"
+CONFIG = "./configs/TSPSD_random.json"
 PROBLEM_TYPE = "wTSPSD"
 
 DATASET_DIR = "./data/datasets/TSPSD/tsplib_11/"
@@ -15,7 +15,7 @@ PROBLEMS = ["burma14-3.1", "ulysses22-5.5", "berlin52-10.4", "berlin52-13.2", "e
 TIMEOUTS = [140, 220, 520, 520, 1010, 2020, 3180, 4170, 6570, 7830, 10840]
 
 
-SEED_FIRST = 31
+SEED_FIRST = 39
 SEED_LAST = 55
 
 
