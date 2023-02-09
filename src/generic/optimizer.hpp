@@ -23,6 +23,7 @@ class Optimizer
     private:
         nlohmann::json config;
         uint timeout_s;
+        uint unimproved_cnt;
         std::chrono::steady_clock::time_point start, last_improvement;
         Instance* instance;
         Solution initial_solution, current_solution, best_known_solution;
@@ -116,7 +117,7 @@ class Optimizer
         void perturbationCall(const std::string &perturbation_name, uint k);
         bool operationCall(const std::string &operation_name);
         long getRuntime();
-        bool timeout();
+        bool stop();
         void randomReverse(std::vector<uint>::iterator, std::vector<uint>::iterator);
         void printOperation(const std::string& msg);
         void printResult(bool update);

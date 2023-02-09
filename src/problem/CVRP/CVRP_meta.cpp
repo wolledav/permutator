@@ -30,7 +30,8 @@ void show_usage(){
 
 int main (int argc, char *argv[])
 {
-    uint node_cnt, tours, seed = 0, timeout_s = 0;
+    uint node_cnt, tours, seed = 0;
+    uint timeout_s = UINT32_MAX;
     string data_path, output_path, conf_path;
     std::ofstream output_file, log_file;
     int opt;
@@ -74,7 +75,7 @@ int main (int argc, char *argv[])
     }
 
     // Rewrite timeout
-    if (timeout_s != 0) {
+    if (timeout_s != UINT32_MAX) {
         config["timeout"] = timeout_s;
     }
 

@@ -21,13 +21,20 @@ Optimizer::Optimizer(Instance *inst, json config, uint seed) {
     this->current_solution = sol;
     this->best_known_solution = sol;
     this->rng = Optimizer::initRng(seed);
-    this->timeout_s = this->config["timeout"].get<uint>();
     this->setConstruction(this->config["construction"].get<string>());
     this->setMetaheuristic(this->config["metaheuristic"].get<string>());
     this->setLocalSearch(this->config["local_search"].get<string>());
     this->setPerturbations(this->config["perturbation"].get<vector<string>>());
     this->setOperators(this->config["operators"].get<vector<string>>());
     omp_set_num_threads(this->config["num_threads"]);
+    if (this->config.contains("timeout")) {
+        this->timeout_s = this->config["timeout"].get<uint>();
+        std::cout << "Timeout set to " << this->timeout_s << "s" << std::endl;
+    } else {
+        std::cout << "No timeout set" << std::endl;
+        this->timeout_s = UINT32_MAX;
+    }
+    this->unimproved_cnt = 0;
 }
 
 std::mt19937* Optimizer::initRng(uint seed) {
@@ -107,7 +114,7 @@ void Optimizer::run() {
     this->last_improvement = this->start;
     this->construction();
 
-    if (!this->timeout()) {
+    if (!this->stop()) {
         this->metaheuristic();
     }
 }
@@ -133,7 +140,7 @@ bool Optimizer::insert1() {
 
 #pragma omp parallel for default(none) private(new_fitness) shared(best_solution, perm, freq)
     for (uint i = 0; i <= perm.size(); i++) {                       // for all positions i
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
         vector<uint> new_perm = perm;
         vector<uint> new_freq = freq;
         new_perm.insert(new_perm.begin() + i, 0);
@@ -186,7 +193,7 @@ bool Optimizer::remove1() {
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, removed_node, perm)
     for (uint i = 0; i < perm.size(); i++){
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
         if (this->current_solution.frequency[perm[i]] <= this->instance->lbs[perm[i]]) {
             continue;
         }
@@ -228,7 +235,7 @@ bool Optimizer::relocate(uint x, bool reverse) {
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, reverse)
     for (uint i = 0; i < perm.size() - x; i++) {
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
         vector<uint> reduced_perm = perm;
         vector<uint> subsequence(perm.begin() + i, perm.begin() + i + x);
         reduced_perm.erase(reduced_perm.begin() + i, reduced_perm.begin() + i + x);
@@ -275,7 +282,7 @@ bool Optimizer::centeredExchange(uint x) {
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
     for (int i = (int)x; i < (int)perm.size() - (int)x; i++) {
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
         vector<uint> new_perm = perm;
         for (int j = 1; j <= (int)x; j++) {
             new_perm[i+j] = perm[i-j];
@@ -317,7 +324,7 @@ bool Optimizer::exchange(uint x, uint y, bool reverse) {
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, y, reverse)
     for (uint i = 0; i < perm.size() - x; i++) {
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
         for (uint j = 0; j < perm.size() - y; j++) {
             if ((i >= j && i < j + y) || (j >= i && j < i + x)) {
                 continue;
@@ -377,7 +384,7 @@ bool Optimizer::moveAll(uint x) {
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
     for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++){ // try for all nodes
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
         // find all positions of node_id in perm
         vector<uint> positions;
         for (uint i = 0; i < perm.size(); i++){
@@ -435,7 +442,7 @@ bool Optimizer::exchangeIds() {
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) {
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
         for (uint j = 0; j < i; j++) {
             vector<uint> new_perm = perm;
             for (unsigned int & node : new_perm){
@@ -482,7 +489,7 @@ bool Optimizer::exchangeNIds() {
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i < this->instance->node_cnt; i++) { // for all nodes i in A
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
         for (uint j = 0; j < i; j++) { // for all pairs of nodes i,j in A
             for (uint n = 1; n < this->current_solution.frequency[i]; n++) { // for all frequencies up to f_i
                 uint counter1 = 0, counter2 = 0;
@@ -533,7 +540,7 @@ bool Optimizer::twoOpt() {
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i <= perm.size() - 2; i++) {
-        if (this->timeout()) continue;
+        if (this->stop()) continue;
             for (uint j = i+2; j <= perm.size(); j++) {
                 vector<uint> new_perm = perm;
                 reverse(new_perm.begin() + i, new_perm.begin() + j); // half closed interval [i, j)
@@ -787,7 +794,7 @@ void Optimizer::basicVND() {
 
     while (current_fitness < prev_fitness) {
         for (const auto &operation : this->operation_list) {
-            if (this->timeout()) return;
+            if (this->stop()) return;
             if (this->operationCall(operation)) break;
         }
         prev_fitness = current_fitness;
@@ -817,7 +824,7 @@ void Optimizer::pipeVND() {
             string operation = this->operation_list[i];
             while (this->operationCall(operation)) {
                 last_improving_operator = i;
-                if (this->timeout()) return;
+                if (this->stop()) return;
             }
         }
         prev_fitness = current_fitness;
@@ -847,7 +854,7 @@ void Optimizer::cyclicVND() {
             if (this->operationCall(operation)) {
                 last_improving_operator = i;
             }
-            if (this->timeout()) return;
+            if (this->stop()) return;
         }
         prev_fitness = current_fitness;
         current_fitness = this->current_solution.fitness;
@@ -876,7 +883,7 @@ void Optimizer::randomVND() {
         std::shuffle(order.begin(), order.end(), *this->rng); // shuffle order
         for (uint idx : order) {
             this->operationCall(this->operation_list[idx]);
-            if (this->timeout()) return;
+            if (this->stop()) return;
         }
         prev_fitness = current_fitness;
         current_fitness = this->current_solution.fitness;
@@ -906,7 +913,7 @@ void Optimizer::randompipeVND() {
         std::shuffle(order.begin(), order.end(), *this->rng);
         for (uint idx : order) {
             while (this->operationCall(this->operation_list[idx])) {
-                if (this->timeout()) { return; }
+                if (this->stop()) { return; }
             }
         }
         prev_fitness = current_fitness;
@@ -929,9 +936,9 @@ void Optimizer::ILS() {
     this->printOperation(str(format("MH: %1%") % __func__));
     std::cout << std::endl;
 #endif
+    fitness_t last_best_fitness;
 
-//    this->local_search();
-    while (!this->timeout()) {
+    while (!this->stop()) {
         // Terminate, if stop_on_feasible set on true
         if (config["stop_on_feasible"] && this->best_known_solution.is_feasible) {
             std::cout << str(format("%1% found a feasible solution in %2% seconds ") % __func__ % this->getRuntime()) << std::endl;
@@ -939,19 +946,25 @@ void Optimizer::ILS() {
         }
 
         // Perform local search on this->current_solution, ev. update this->best_known_solution
+        last_best_fitness = best_known_solution.fitness;
         this->local_search();
+        this->best_known_solution.fitness == last_best_fitness ? unimproved_cnt++ : unimproved_cnt = 0;
+
 
         // Reset this->current_solution to this->best_known_solution
-        if (this->best_known_solution.fitness != this->current_solution.fitness) {
-            this->current_solution=this->best_known_solution;
-        }
+        this->current_solution=this->best_known_solution;
 
         // Apply perturbation to this->current_solution
         for (const auto &pert : this->perturbation_list) {
             this->perturbationCall(pert, config["ils_k"].get<uint>());
         }
     }
-    std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
+
+    if (this->timeout_s == UINT32_MAX) {
+        std::cout << __func__ << " terminated after " << UNIMPROVING_ITERS_MAX << " non-improving iterations" << std::endl;
+    } else {
+        std::cout << __func__ << " terminated after reaching " << this->timeout_s << "s timeout" << std::endl;
+    }
 }
 
 /*
@@ -971,9 +984,10 @@ void Optimizer::basicVNS() {
     uint min_k = config["bvns_min_k"].get<uint>();
     uint max_k = config["bvns_max_k"].get<uint>();
     uint k = min_k;
+    fitness_t last_best_fitness;
 
     Solution current_best_solution = this->current_solution; // needed, as this->best_known_solution is updated internally
-    while (!this->timeout()) {
+    while (!this->stop()) {
         // Terminate, if stop_on_feasible set on true
         if (config["stop_on_feasible"] && this->best_known_solution.is_feasible) {
             std::cout << str(format("%1% found a feasible solution in %2% seconds ") % __func__ % this->getRuntime()) << std::endl;
@@ -981,7 +995,10 @@ void Optimizer::basicVNS() {
         }
 
         // Perform local search on this->current_solution, ev. update this->best_known_solution
+        last_best_fitness = best_known_solution.fitness;
         this->local_search();
+        this->best_known_solution.fitness == last_best_fitness ? unimproved_cnt++ : unimproved_cnt = 0;
+        std::cout << unimproved_cnt << std::endl;
 
         // Adjust k
         if (this->current_solution < current_best_solution){
@@ -999,7 +1016,12 @@ void Optimizer::basicVNS() {
             this->perturbationCall(pert, k);
         }
     }
-    std::cout << str(format("%1% Timeout: %2% (sec)") % __func__ % this->timeout_s) << std::endl;
+
+    if (this->timeout_s == UINT32_MAX) {
+        std::cout << __func__ << " terminated after " << UNIMPROVING_ITERS_MAX << " non-improving iterations" << std::endl;
+    } else {
+        std::cout << __func__ << " terminated after reaching " << this->timeout_s << "s timeout" << std::endl;
+    }
 }
 
 //**********************************************************************************************************************
@@ -1022,7 +1044,7 @@ void Optimizer::constructGreedy() {
     do {
         updated = insert1();
         valid = this->instance->FrequencyInBounds(this->current_solution.frequency);
-    } while((!valid || updated) && !this->timeout());
+    } while((!valid || updated) && !this->stop());
 
     // Evaluate
     if (this->current_solution < this->best_known_solution) {
@@ -1115,7 +1137,7 @@ void Optimizer::constructRandomReplicate() {
                 sol.permutation.push_back(elem);
             }
         }
-    } while(!this->instance->FrequencyInBounds(sol.frequency) && !this->timeout());
+    } while(!this->instance->FrequencyInBounds(sol.frequency) && !this->stop());
 
     // Evaluate
     this->current_solution = Solution(sol.permutation, *this->instance);
@@ -1159,7 +1181,7 @@ void Optimizer::perturbationCall(const string &perturbation_name, uint k) {
         do {
             this->current_solution=this->best_known_solution;
             this->perturbation_map.at(perturbation_name)(k); // call perturbation
-        } while (!this->timeout() && (this->current_solution.fitness == this->best_known_solution.fitness || !this->current_solution.is_feasible)); // no change or not feasible -> repeat
+        } while (!this->stop() && (this->current_solution.fitness == this->best_known_solution.fitness || !this->current_solution.is_feasible)); // no change or not feasible -> repeat
     } else {
         this->perturbation_map.at(perturbation_name)(k); // call perturbation
     }
@@ -1170,8 +1192,12 @@ long Optimizer::getRuntime() {
     return std::chrono::duration_cast<std::chrono::seconds>(now - this->start).count();
 }
 
-bool Optimizer::timeout() {
-    return this->getRuntime() > this->timeout_s;
+bool Optimizer::stop() {
+    if (timeout_s == UINT32_MAX) {
+        return unimproved_cnt >= UNIMPROVING_ITERS_MAX;
+    } else {
+        return this->getRuntime() > this->timeout_s;
+    }
 }
 
 void Optimizer::randomReverse(std::vector<uint>::iterator it1, std::vector<uint>::iterator it2) {
