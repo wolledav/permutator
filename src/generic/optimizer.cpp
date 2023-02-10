@@ -127,14 +127,15 @@ void Optimizer::run() {
 
 /*
  * Attempts to insert all nodes from A to X.
- * Performs the most-improving insertion.
+ * Performs the most improving (or least worsening) insertion.
+ * If all nodes are at their upper bounds, does nothing.
  */
 bool Optimizer::insert1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->printOperation(str(format("\t\tO: %1%") % __func__));
 #endif
 
-    Solution best_solution = this->current_solution;
+    Solution best_solution = Solution(this->instance->node_cnt); // this has huge fitness, so something is always inserted
     vector<uint> perm = this->current_solution.permutation;
     vector<uint> freq = this->current_solution.frequency;
     fitness_t new_fitness;
@@ -179,13 +180,14 @@ bool Optimizer::insert1() {
 
 /*
  * Attempts to append all nodes from A to X.
- * Performs the most-improving insertion.
+ * Performs the most improving (or least worsening) insertion.
+ * If all nodes are at their upper bounds, does nothing.
  */
 bool Optimizer::append1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->printOperation(str(format("\t\tO: %1%") % __func__));
 #endif
-    Solution best_solution = this->current_solution;
+    Solution best_solution = Solution(this->instance->node_cnt); // this has huge fitness, so something is always appended
     bool best_updated = false;
 
     vector<uint> cand_perm = this->current_solution.permutation;
