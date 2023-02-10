@@ -58,6 +58,8 @@ void Optimizer::setConstruction(const string& constr) {
         this->construction = [this] { constructRandom(); };
     else if (constr == "randomReplicate")
         this->construction = [this] { constructRandomReplicate(); };
+    else if (constr == "nearestNeighbor")
+        this->construction = [this] { constructNearestNeighbor(); };
     else
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
@@ -132,7 +134,7 @@ bool Optimizer::insert1() {
     this->printOperation(str(format("\t\tO: %1%") % __func__));
 #endif
 
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     vector<uint> perm = this->current_solution.permutation;
     vector<uint> freq = this->current_solution.frequency;
     fitness_t new_fitness;
@@ -166,13 +168,53 @@ bool Optimizer::insert1() {
 
     if (best_solution.fitness + new_penalty < this->current_solution.fitness + penalty) {
         updated = true;
-        this->current_solution=best_solution;
+        this->current_solution = best_solution;
     }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->printResult(updated);
 #endif
     return updated;
+}
+
+/*
+ * Attempts to append all nodes from A to X.
+ * Performs the most-improving insertion.
+ */
+bool Optimizer::append1() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->printOperation(str(format("\t\tO: %1%") % __func__));
+#endif
+    Solution best_solution = this->current_solution;
+    bool best_updated = false;
+
+    vector<uint> cand_perm = this->current_solution.permutation;
+    vector<uint> cand_freq = this->current_solution.frequency;
+    fitness_t cand_fitness;
+    cand_perm.emplace_back(-1);
+
+#pragma omp parallel for default(none) shared(best_solution, best_updated) private(cand_fitness) firstprivate(cand_perm, cand_freq)
+    for (uint i = 0; i < this->instance->node_cnt; i++) {    // for all nodes i in A
+        if (this->current_solution.frequency[i] >= this->instance->ubs[i]) continue;
+        cand_perm.back() = i;
+        cand_freq[i]++;
+
+        this->instance->computeFitness(cand_perm, &cand_fitness);
+        auto cand_penalty = this->instance->getLBPenalty(cand_freq);
+#pragma omp critical
+        if (cand_fitness + cand_penalty < best_solution.fitness + this->instance->getLBPenalty(best_solution.frequency)) {
+            best_solution = Solution(cand_perm, *this->instance);
+            best_updated = true;
+        }
+        cand_freq[i]--;
+    }
+
+    if (best_updated) this->current_solution = best_solution;
+
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->printResult(best_updated);
+#endif
+    return best_updated;
 }
 
 /*
@@ -1060,6 +1102,37 @@ void Optimizer::constructGreedy() {
 }
 
 /*
+ * Applies append1 operator until the solution is not valid w.r.t. LBs and UBs or the operator does not update the solution.
+ * Uses this->initial_solution and sets this->current solution.
+ */
+void Optimizer::constructNearestNeighbor() {
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->printOperation(str(format("C: %1%") % __func__));
+    std::cout << std::endl;
+#endif
+    this->current_solution = this->initial_solution;
+
+    // Construct
+    bool updated, valid;
+    do {
+        updated = append1();
+        valid = this->instance->FrequencyInBounds(this->current_solution.frequency);
+    } while((!valid || updated) && !this->stop());
+
+    // Evaluate
+    if (this->current_solution < this->best_known_solution) {
+        this->best_known_solution=this->current_solution;
+        this->last_improvement = std::chrono::steady_clock::now();
+        this->steps.emplace_back(this->getRuntime(), this->current_solution.fitness);
+    }
+
+#if defined STDOUT_ENABLED && STDOUT_ENABLED==1
+    this->printOperation(str(format("C: %1%") % __func__));
+    this->printResult(true);
+#endif
+}
+
+/*
  * Adds nodes to random positions of the solution, until all nodes are at their LBs.
  * Uses this->initial_solution and sets this->current solution.
  */
@@ -1247,3 +1320,4 @@ void Optimizer::saveToJson(json& container) {
     this->best_known_solution.saveToJson(container);
     container["config"] = this->config;
 }
+
