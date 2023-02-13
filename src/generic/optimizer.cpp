@@ -116,6 +116,9 @@ void Optimizer::run() {
     this->last_improvement = this->start;
     this->construction();
 
+    // Constructed solution might be invalid -> increase final fitness
+    this->best_known_solution.fitness += this->instance->getLBPenalty(this->best_known_solution.frequency);
+
     if (!this->stop()) {
         this->metaheuristic();
     }
@@ -164,7 +167,7 @@ bool Optimizer::insert1() {
         }
     }
 
-    // Update this->solution
+    // Update this->current_solution
     auto new_penalty = this->instance->getLBPenalty(best_solution.frequency);
     auto penalty = this->instance->getLBPenalty(this->current_solution.frequency);
 
@@ -213,7 +216,9 @@ bool Optimizer::append1() {
         cand_freq[i]--;
     }
 
-    if (best_updated) this->current_solution = best_solution;
+    if (best_updated) {
+        this->current_solution = best_solution;
+    }
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->printResult(best_updated);
