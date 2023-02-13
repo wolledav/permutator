@@ -67,8 +67,8 @@ TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
     }
 }
 
-bool TSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t *fitness) {
-    *fitness = 0;
+bool TSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &fitness, vector<fitness_t> &penalties) {
+    fitness = 0;
     bool valid = true;
 
     if (permutation.size() > 1) {
@@ -85,7 +85,7 @@ bool TSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t *f
                 del_mat(del.second, del.first) = true;
             }
             // Update fitness and validity
-            *fitness +=
+            fitness +=
                     del_mat(node1, node2) * DELETED_EDGE_PENALTY + (1 - del_mat(node1, node2)) * dist_mat(node1, node2);
             valid = valid && !del_mat(node1, node2);
 

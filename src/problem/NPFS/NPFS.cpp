@@ -34,10 +34,10 @@ void NPFSInstance::read(const char *path) {
     this->empty_machine_penalty = 3*this->job_cnt*this->big_m;
 }
 
-bool NPFSInstance::computeFitness(const vector<uint> &permutation, fitness_t *fitness) {
+bool NPFSInstance::computeFitness(const vector<uint> &permutation, fitness_t &fitness, vector<fitness_t> &penalties) {
     uint perm_idx, end, curr_job, prev_job, last_machine = 0;
     vector<bool> processed_jobs (this->job_cnt, false);
-    *fitness = 0;
+    fitness = 0;
     boost::numeric::ublas::matrix<uint> op_end_times (this->machine_cnt, this->job_cnt, 0);
     // First machine has no waiting time between operations.
     end = std::min((uint)permutation.size(), this->job_cnt);
@@ -45,13 +45,13 @@ bool NPFSInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
     processed_jobs[permutation[0]] = true;
     for (uint j = 1; j < end; j++) {
         if (processed_jobs[permutation[j]])
-            *fitness += this->job_duplication_penalty;
+            fitness += this->job_duplication_penalty;
         else
             processed_jobs[permutation[j]] = true;
         op_end_times(0, permutation[j]) = op_end_times(0, permutation[j - 1]) + this->job_mat(0, permutation[j]);
     }
     if (end < this->job_cnt)
-        *fitness += (this->job_cnt - end)*this->big_m;
+        fitness += (this->job_cnt - end)*this->big_m;
     // Compute op_end_time for the rest of the machines
     for (uint m = 1; m < this->machine_cnt; m++) {
         last_machine = m;
@@ -62,7 +62,7 @@ bool NPFSInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
                 curr_job = permutation[perm_idx], prev_job = permutation[perm_idx - 1];
                 // Every machine can process each job only once.
                 if (processed_jobs[curr_job])
-                    *fitness += this->job_duplication_penalty;
+                    fitness += this->job_duplication_penalty;
                 else
                     processed_jobs[curr_job] = true;
                 // If the job has not yet ended on previous machine wait for it to finish.
@@ -73,15 +73,15 @@ bool NPFSInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
                     op_end_times(m, curr_job) = op_end_times(m, prev_job) + this->job_mat(m, curr_job);
             }
             if (perm_idx != (m+1)*this->job_cnt)
-                *fitness += ((m+1)*this->job_cnt - end)*this->big_m;
+                fitness += ((m+1)*this->job_cnt - end)*this->big_m;
         } else {
-            *fitness += this->empty_machine_penalty;
+            fitness += this->empty_machine_penalty;
         }
     }
-    if (last_machine > 0) *fitness += std::max(op_end_times(last_machine, permutation[(end - 1)]),
+    if (last_machine > 0) fitness += std::max(op_end_times(last_machine, permutation[(end - 1)]),
                                                 op_end_times(last_machine-1, permutation[(end - 1)]));
-    else *fitness += op_end_times(last_machine, permutation[(end - 1)]);
-    return *fitness < this->big_m;
+    else fitness += op_end_times(last_machine, permutation[(end - 1)]);
+    return fitness < this->big_m;
 }
 
 void NPFSInstance::print_solution(Solution *solution, std::basic_ostream<char> &outf) const {

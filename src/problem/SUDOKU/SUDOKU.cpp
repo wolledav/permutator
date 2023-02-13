@@ -44,19 +44,19 @@ void SudokuInstance::fill_grid(matrix<int>& target_grid, const vector<uint> &per
     }
 }
 
-bool SudokuInstance::computeFitness(const vector<uint> &permutation, fitness_t* fitness) {
+bool SudokuInstance::computeFitness(const vector<uint> &permutation, fitness_t &fitness, vector<fitness_t> &penalties) {
     uint si, sj, i, j;
     matrix<int> new_grid(this->grid);
     this->fill_grid(new_grid, permutation);
-    *fitness = 0;
+    fitness = 0;
     // check vertical lines
     for (i = 0; i < this->node_cnt; i++) {
         vector<bool> is_present(this->node_cnt, false);
         for (j = 0; j < this->node_cnt; j++) {
             if (new_grid(j, i) < 0) {
-                *fitness += 2;
+                fitness += 2;
             } else if (is_present[new_grid(j, i)]){
-                *fitness += 1;
+                fitness += 1;
             } else {
                 is_present[new_grid(j, i)] = true;
             }
@@ -68,9 +68,9 @@ bool SudokuInstance::computeFitness(const vector<uint> &permutation, fitness_t* 
         vector<bool> is_present(this->node_cnt, false);
         for (j = 0; j < this->node_cnt; j++) {
             if (new_grid(i, j) < 0) {
-                *fitness += 2;
+                fitness += 2;
             } else if (is_present[new_grid(i, j)]){
-                *fitness += 1;
+                fitness += 1;
             } else {
                 is_present[new_grid(i, j)] = true;
             }
@@ -84,9 +84,9 @@ bool SudokuInstance::computeFitness(const vector<uint> &permutation, fitness_t* 
             for (i = 0; i < this->subdivision; i++) {
                 for (j = 0; j < this->subdivision; j++){
                     if (new_grid(si+ i, sj + j) < 0) {
-                        *fitness += 2;
+                        fitness += 2;
                     } else if (is_present[new_grid(si+ i, sj + j)]){
-                        *fitness += 1;
+                        fitness += 1;
                     } else {
                         is_present[new_grid(si + i, sj + j)] = true;
                     }
@@ -94,7 +94,7 @@ bool SudokuInstance::computeFitness(const vector<uint> &permutation, fitness_t* 
             }
         }
     }
-    return *fitness == 0;
+    return fitness == 0;
 }
 
 void SudokuInstance::print_solution(Solution *solution, std::basic_ostream<char> &outf) const {
