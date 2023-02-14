@@ -35,6 +35,7 @@ add_executable(CVRP_meta
         lib/tinyxml/tinyxmlerror.cpp
         lib/tinyxml/tinyxmlparser.cpp
         lib/tinyxml/tinystr.cpp
+        lib/getopt/getopt.c
         )
 
 add_executable(QAP_meta
@@ -44,6 +45,7 @@ add_executable(QAP_meta
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/QAP/QAP.cpp
+        lib/getopt/getopt.c
         )
 
 add_executable(NPFS_meta
@@ -53,6 +55,7 @@ add_executable(NPFS_meta
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/NPFS/NPFS.cpp
+        lib/getopt/getopt.c
         )
 
 add_executable(SUDOKU_meta
@@ -62,6 +65,7 @@ add_executable(SUDOKU_meta
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/SUDOKU/SUDOKU.cpp
+        lib/getopt/getopt.c
         )
 
 add_executable(TSPSD_meta
@@ -70,7 +74,9 @@ add_executable(TSPSD_meta
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/TSPSD/TSPSD.cpp)
+        src/problem/TSPSD/TSPSD.cpp
+        lib/getopt/getopt.c
+        )
 
 add_executable(wTSPSD_meta
         src/problem/wTSPSD/wTSPSD_meta.cpp
@@ -78,7 +84,9 @@ add_executable(wTSPSD_meta
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
-        src/problem/wTSPSD/wTSPSD.cpp)
+        src/problem/wTSPSD/wTSPSD.cpp
+        lib/getopt/getopt.c
+        )
 
 target_include_directories(CVRP_meta PUBLIC
                            "${PROJECT_BINARY_DIR}/../"

@@ -7,3 +7,5 @@ model/
 data/
 /data/
 .vscode/
+boost/
+start.sh

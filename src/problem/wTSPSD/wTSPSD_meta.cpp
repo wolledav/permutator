@@ -3,6 +3,7 @@
 
 #include "generic/optimizer.hpp"
 #include "src/problem/wTSPSD/wTSPSD.hpp"
+#include "lib/getopt/getopt.h"
 
 using std::string;
 using nlohmann::json;

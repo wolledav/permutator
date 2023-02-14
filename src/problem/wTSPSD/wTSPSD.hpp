@@ -7,7 +7,7 @@
 #include <iostream>
 #include <climits>
 #include <boost/numeric/ublas/matrix.hpp>
-#include <bits/stdc++.h>
+#include <queue>
 #include <omp.h>
 
 #include "generic/instance.hpp"

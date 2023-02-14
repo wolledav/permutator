@@ -4,6 +4,7 @@
 
 #include "generic/optimizer.hpp"
 #include "src/problem/CVRP/CVRP.hpp"
+#include "lib/getopt/getopt.h"
 
 using std::string;
 using std::vector;
