@@ -9,7 +9,7 @@ using std::string;
 using nlohmann::json;
 
 void show_usage(){
-    std::cout << "Usage: TSPSD_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
+    std::cout << "Usage: TSPSD_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path [-c] config path [-i] initial_solution path\n";
 }
 
 int main (int argc, char *argv[]) {
