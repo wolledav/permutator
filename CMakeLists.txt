@@ -38,6 +38,16 @@ add_executable(CVRP_meta
         lib/getopt/getopt.c
         )
 
+add_executable(EVRP_meta
+        src/problem/EVRP/EVRP_meta.cpp
+        src/config.cpp
+        src/generic/optimizer.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/problem/EVRP/EVRP.cpp
+        lib/getopt/getopt.c
+        )
+
 add_executable(QAP_meta
         src/problem/QAP/QAP_meta.cpp
         src/config.cpp
@@ -89,10 +99,16 @@ add_executable(wTSPSD_meta
         )
 
 target_include_directories(CVRP_meta PUBLIC
-                           "${PROJECT_BINARY_DIR}/../"
-                           "${PROJECT_BINARY_DIR}/../src"
-                           "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-                           )
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+target_include_directories(EVRP_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
 
 target_include_directories(QAP_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"

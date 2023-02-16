@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <numeric>
 
 using permutator::fitness_t;
 using std::vector;
@@ -10,15 +11,24 @@ using std::vector;
 // EVRPInstance
 // ----------------------------------------------------------------------
 
-EVRPInstance::EVRPInstance(const char *path)
-    : Instance(generateName(path, "EVRP"), 1, 1, 1)
+EVRPInstance::EVRPInstance(const char *path, int cnt, int charger_cnt)
+    : Instance(generateName(path, "EVRP"), cnt + charger_cnt, 1, 1)
 {
-    // this->quantities = new uint[count];
-    // this->positions = new coords[count];
-    // this->tours = tours;
-    // this->dist_mat.resize(count, count);
-    // this->ubs[this->depot_id] = UINT_MAX;
     this->parseDataFrom(path);
+    this->ubs[this->depot_id] = this->node_cnt;
+    this->dist_mat.resize(this->node_cnt, this->node_cnt);
+    for (int i = 0; i < this->node_cnt; i++)
+    {
+        this->total_requests += this->quantities[i];
+    }
+    for (uint i = 0; i < this->node_cnt; i++)
+    {
+        if (this->chargers[i] && i != this->depot_id)
+        {
+            this->lbs[i] = 0;
+            this->ubs[i] = 2 * cnt;
+        }
+    }
     this->compute_dist_mat();
 }
 
@@ -26,11 +36,12 @@ EVRPInstance::~EVRPInstance()
 {
     delete[] this->quantities;
     delete[] this->positions;
+    delete[] this->chargers;
 }
 
 // the authors of dataset suggest rounding the distances
 // to the closest integer value, following the TSPLIB standard.
-uint EVRPInstance::compute_dist(uint id1, uint id2) const
+double EVRPInstance::compute_dist(uint id1, uint id2) const
 {
     if (id1 == id2)
     {
@@ -39,7 +50,7 @@ uint EVRPInstance::compute_dist(uint id1, uint id2) const
     uint xdiff = this->positions[id1].x - this->positions[id2].x;
     uint ydiff = this->positions[id1].y - this->positions[id2].y;
     double distance = sqrt(xdiff * xdiff + ydiff * ydiff);
-    return (uint)round(distance);
+    return distance;
 }
 
 void EVRPInstance::compute_dist_mat()
@@ -48,22 +59,24 @@ void EVRPInstance::compute_dist_mat()
     {
         for (uint j = 0; j <= i; j++)
         {
-            this->dist_mat(i, j) = this->compute_dist(i, j)*this->energy_consumption;
+            this->dist_mat(i, j) = this->compute_dist(i, j);
             this->dist_mat(j, i) = this->dist_mat(i, j);
         }
     }
 }
 
+//part of implementation of EVRP.cpp provided by IEEE WCCI-2020 EVRP as part of the competition 
+//web: https://mavrovouniotis.github.io/EVRPcompetition2020/
+//code download link: https://mavrovouniotis.github.io/EVRPcompetition2020/SampleCode.zip
 void EVRPInstance::parseDataFrom(const char *path)
 {
     int i;
-    int problem_size;
     int lineLength = 100;
-    char line[lineLength];
+    char *line = new char[lineLength];
     char *keywords;
     char Delimiters[] = " :=\n\t\r\f\v";
     std::ifstream fin(path);
-    while ((fin.getline(line, lineLength - 1)))
+    while (fin.getline(line, lineLength - 1))
     {
 
         if (!(keywords = strtok(line, Delimiters)))
@@ -109,7 +122,7 @@ void EVRPInstance::parseDataFrom(const char *path)
         }
         else if (!strcmp(keywords, "ENERGY_CAPACITY"))
         {
-            if (!sscanf(strtok(NULL, Delimiters), "%d", &this->battery_capacity))
+            if (!sscanf(strtok(NULL, Delimiters), "%lf", &this->battery_capacity))
             {
                 std::cout << "ENERGY_CAPACITY error" << std::endl;
                 exit(0);
@@ -141,19 +154,17 @@ void EVRPInstance::parseDataFrom(const char *path)
         // }
         else if (!strcmp(keywords, "NODE_COORD_SECTION"))
         {
-            this->num_nodes = this->num_chargers + this->num_customers + 1;
-            if (this->num_nodes != 0)
+            this->node_cnt = this->num_chargers + this->num_customers + 1;
+            if (this->node_cnt != 0)
             {
                 uint temp;
-                this->positions = new coords[this->num_nodes];
+                this->positions = new coords[this->node_cnt];
 
-                for (i = 0; i < this->num_nodes; i++)
+                for (i = 0; i < this->node_cnt; i++)
                 {
                     fin >> temp;
                     fin >> this->positions[i].x >> this->positions[i].y;
                 }
-
-                this->compute_dist_mat();
             }
             else
             {
@@ -163,18 +174,31 @@ void EVRPInstance::parseDataFrom(const char *path)
         }
         else if (!strcmp(keywords, "DEMAND_SECTION"))
         {
-            if (this->num_nodes != 0)
+            if (this->node_cnt != 0)
             {
 
                 int temp;
-                this->quantities = new uint[this->num_customers];
-                this->chargers = new bool[this->num_chargers] {true};
+                this->quantities = new uint[this->node_cnt];
 
-                for (i = 0; i < this->num_customers; i++)
+                for (i = 0; i < this->num_customers + 1; i++) // +1 for depot
                 {
                     fin >> temp;
                     fin >> this->quantities[temp - 1];
-                    this->chargers[temp - 1] = false;  //customer can't be a charging station
+                }
+            }
+        }
+        else if (!strcmp(keywords, "STATIONS_COORD_SECTION"))
+        {
+            if (this->node_cnt != 0)
+            {
+                int idx;
+                this->chargers = new bool[this->node_cnt]{false};
+
+                for (i = 0; i < this->num_chargers; i++)
+                {
+                    fin >> idx;
+                    this->quantities[idx - 1] = 0;
+                    this->chargers[idx - 1] = true;
                 }
             }
         }
@@ -182,10 +206,12 @@ void EVRPInstance::parseDataFrom(const char *path)
         {
             fin >> this->depot_id;
             this->depot_id -= 1;
+            this->chargers[this->depot_id] = true;
+            this->quantities[this->depot_id] = 0;
         }
     }
     fin.close();
-    if (this->num_nodes == 0)
+    if (this->node_cnt == 0)
     {
         std::cout << "wrong problem instance file" << std::endl;
         exit(1);
@@ -197,6 +223,9 @@ bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
     uint curr_tour = 0, idx = 0;
     uint cargo_load = this->car_capacity;
     uint unsatisfied = this->total_requests;
+    double charge = this->battery_capacity;
+    double distance, negative_charge = 0;
+    double temp_fitness = 0; //provided optima are floats, this is intended to minimize the rounding error
     bool *visited = new bool[this->node_cnt]{false};
     bool is_feasible = true;
     uint prev_id = permutation[idx++];
@@ -205,12 +234,20 @@ bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
     for (; idx < permutation.size(); idx++)
     {
         const uint node_id = permutation[idx];
-        *fitness += this->dist_mat(prev_id, node_id);
+        distance = this->dist_mat(prev_id, node_id);
+        temp_fitness += distance;
+        charge -= distance * this->energy_consumption;
+
+        if (charge < 0)
+        {
+            negative_charge += distance * this->energy_consumption;
+        }
         if (prev_id == this->depot_id)
             curr_tour++;
         if (node_id == this->depot_id)
         {
             cargo_load = this->car_capacity; // Fill car with cargo
+            charge = this->battery_capacity;
         }
         else
         {
@@ -224,8 +261,13 @@ bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
                 }
             }
         }
+        if (this->chargers[node_id])
+        {
+            charge = this->battery_capacity;
+        }
         prev_id = node_id;
     }
+    *fitness = (uint)round(temp_fitness);
     if (unsatisfied > 0)
     {
         *fitness += 1000 * unsatisfied;
@@ -242,13 +284,18 @@ bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
         *fitness += JOB_MISSING_PENALTY;
         is_feasible = false;
     }
+    if (negative_charge > 0)
+    {
+        *fitness += (uint)round(1000 * negative_charge);
+        is_feasible = false;
+    }
     delete[] visited;
     return is_feasible;
 }
 
 void EVRPInstance::print_nodes()
 {
-    printf("Car capacity = %u, Number of tours = %u\n", this->car_capacity, this->tours);
+    printf("Car capacity = %u, Battery capacity = %lf, Energy consumption = %lf, Number of tours = %u\n", this->car_capacity, this->battery_capacity, this->energy_consumption, this->tours);
     for (uint i = 0; i < this->node_cnt; i++)
     {
         printf("[%d]: (%d, %d) lb=%u, ub=%u, quant=%u\n",
@@ -259,24 +306,37 @@ void EVRPInstance::print_nodes()
 
 void EVRPInstance::print_solution(Solution *solution, std::basic_ostream<char> &outf)
 {
-    uint curr_tour = 0, idx = 0, cost = 0;
-    bool *visited = new bool[this->node_cnt]{false};
+    uint curr_tour = 0, idx = 0;
     uint cargo_load = this->car_capacity;
     uint unsatisfied = this->total_requests;
+    double charge = this->battery_capacity;
+    double distance, negative_charge = 0;
+    double temp_fitness = 0; //provided optima are floats, this is intended to minimize the rounding error
+    bool *visited = new bool[this->node_cnt]{false};
+    bool is_feasible = true;
     uint prev_id = solution->permutation[idx++];
     visited[this->depot_id] = true;
+    uint cost = 0;
 
-    outf << this->depot_id << "(" << this->quantities[this->depot_id] << "/" << cargo_load << ")";
+    std::cout.precision(3);
+    outf << this->depot_id << "-(" << this->quantities[this->depot_id] <<"/" << cargo_load << "|" << charge << ")";
     for (; idx < solution->permutation.size(); idx++)
     {
         const uint node_id = solution->permutation[idx];
-        if (node_id == this->depot_id)
-            outf << std::endl;
+        distance = this->dist_mat(prev_id, node_id);
+        temp_fitness += distance;
+        charge -= distance * this->energy_consumption;
+
+        if (charge < 0)
+        {
+            negative_charge += distance * this->energy_consumption;
+        }
         if (prev_id == this->depot_id)
             curr_tour++;
         if (node_id == this->depot_id)
         {
             cargo_load = this->car_capacity; // Fill car with cargo
+            charge = this->battery_capacity;
         }
         else
         {
@@ -290,8 +350,12 @@ void EVRPInstance::print_solution(Solution *solution, std::basic_ostream<char> &
                 }
             }
         }
-        cost += this->dist_mat(prev_id, node_id);
-        outf << " -(" << cost << ")> " << node_id << "(" << this->quantities[node_id] << "/" << cargo_load << ")";
+        if (this->chargers[node_id])
+        {
+            charge = this->battery_capacity;
+        }
+        cost = (uint)round(temp_fitness);
+        outf << " -(" << cost << ")> " << node_id << "(" << this->quantities[node_id] << "/" << cargo_load << "|" << charge <<")";
         prev_id = node_id;
     }
     outf << std::endl;

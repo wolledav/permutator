@@ -10,7 +10,20 @@ using std::string;
 using std::vector;
 using nlohmann::json;
 
-
+void parse_filename(string name, uint *N, uint *S) {
+    int start, i, len = 0;
+    string temp;
+    for (i = 0; name[i] != 'n'; i++) {}
+    start = i+1;
+    for (i++; name[i] >= '0' && name[i] <= '9'; i++, len++) {}
+    temp = name.substr(start, len);
+    *N = stoi(temp);
+    for (i++; name[i] != 's'; i++) {}
+    start = i+1; len = 0;
+    for (i++; name[i] >= '0' && name[i] <= '9'; i++, len++) {}
+    temp = name.substr(start, len);
+    *S = stoi(temp);
+}
 
 void show_usage(){
     std::cout << "Usage: EVRP_meta -d data_path [-c] config_path [-t] timeout(sec) [-s] seed [-o] output_file_path\n";
@@ -18,7 +31,7 @@ void show_usage(){
 
 int main (int argc, char *argv[])
 {
-    uint node_cnt, tours, seed = 0;
+    uint customer_cnt, charger_cnt, tours, seed = 0;
     uint timeout_s = UINT32_MAX;
     string data_path, output_path, conf_path;
     std::ofstream output_file, log_file;
@@ -69,8 +82,8 @@ int main (int argc, char *argv[])
 
     // Parse and solve instance
     string filename = getFilename(data_path);
-    //parse_filename(filename, &node_cnt, &tours);
-    EVRPInstance inst = EVRPInstance(data_path.c_str());
+    parse_filename(filename, &customer_cnt, &charger_cnt);
+    EVRPInstance inst = EVRPInstance(data_path.c_str(), customer_cnt, charger_cnt);
     std::cout << "Solving " << inst.name << std::endl;
     Optimizer optimizer = Optimizer(&inst, config, seed);
     optimizer.run();

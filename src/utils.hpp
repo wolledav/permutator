@@ -9,6 +9,8 @@
 #include "config.hpp"
 #include "utils.hpp"
 
+#define LOG(x) (std::cout << x << std::endl)
+
 using uint = unsigned int;
 
 inline std::string itos(int i) {std::stringstream s; s << i; return s.str(); }

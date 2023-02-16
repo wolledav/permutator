@@ -9,4 +9,5 @@ data/
 .vscode/
 boost/
 start.sh
-data_demo/datasets
+temp.txt
+log/

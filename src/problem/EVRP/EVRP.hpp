@@ -24,26 +24,24 @@ class EVRPInstance : public Instance
 {
 private:
     uint total_requests = 0;
-    uint compute_dist(uint id1, uint id2) const;
+    double compute_dist(uint id1, uint id2) const;
     void compute_dist_mat();
 
 public:
     std::string type = "EVRP";
     uint tours;
     uint depot_id = 0;
-    uint num_nodes;
     uint num_chargers;
     uint num_customers;
     uint car_capacity;
-    uint battery_capacity;
+    double battery_capacity;
     double energy_consumption;
     uint *quantities;
     coords *positions;
-    uint* customer_ids;
-    bool* chargers;
-    boost::numeric::ublas::matrix<uint> dist_mat;
+    bool *chargers;
+    boost::numeric::ublas::matrix<double> dist_mat;
 
-    EVRPInstance(const char *path);
+    EVRPInstance(const char *path, int cnt, int charger_cnt);
     ~EVRPInstance();
     bool computeFitness(const std::vector<uint> &permutation, permutator::fitness_t *fitness) override;
     void parseDataFrom(const char *path);
