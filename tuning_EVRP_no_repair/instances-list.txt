@@ -1,0 +1,16 @@
+## This is an example of specifying instances with a file.
+
+# Each line is an instance relative to trainInstancesDir
+# (see scenario.txt.tmpl) and an optional sequence of instance-specific
+# parameters that will be passed to target-runnerx when invoked on that
+# instance.
+
+# Empty lines and comments are ignored.
+
+evrp-E-n22-k4.json timeout 15
+evrp-E-n23-k3.json timeout 15
+evrp-E-n30-k3.json timeout 15
+evrp-E-n33-k4.json timeout 20
+#evrp-E-n51-k5.json timeout 30
+#evrp-E-n76-k7.json timeout 45
+#evrp-E-n101-k8.json timeout 55

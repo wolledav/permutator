@@ -78,9 +78,13 @@ int main (int argc, char *argv[])
         output_file.open(output_path);
         optimizer.save_to_json(output);
         output_file << output.dump(4);
-        std::cout << sol.fitness << std::endl;
+        std::cout << sol.fitness;
+        if (!sol.is_feasible) std::cout << " x";
+        std::cout << std::endl;
     } else {
-        std::cout << sol.fitness << std::endl;
+        std::cout << sol.fitness;
+        if (!sol.is_feasible) std::cout << " x";
+        std::cout << std::endl;
     }
 
     if (STDOUT_ENABLED) {

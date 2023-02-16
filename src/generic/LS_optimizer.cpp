@@ -576,6 +576,9 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
     std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt-1);
     std::vector<uint> idx;
     vector<uint> new_perm = this->current_solution.permutation;
+    uint node_cnt = this->instance->node_cnt;
+
+    assert(std::all_of(new_perm.begin(), new_perm.end(), [node_cnt] (uint const e) { return (e < node_cnt); }));
 
     // generate random indices
     for (uint i = 0; i < k; i++) {
@@ -596,6 +599,8 @@ void LS_optimizer::double_bridge(uint k, bool reverse_all) {
         reverse(new_perm.begin() + idx[k - 1], new_perm.end()); // half closed interval [i, j)
     }
     // copy new solution
+    
+    assert(std::all_of(new_perm.begin(), new_perm.end(), [node_cnt] (uint const e) { return (e < node_cnt); }));
     this->current_solution = Solution(new_perm, *this->instance);
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -1230,6 +1235,7 @@ bool LS_optimizer::operation_call(const string &operation_name) {
 }
 
 void LS_optimizer::perturbation_call(const string &perturbation_name, uint k) {
+    
     if (!config["allow_infeasible"].get<bool>()) {
         do {
             this->current_solution=this->best_known_solution;

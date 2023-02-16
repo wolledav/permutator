@@ -6,9 +6,9 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/format.hpp>
 
-#define CAPACITY_PENALTY 100000
-#define ENERGY_PENALTY 50000
-#define INVALID_SOL_PENALTY 1000000
+#define CAPACITY_PENALTY 1000000
+#define ENERGY_PENALTY 1000000
+#define INVALID_SOL_PENALTY 10000000
 
 using namespace std;
 
@@ -30,7 +30,6 @@ class EVRPInstance: public Instance
         uint route_cnt;
         uint customer_cnt;
         uint station_cnt;
-        uint total_cnt;
 
         uint depot_id;
         vector<float> demands;
