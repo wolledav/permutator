@@ -20,6 +20,7 @@ Optimizer::Optimizer(Instance *inst, json config, uint seed) {
     this->initial_solution = sol;
     this->current_solution = sol;
     this->best_known_solution = sol;
+    best_known_solution.fitness =  std::numeric_limits<fitness_t>::max();
     this->rng = Optimizer::initRng(seed);
     this->setConstruction(this->config["construction"].get<string>());
     this->setMetaheuristic(this->config["metaheuristic"].get<string>());
@@ -132,7 +133,7 @@ bool Optimizer::insert1() {
     this->printOperation(str(format("\t\tO: %1%") % __func__));
 #endif
 
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     vector<uint> perm = this->current_solution.permutation;
     vector<uint> freq = this->current_solution.frequency;
     fitness_t new_fitness;
@@ -188,7 +189,7 @@ bool Optimizer::remove1() {
     vector<uint> perm = this->current_solution.permutation;
     uint removed_node = std::numeric_limits<uint>::max()/2;
     fitness_t fitness;
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, removed_node, perm)
@@ -230,7 +231,7 @@ bool Optimizer::relocate(uint x, bool reverse) {
     if (x > this->current_solution.permutation.size()) return false;
     fitness_t fitness;
     vector<uint> perm = this->current_solution.permutation;
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, reverse)
@@ -277,7 +278,7 @@ bool Optimizer::centeredExchange(uint x) {
     if (x > this->current_solution.permutation.size())
         return false;
     vector<uint> perm = this->current_solution.permutation;
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
@@ -319,7 +320,7 @@ bool Optimizer::exchange(uint x, uint y, bool reverse) {
         return false;
     fitness_t fitness;
     vector<uint> perm = this->current_solution.permutation;
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x, y, reverse)
@@ -379,7 +380,7 @@ bool Optimizer::moveAll(uint x) {
         return false;
     vector<uint> perm = this->current_solution.permutation;
     fitness_t fitness;
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm, x)
@@ -437,7 +438,7 @@ bool Optimizer::exchangeIds() {
         return false;
     vector<uint> perm = this->current_solution.permutation;
     fitness_t fitness;
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
@@ -484,7 +485,7 @@ bool Optimizer::exchangeNIds() {
     // Init structures
     vector<uint> perm = this->current_solution.permutation;
     fitness_t fitness;
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
@@ -536,7 +537,7 @@ bool Optimizer::twoOpt() {
     if (perm.size() < 2)
         return false;
 
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 #pragma omp parallel for default(none) private(fitness) shared(best_solution, perm)
     for (uint i = 0; i <= perm.size() - 2; i++) {
@@ -577,7 +578,7 @@ void Optimizer::doubleBridge(uint k, bool reverse_all) {
 #endif
 
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
-    std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt-1);
+    std::uniform_int_distribution<uint> uni(0,this->current_solution.getSize()-1);
     std::vector<uint> idx;
     vector<uint> new_perm = this->current_solution.permutation;
 
@@ -953,7 +954,6 @@ void Optimizer::ILS() {
 
         // Reset this->current_solution to this->best_known_solution
         this->current_solution=this->best_known_solution;
-
         // Apply perturbation to this->current_solution
         for (const auto &pert : this->perturbation_list) {
             this->perturbationCall(pert, config["ils_k"].get<uint>());
