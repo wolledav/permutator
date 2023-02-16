@@ -24,7 +24,6 @@ namespace permutator {
     typedef unsigned long int fitness_t;
 #endif
 }
-#define LB_PENALTY 10000000
 #define UNIMPROVING_ITERS_MAX 10
 
 class Config {
