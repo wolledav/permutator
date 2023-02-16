@@ -115,13 +115,10 @@ void Optimizer::run() {
     this->start = std::chrono::steady_clock::now();
     this->last_improvement = this->start;
     this->construction();
+    if (!this->stop()) this->metaheuristic();
 
-    // Constructed solution might be invalid -> increase final fitness
-    this->best_known_solution.fitness += this->instance->getLBPenalty(this->best_known_solution.frequency);
-
-    if (!this->stop()) {
-        this->metaheuristic();
-    }
+    // Penalize solution under LB
+    this->best_known_solution.fitness += this->instance->getLBPenalty(this->best_known_solution.frequency) * LB_PENALTY;
 }
 
 //**********************************************************************************************************************

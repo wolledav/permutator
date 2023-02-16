@@ -25,6 +25,7 @@ namespace permutator {
 #endif
 }
 #define UNIMPROVING_ITERS_MAX 10
+#define LB_PENALTY 1000000000000
 
 class Config {
 private:
