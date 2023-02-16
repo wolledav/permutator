@@ -138,43 +138,42 @@ bool Optimizer::insert1() {
     this->printOperation(str(format("\t\tO: %1%") % __func__));
 #endif
 
-    Solution best_solution = Solution(this->instance->node_cnt); // this has huge fitness, so something is always inserted
+    Solution best_solution = this->current_solution;
     vector<uint> perm = this->current_solution.permutation;
     vector<uint> freq = this->current_solution.frequency;
     fitness_t new_fitness;
     vector<fitness_t> new_penalties;
     bool updated = false;
+    bool best_improved = false;
 
-#pragma omp parallel for default(none) private(new_fitness, new_penalties) shared(best_solution, perm, freq)
-    for (uint i = 0; i <= perm.size(); i++) {                       // for all positions i
-        if (this->stop()) continue;
+#pragma omp parallel for default(none) private(new_fitness, new_penalties) shared(best_solution, perm, freq, updated, best_improved)
+    for (uint i = 0; i <= perm.size(); i++) {                       // for all positions i in X
+        if (this->stop() || (best_improved && config["first_improve"])) continue;
         vector<uint> new_perm = perm;
         vector<uint> new_freq = freq;
         new_perm.insert(new_perm.begin() + i, 0);
 
-        for (uint j = 0; j < this->instance->node_cnt; j++){    // for all nodes j
+        for (uint j = 0; j < this->instance->node_cnt; j++){    // for all nodes j in A
             if (this->current_solution.frequency[j] >= this->instance->ubs[j]) continue;
             new_perm[i] = j;
             new_freq[j]++;
             this->instance->computeFitness(new_perm, new_fitness, new_penalties);
-            auto penalty = this->instance->getLBPenalty(best_solution.frequency);
             auto new_penalty = this->instance->getLBPenalty(new_freq);
+
 #pragma omp critical
-            if (new_fitness + new_penalty < best_solution.fitness + penalty) {
+        {
+            auto penalty = this->instance->getLBPenalty(best_solution.frequency);
+            if ((new_penalty < penalty) || (new_penalty == penalty && new_fitness < best_solution.fitness)) {
                 best_solution = Solution(new_perm, *this->instance);
+                updated = true;
+                if (new_fitness < best_solution.fitness) best_improved = true;
             }
-            new_freq[j]--;
+        };
+        new_freq[j]--;
         }
     }
 
-    // Update this->current_solution
-    auto new_penalty = this->instance->getLBPenalty(best_solution.frequency);
-    auto penalty = this->instance->getLBPenalty(this->current_solution.frequency);
-
-    if (best_solution.fitness + new_penalty < this->current_solution.fitness + penalty) {
-        updated = true;
-        this->current_solution = best_solution;
-    }
+    if (updated) this->current_solution = best_solution;
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->printResult(updated);
@@ -186,49 +185,54 @@ bool Optimizer::insert1() {
  * Attempts to append all nodes from A to X.
  * Performs the most improving (or least worsening) insertion.
  * If all nodes are at their upper bounds, does nothing.
+ * Complexity: O(n^2)
  */
 bool Optimizer::append1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->printOperation(str(format("\t\tO: %1%") % __func__));
 #endif
-    Solution best_solution = Solution(this->instance->node_cnt); // this has huge fitness, so something is always appended
-    bool best_updated = false;
 
+    Solution best_solution = this->current_solution;
+    bool updated = false;
+    bool best_improved = false;
     vector<uint> cand_perm = this->current_solution.permutation;
     vector<uint> cand_freq = this->current_solution.frequency;
     fitness_t cand_fitness;
     vector<fitness_t> cand_penalties;
     cand_perm.emplace_back(-1);
 
-#pragma omp parallel for default(none) shared(best_solution, best_updated) private(cand_fitness, cand_penalties) firstprivate(cand_perm, cand_freq)
+#pragma omp parallel for default(none) shared(best_solution, best_improved, updated) private(cand_fitness, cand_penalties) firstprivate(cand_perm, cand_freq)
     for (uint i = 0; i < this->instance->node_cnt; i++) {    // for all nodes i in A
-        if (this->current_solution.frequency[i] >= this->instance->ubs[i]) continue;
+        if (this->current_solution.frequency[i] >= this->instance->ubs[i] || (best_improved && config["first_improve"]) || this->stop()) continue;
         cand_perm.back() = i;
         cand_freq[i]++;
-
         this->instance->computeFitness(cand_perm, cand_fitness, cand_penalties);
         auto cand_penalty = this->instance->getLBPenalty(cand_freq);
 #pragma omp critical
-        if (cand_fitness + cand_penalty < best_solution.fitness + this->instance->getLBPenalty(best_solution.frequency)) {
-            best_solution = Solution(cand_perm, *this->instance);
-            best_updated = true;
-        }
+        {
+            auto best_penalty = this->instance->getLBPenalty(best_solution.frequency);
+            if ((cand_penalty < best_penalty) || (cand_penalty == best_penalty && cand_fitness < best_solution.fitness)) {
+                best_solution = Solution(cand_perm, *this->instance);
+                updated = true;
+                if (cand_fitness < best_solution.fitness) best_improved = true;
+            }
+        };
         cand_freq[i]--;
     }
 
-    if (best_updated) {
-        this->current_solution = best_solution;
-    }
+    if (updated) this->current_solution = best_solution;
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
-    this->printResult(best_updated);
+    this->printResult(updated);
 #endif
-    return best_updated;
+
+    return updated;
 }
 
 /*
  * Attempts to remove all nodes from X.
  * Performs the most-improving or non-worsening insertion.
+ * Complexity: O(n)
  */
 bool Optimizer::remove1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -237,15 +241,14 @@ bool Optimizer::remove1() {
 
     if (this->current_solution.permutation.empty()) return false;
     vector<uint> perm = this->current_solution.permutation;
-    uint removed_node = std::numeric_limits<uint>::max()/2;
     fitness_t fitness;
     vector<fitness_t> penalties;
-    Solution best_solution(this->instance->node_cnt);
+    Solution best_solution = this->current_solution;
     bool updated = false;
 
-#pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, removed_node, perm)
+#pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, updated)
     for (uint i = 0; i < perm.size(); i++){
-        if (this->stop()) continue;
+        if (this->stop() || (updated && config["first_improve"])) continue;
         if (this->current_solution.frequency[perm[i]] <= this->instance->lbs[perm[i]]) {
             continue;
         }
@@ -255,13 +258,11 @@ bool Optimizer::remove1() {
 #pragma omp critical
         if (fitness < best_solution.fitness) {
             best_solution = Solution(new_perm, *this->instance);
-            removed_node = perm[i];
+            updated = true;
         }
     }
-    if (best_solution <= this->current_solution && removed_node != std::numeric_limits<uint>::max() / 2) {
-        updated = true;
-        this->current_solution=best_solution;
-    }
+    if (updated) this->current_solution = best_solution;
+
 
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
     this->printResult(updated);
