@@ -1,5 +1,6 @@
 {
   "stop_on_feasible": false,
+  "first_improve": false,
   "num_threads": 1,
   "metaheuristic": "ILS",
   "ils_k": 6,
