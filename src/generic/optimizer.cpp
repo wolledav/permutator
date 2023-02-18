@@ -578,7 +578,7 @@ void Optimizer::doubleBridge(uint k, bool reverse_all) {
 #endif
 
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
-    std::uniform_int_distribution<uint> uni(0,this->current_solution.getSize()-1);
+    std::uniform_int_distribution<uint> uni(0,this->current_solution.getSize() - 1);
     std::vector<uint> idx;
     vector<uint> new_perm = this->current_solution.permutation;
 
