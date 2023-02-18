@@ -218,7 +218,7 @@ void EVRPInstance::parseDataFrom(const char *path)
     }
 }
 
-bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fitness)
+bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t &fitness, vector<fitness_t> &penalties)
 {
     uint curr_tour = 0, idx = 0;
     uint cargo_load = this->car_capacity;
@@ -230,7 +230,7 @@ bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
     bool is_feasible = true;
     uint prev_id = permutation[idx++];
     visited[this->depot_id] = true;
-    *fitness = 0;
+    fitness = 0;
     for (; idx < permutation.size(); idx++)
     {
         const uint node_id = permutation[idx];
@@ -267,26 +267,26 @@ bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t *fi
         }
         prev_id = node_id;
     }
-    *fitness = (uint)round(temp_fitness);
+    fitness = (uint)round(temp_fitness);
     if (unsatisfied > 0)
     {
-        *fitness += 1000 * unsatisfied;
-        *fitness += JOB_MISSING_PENALTY;
+        fitness += 1000 * unsatisfied;
+        fitness += JOB_MISSING_PENALTY;
         is_feasible = false;
     }
     if (curr_tour != this->tours)
     {
-        *fitness += (JOB_MISSING_PENALTY / 10) * (abs((int)curr_tour - (int)this->tours));
+        fitness += (JOB_MISSING_PENALTY / 10) * (abs((int)curr_tour - (int)this->tours));
         is_feasible = false;
     }
     if (permutation.back() != this->depot_id || permutation.front() != this->depot_id)
     {
-        *fitness += JOB_MISSING_PENALTY;
+        fitness += JOB_MISSING_PENALTY;
         is_feasible = false;
     }
     if (negative_charge > 0)
     {
-        *fitness += (uint)round(1000 * negative_charge);
+        fitness += (uint)round(1000 * negative_charge);
         is_feasible = false;
     }
     delete[] visited;
