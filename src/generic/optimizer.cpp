@@ -20,7 +20,7 @@ Optimizer::Optimizer(Instance *inst, json config, uint seed) {
     this->initial_solution = sol;
     this->current_solution = sol;
     this->best_known_solution = sol;
-    best_known_solution.fitness =  std::numeric_limits<fitness_t>::max();
+    //best_known_solution.fitness =  std::numeric_limits<fitness_t>::max();
     this->rng = Optimizer::initRng(seed);
     this->setConstruction(this->config["construction"].get<string>());
     this->setMetaheuristic(this->config["metaheuristic"].get<string>());
@@ -546,7 +546,7 @@ bool Optimizer::exchangeNIds() {
 
 #pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, updated)
     for (uint i = 0; i < this->instance->node_cnt; i++) { // for all nodes i in A
-        if (this->stop() || (updated && config["first_update"])) continue;
+        if (this->stop() || (updated && config["first_improve"])) continue;
         for (uint j = 0; j < i; j++) { // for all pairs of nodes i,j in A
             for (uint n = 1; n < this->current_solution.frequency[i]; n++) { // for all frequencies up to f_i
                 uint counter1 = 0, counter2 = 0;
