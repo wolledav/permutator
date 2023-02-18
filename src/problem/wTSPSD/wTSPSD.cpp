@@ -52,7 +52,9 @@ wTSPSDInstance::wTSPSDInstance(const char *path) : Instance() {
 }
 
 bool wTSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &fitness, vector<fitness_t> &penalties) {
+    
     fitness = 0;
+    penalties.clear(); 
     bool valid = true;
 
     auto del_mat = boost::numeric::ublas::matrix<bool, boost::numeric::ublas::row_major>(this->node_cnt, this->node_cnt, false); // delete matrix used in compute_fitness
@@ -80,6 +82,7 @@ bool wTSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &
             }
         }
     }
+    penalties.push_back(fitness);
 
     fitness_evals++;
     return valid;

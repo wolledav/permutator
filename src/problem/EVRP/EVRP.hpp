@@ -17,6 +17,7 @@
 #include<limits.h>
 
 #define JOB_MISSING_PENALTY 100000000
+#define NEGATIVE_CHARGE_PENALTY 100000000
 
 
 

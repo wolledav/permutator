@@ -47,12 +47,6 @@ TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
     compute_dist_mat();
 
     f_delete.resize(this->node_cnt);                       // delete function
-//    deleted_by.resize(this->node_cnt);
-//    for (auto i = 0; i < this->node_cnt; i++) {
-//        for (auto j = 0; j < this->node_cnt; j++) {
-//            deleted_by(i, j) = std::vector<bool>(this->node_cnt, false);
-//        }
-//    }
 
     for (const auto &item: data["DELETE"].items()) {
         uint id = get_internal_id(item.key());
@@ -62,13 +56,16 @@ TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
             auto del_edge = get_edge(id1, id2);
             f_delete[id].push_back(del_edge);
 
-//            deleted_by(del_edge.first, del_edge.second)[id] = true;
         }
     }
 }
 
 bool TSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &fitness, vector<fitness_t> &penalties) {
+    
     fitness = 0;
+    penalties.clear();
+    uint illegal_edgemoves_cnt = 0;
+    fitness_t distance = 0;
     bool valid = true;
 
     if (permutation.size() > 1) {
@@ -87,21 +84,14 @@ bool TSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &f
             // Update fitness and validity
             fitness +=
                     del_mat(node1, node2) * DELETED_EDGE_PENALTY + (1 - del_mat(node1, node2)) * dist_mat(node1, node2);
+            illegal_edgemoves_cnt += del_mat(node1, node2);
+            distance += dist_mat(node1, node2);
             valid = valid && !del_mat(node1, node2);
-
-//            std::cout << node1 + 1 << "--" << node2 + 1 << " : " << dist_mat(node1, node2) << std::endl;
-            // Evaluate edge [node1, node2]
-//            bool deleted = false;
-//            auto edge = get_edge(node1, node2);
-//
-//            for (uint j = 0; j <= i; j++) { // look at nodes from 0 to i
-//                deleted = deleted || deleted_by(edge.first, edge.second)[permutation[j]];
-//            }
-//            // Update fitness and validity
-//            *fitness += deleted * DELETED_EDGE_PENALTY + (1 - deleted) * dist_mat(node1, node2);
-//            valid = valid && !deleted;
         }
     }
+
+    penalties.push_back(distance);
+    penalties.push_back(illegal_edgemoves_cnt);
 
     fitness_evals++;
     return valid;

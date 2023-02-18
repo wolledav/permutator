@@ -99,6 +99,8 @@ bool CVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t &fi
     uint prev_id = permutation[idx++];
     visited[this->depot_id] = true;
     fitness = 0;
+    penalties.clear();
+
     for (; idx < permutation.size(); idx++) {
         const uint node_id = permutation[idx];
         fitness += this->dist_mat(prev_id, node_id);
@@ -116,17 +118,23 @@ bool CVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t &fi
         }
         prev_id = node_id;
     }
+
+    penalties.push_back(fitness);
+
     if (unsatisfied > 0) {
         fitness += 1000*unsatisfied;
         fitness += JOB_MISSING_PENALTY;
+        penalties.push_back(unsatisfied);
         is_feasible = false;
     }
     if (curr_tour != this->tours){
         fitness += (JOB_MISSING_PENALTY / 10) * (abs((int)curr_tour - (int)this->tours));
+        penalties.push_back(abs((int)curr_tour - (int)this->tours));
         is_feasible = false;
     }
     if (permutation.back() != this->depot_id || permutation.front() != this->depot_id) {
         fitness += JOB_MISSING_PENALTY;
+        penalties.push_back(permutation.back() != this->depot_id + permutation.front() != this->depot_id);
         is_feasible = false;
     }
     delete[] visited;

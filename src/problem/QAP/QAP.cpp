@@ -25,14 +25,18 @@ void QAPInstance::read(const char *path) {
 
 bool QAPInstance::computeFitness(const vector<uint> &permutation, permutator::fitness_t &fitness, vector<permutator::fitness_t> &penalties) {
     fitness = 0;
+    penalties.clear();
+
     if (permutation.size() == this->node_cnt) {
         for (uint i = 0; i < this->node_cnt; i++) {
             for (uint j = 0; j < this->node_cnt; j++) {
                 fitness += this->flow_mat(i, j)*this->dist_mat(permutation[i], permutation[j]);
             }
         }
+        penalties.push_back(fitness);
         return true;
     } else {
+        penalties.push_back(fitness);
         fitness += (this->node_cnt - permutation.size()) * JOB_MISSING_PENALTY;
         return false;
     }
