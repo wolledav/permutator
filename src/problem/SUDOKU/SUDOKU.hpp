@@ -20,7 +20,7 @@ public:
     SudokuInstance(const std::string& path, uint nodes);
     ~SudokuInstance() = default;
     void fill_grid(boost::numeric::ublas::matrix<int>& target_grid, const std::vector<uint> &permutation);
-    bool computeFitness(const std::vector<uint> &permutation, permutator::fitness_t* fitness) override;
+    bool computeFitness(const std::vector<uint> &permutation, permutator::fitness_t &fitness, std::vector<permutator::fitness_t> &penalties) override;
     void read(const char* path);
     void print_solution(Solution *solution, std::basic_ostream<char>& outf = std::cout) const;
     void print_nodes();

@@ -90,7 +90,7 @@ void CVRPInstance::parseDataFrom(const char* path) {
 	}
 }
 
-bool CVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t* fitness) {
+bool CVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t &fitness, vector<fitness_t> &penalties) {
     uint curr_tour = 0, idx = 0;
     uint cargo_load = this->car_capacity;
     uint unsatisfied = this->total_requests;
@@ -98,10 +98,10 @@ bool CVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t* fi
     bool is_feasible = true;
     uint prev_id = permutation[idx++];
     visited[this->depot_id] = true;
-    *fitness = 0;
+    fitness = 0;
     for (; idx < permutation.size(); idx++) {
         const uint node_id = permutation[idx];
-        *fitness += this->dist_mat(prev_id, node_id);
+        fitness += this->dist_mat(prev_id, node_id);
         if (prev_id == this->depot_id) curr_tour++;
         if (node_id == this->depot_id) {
             cargo_load = this->car_capacity; // Fill car with cargo
@@ -117,16 +117,16 @@ bool CVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t* fi
         prev_id = node_id;
     }
     if (unsatisfied > 0) {
-        *fitness += 1000*unsatisfied;
-        *fitness += JOB_MISSING_PENALTY;
+        fitness += 1000*unsatisfied;
+        fitness += JOB_MISSING_PENALTY;
         is_feasible = false;
     }
     if (curr_tour != this->tours){
-        *fitness += (JOB_MISSING_PENALTY / 10) * (abs((int)curr_tour - (int)this->tours));
+        fitness += (JOB_MISSING_PENALTY / 10) * (abs((int)curr_tour - (int)this->tours));
         is_feasible = false;
     }
     if (permutation.back() != this->depot_id || permutation.front() != this->depot_id) {
-        *fitness += JOB_MISSING_PENALTY;
+        fitness += JOB_MISSING_PENALTY;
         is_feasible = false;
     }
     delete[] visited;

@@ -1,0 +1,16 @@
+{
+    "stop_on_feasible": false,
+    "num_threads": 8,
+    "metaheuristic": "BVNS",
+    "bvns_min_k": 1,
+    "bvns_max_k": 7,
+    "construction": "nearestNeighbor",
+    "allow_infeasible": true,
+    "local_search": "CVND",
+    "operators": [
+        "twoOpt"
+    ],
+    "perturbation": [
+        "reinsert"
+    ]
+}

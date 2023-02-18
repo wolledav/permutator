@@ -30,7 +30,7 @@ fitness_t Instance::getLBPenalty(const std::vector<uint> &frequency) {
     for (uint i = 0; i < this->node_cnt; i++) {
         sum += std::max((int)this->lbs[i] - (int)frequency[i], 0);
     }
-    return sum * LB_PENALTY;
+    return sum;
 }
 
 bool Instance::FrequencyInBounds(const std::vector<uint> &frequency) {

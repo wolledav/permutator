@@ -23,17 +23,17 @@ void QAPInstance::read(const char *path) {
             ifs >> dist_mat(i, j);
 }
 
-bool QAPInstance::computeFitness(const vector<uint> &permutation, permutator::fitness_t *fitness) {
-    *fitness = 0;
+bool QAPInstance::computeFitness(const vector<uint> &permutation, permutator::fitness_t &fitness, vector<permutator::fitness_t> &penalties) {
+    fitness = 0;
     if (permutation.size() == this->node_cnt) {
         for (uint i = 0; i < this->node_cnt; i++) {
             for (uint j = 0; j < this->node_cnt; j++) {
-                *fitness += this->flow_mat(i, j)*this->dist_mat(permutation[i], permutation[j]);
+                fitness += this->flow_mat(i, j)*this->dist_mat(permutation[i], permutation[j]);
             }
         }
         return true;
     } else {
-        *fitness += (this->node_cnt - permutation.size()) * JOB_MISSING_PENALTY;
+        fitness += (this->node_cnt - permutation.size()) * JOB_MISSING_PENALTY;
         return false;
     }
 }

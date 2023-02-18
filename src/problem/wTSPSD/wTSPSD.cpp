@@ -51,8 +51,8 @@ wTSPSDInstance::wTSPSDInstance(const char *path) : Instance() {
     }
 }
 
-bool wTSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t *fitness) {
-    *fitness = 0;
+bool wTSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &fitness, vector<fitness_t> &penalties) {
+    fitness = 0;
     bool valid = true;
 
     auto del_mat = boost::numeric::ublas::matrix<bool, boost::numeric::ublas::row_major>(this->node_cnt, this->node_cnt, false); // delete matrix used in compute_fitness
@@ -69,11 +69,11 @@ bool wTSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t *
 
         // Update fitness and validity
         if (!del_mat(node1, node2)) { // Assuming, that direct edge node1->node2 is the shortest path
-            *fitness += dist_mat(node1, node2);
+            fitness += dist_mat(node1, node2);
         } else {
             vector<uint> path{};
             auto aStar_fitness = Astar(dist_mat, del_mat, node1, node2, path);
-            *fitness += aStar_fitness;
+            fitness += aStar_fitness;
 
             for (uint j = 0; j < path.size() - 1; j++) {
                 valid = valid && !del_mat(path[j], path[j + 1]);

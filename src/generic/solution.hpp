@@ -11,6 +11,7 @@ class Solution
 {
 public:
     permutator::fitness_t fitness;
+    std::vector<permutator::fitness_t> penalties;
     bool is_feasible = false;
     std::vector<uint> permutation;
     std::vector<uint> frequency;

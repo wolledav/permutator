@@ -42,9 +42,8 @@ Solution::Solution(std::vector<uint> &perm, Instance &instance) {
     for (auto id:this->permutation) {
         this->frequency[id]++;
     }
-    this->is_feasible = instance.computeFitness(permutation, &this->fitness) &&
+    this->is_feasible = instance.computeFitness(permutation, this->fitness, this->penalties) &&
             instance.FrequencyInBounds(this->frequency);
-
 }
 
 void Solution::saveToJson(json& obj) {

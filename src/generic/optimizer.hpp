@@ -86,10 +86,12 @@ class Optimizer
         };
         // Initial solution constructions
         void constructGreedy();
+        void constructNearestNeighbor();
         void constructRandom();
         void constructRandomReplicate();
         // Local search operators
         bool insert1();
+        bool append1();
         bool remove1();
         bool relocate(uint x, bool reverse=false);
         bool exchange(uint x, uint y, bool reverse=false);
