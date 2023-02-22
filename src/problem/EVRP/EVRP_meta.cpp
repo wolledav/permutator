@@ -2,7 +2,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "generic/optimizer.hpp"
+#include "generic/EA.hpp"
 #include "src/problem/EVRP/EVRP.hpp"
 #include "lib/getopt/getopt.h"
 
@@ -85,15 +85,15 @@ int main (int argc, char *argv[])
     parse_filename(filename, &customer_cnt, &charger_cnt);
     EVRPInstance inst = EVRPInstance(data_path.c_str(), customer_cnt, charger_cnt);
     std::cout << "Solving " << inst.name << std::endl;
-    Optimizer optimizer = Optimizer(&inst, config, seed);
+    EA optimizer = EA(&inst, config, seed);
     optimizer.run();
 
     // Export solution
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {
-        output_file.open(output_path);
-        optimizer.saveToJson(output);
-        output_file << output.dump(4);
+        // output_file.open(output_path);
+        // optimizer.saveToJson(output);
+        // output_file << output.dump(4);
     } else {
         inst.print_solution(&sol, std::cout);
         std::cout << sol.fitness << std::endl;

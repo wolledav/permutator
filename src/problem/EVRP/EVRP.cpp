@@ -15,8 +15,9 @@ EVRPInstance::EVRPInstance(const char *path, int cnt, int charger_cnt)
     : Instance(generateName(path, "EVRP"), cnt + charger_cnt, 1, 1)
 {
     this->parseDataFrom(path);
-    this->ubs[this->depot_id] = this->node_cnt;
+    this->ubs[this->depot_id] = this->tours+1;
     this->dist_mat.resize(this->node_cnt, this->node_cnt);
+    this->penalty_func_cnt = 5;
     for (int i = 0; i < this->node_cnt; i++)
     {
         this->total_requests += this->quantities[i];
@@ -277,27 +278,31 @@ bool EVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t &fi
     {
         fitness += 1000 * unsatisfied;
         fitness += JOB_MISSING_PENALTY;
-        penalties.push_back(unsatisfied);
         is_feasible = false;
     }
+    penalties.push_back(unsatisfied);
+
     if (curr_tour != this->tours)
     {
         fitness += (JOB_MISSING_PENALTY / 10) * (abs((int)curr_tour - (int)this->tours));
-        penalties.push_back(abs((int)curr_tour - (int)this->tours));
         is_feasible = false;
     }
+    penalties.push_back(std::max(0, abs((int)curr_tour - (int)this->tours)));
+
     if (permutation.back() != this->depot_id || permutation.front() != this->depot_id)
     {
         fitness += JOB_MISSING_PENALTY;
-        penalties.push_back(permutation.back() != this->depot_id + permutation.front() != this->depot_id);
         is_feasible = false;
     }
+    penalties.push_back((uint)(permutation.back() != this->depot_id) + (uint)(permutation.front() != this->depot_id));
+
     if (negative_charge > 0)
     {
         fitness += NEGATIVE_CHARGE_PENALTY + (uint)round(1000 * negative_charge);
-        penalties.push_back((fitness_t)round(abs(negative_charge))) ;
         is_feasible = false;
     }
+    penalties.push_back((fitness_t)round(abs(negative_charge)));
+
     delete[] visited;
     return is_feasible;
 }

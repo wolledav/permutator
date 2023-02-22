@@ -56,6 +56,9 @@ void Solution::print() {
     std::cout << "solution state" << std::endl;
     std::cout << "\tlength: " << permutation.size() << std::endl;
     std::cout << "\tfitness: " << fitness << std::endl;
+    std::cout << "\tfitness vector: ";
+    for(auto p : penalties) std::cout << p << ' ';
+    std::cout << std::endl;
     std::cout << "\tis_feasible: " << is_feasible << std::endl;
 
     std::cout << "\tpermutation: ";

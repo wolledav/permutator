@@ -1,0 +1,16 @@
+{
+    "construction": "random",
+    "selection": "constrainedTournament",
+    "crossover": "swapNode",
+    "mutation": [
+        "insert",
+        "centeredExchange_3",
+        "relocate_1",
+        "remove"
+    ],
+    "replacement": "segregational",
+    "population_size": 20,
+    "timeout": 60,
+    "stop_on_feasible": false
+    
+}

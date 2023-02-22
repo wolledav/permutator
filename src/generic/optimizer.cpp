@@ -20,7 +20,6 @@ Optimizer::Optimizer(Instance *inst, json config, uint seed) {
     this->initial_solution = sol;
     this->current_solution = sol;
     this->best_known_solution = sol;
-    //best_known_solution.fitness =  std::numeric_limits<fitness_t>::max();
     this->rng = Optimizer::initRng(seed);
     this->setConstruction(this->config["construction"].get<string>());
     this->setMetaheuristic(this->config["metaheuristic"].get<string>());
@@ -167,7 +166,7 @@ bool Optimizer::insert1() {
                 if (new_fitness < best_solution.fitness) best_improved = true;
             }
         };
-        new_freq[j]--;
+            new_freq[j]--;
         }
     }
 
@@ -318,7 +317,7 @@ bool Optimizer::relocate(uint x, bool reverse) {
 }
 
 /*
- * Attempts to revert the all possible substrings of length 2x + 1 around all nodes in X.
+ * Attempts to revert all the possible substrings of length 2x + 1 around all nodes in X.
  * Performs the most improving reverse.
  * Complexity: O(n)
  */
