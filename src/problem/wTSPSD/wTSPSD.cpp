@@ -87,8 +87,8 @@ bool wTSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &
 
 uint wTSPSDInstance::compute_dist(uint id1, uint id2) {
     if (id1 == id2) { return 0; }
-    uint xdiff = this->positions[id1].x - this->positions[id2].x;
-    uint ydiff = this->positions[id1].y - this->positions[id2].y;
+    auto xdiff = this->positions[id1].x - this->positions[id2].x;
+    auto ydiff = this->positions[id1].y - this->positions[id2].y;
     double distance = sqrt(xdiff*xdiff + ydiff*ydiff);
     return (uint)round(distance);
 }

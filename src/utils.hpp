@@ -34,7 +34,7 @@ inline static nlohmann::json readJson(const std::string& path) {
 }
 
 struct coords {
-    int x;
-    int y;
+    double x;
+    double y;
 };
 
