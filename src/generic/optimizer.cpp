@@ -546,7 +546,7 @@ bool Optimizer::exchangeNIds() {
 
 #pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, updated)
     for (uint i = 0; i < this->instance->node_cnt; i++) { // for all nodes i in A
-        if (this->stop() || (updated && config["first_update"])) continue;
+        if (this->stop() || (updated && config["first_improve"])) continue;
         for (uint j = 0; j < i; j++) { // for all pairs of nodes i,j in A
             for (uint n = 1; n < this->current_solution.frequency[i]; n++) { // for all frequencies up to f_i
                 uint counter1 = 0, counter2 = 0;
