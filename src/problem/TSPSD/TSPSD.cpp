@@ -34,6 +34,7 @@ TSPSDInstance::TSPSDInstance(const char *path) : Instance() {
     this->node_cnt = data["DIMENSION"];
     this->lbs = vector<uint>(this->node_cnt, 1);
     this->ubs = vector<uint>(this->node_cnt, 1);
+    this->penalty_func_cnt = 2;
 
     // Fill TSPSDInstance attributes
     this->positions.resize(this->node_cnt);                // coords
@@ -84,7 +85,7 @@ bool TSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &f
             // Update fitness and validity
             fitness +=
                     del_mat(node1, node2) * DELETED_EDGE_PENALTY + (1 - del_mat(node1, node2)) * dist_mat(node1, node2);
-            illegal_edgemoves_cnt += del_mat(node1, node2);
+            illegal_edgemoves_cnt += (uint)del_mat(node1, node2);
             distance += dist_mat(node1, node2);
             valid = valid && !del_mat(node1, node2);
         }

@@ -2,7 +2,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "generic/optimizer.hpp"
+#include "generic/EA.hpp"
 #include "src/problem/NPFS/NPFS.hpp"
 #include "lib/getopt/getopt.h"
 
@@ -80,7 +80,7 @@ int main (int argc, char *argv[])
     parse_filename(filename, &job_cnt, &machine_cnt);
     NPFSInstance inst = NPFSInstance(data_path, job_cnt, machine_cnt);
     std::cout << "Solving " << inst.name << std::endl;
-    Optimizer optimizer = Optimizer(&inst, config, seed);
+    EA optimizer = EA(&inst, config, seed);
     optimizer.run();
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {

@@ -10,7 +10,7 @@ endif()
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(GCC_COVERAGE_COMPILE_FLAGS "-fopenmp")
@@ -23,7 +23,30 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 #       Metaheuristics
 # ************************************
 
-add_executable(EA_meta
+
+add_executable(CVRP_meta
+        src/problem/CVRP/CVRP_meta.cpp
+        src/config.cpp
+        src/generic/EA.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/problem/CVRP/CVRP.cpp
+        lib/tinyxml/tinyxml.cpp
+        lib/tinyxml/tinyxmlerror.cpp
+        lib/tinyxml/tinyxmlparser.cpp
+        lib/tinyxml/tinystr.cpp
+        lib/getopt/getopt.c
+        )
+
+target_include_directories(CVRP_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+
+
+add_executable(EVRP_meta
         src/problem/EVRP/EVRP_meta.cpp
         src/config.cpp
         src/generic/EA.cpp
@@ -33,56 +56,83 @@ add_executable(EA_meta
         lib/getopt/getopt.c
         )
 
-target_include_directories(EA_meta PUBLIC
+target_include_directories(EVRP_meta PUBLIC
         "${PROJECT_BINARY_DIR}/../"
         "${PROJECT_BINARY_DIR}/../src"
         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
         )
 
-# add the executables
-# add_executable(CVRP_meta
-#         src/problem/CVRP/CVRP_meta.cpp
-#         src/config.cpp
-#         src/generic/optimizer.cpp
-#         src/generic/instance.cpp
-#         src/generic/solution.cpp
-#         src/problem/CVRP/CVRP.cpp
-#         lib/tinyxml/tinyxml.cpp
-#         lib/tinyxml/tinyxmlerror.cpp
-#         lib/tinyxml/tinyxmlparser.cpp
-#         lib/tinyxml/tinystr.cpp
-#         lib/getopt/getopt.c
-#         )
 
-# add_executable(EVRP_meta
-#         src/problem/EVRP/EVRP_meta.cpp
-#         src/config.cpp
-#         src/generic/optimizer.cpp
-#         src/generic/instance.cpp
-#         src/generic/solution.cpp
-#         src/problem/EVRP/EVRP.cpp
-#         lib/getopt/getopt.c
-#         )
 
-# add_executable(QAP_meta
-#         src/problem/QAP/QAP_meta.cpp
-#         src/config.cpp
-#         src/generic/optimizer.cpp
-#         src/generic/instance.cpp
-#         src/generic/solution.cpp
-#         src/problem/QAP/QAP.cpp
-#         lib/getopt/getopt.c
-#         )
+add_executable(QAP_meta
+        src/problem/QAP/QAP_meta.cpp
+        src/config.cpp
+        src/generic/EA.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/problem/QAP/QAP.cpp
+        lib/getopt/getopt.c
+        )
 
-# add_executable(NPFS_meta
-#         src/problem/NPFS/NPFS_meta.cpp
-#         src/config.cpp
-#         src/generic/optimizer.cpp
-#         src/generic/instance.cpp
-#         src/generic/solution.cpp
-#         src/problem/NPFS/NPFS.cpp
-#         lib/getopt/getopt.c
-#         )
+target_include_directories(QAP_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+
+
+add_executable(NPFS_meta
+        src/problem/NPFS/NPFS_meta.cpp
+        src/config.cpp
+        src/generic/EA.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/problem/NPFS/NPFS.cpp
+        lib/getopt/getopt.c
+        )
+
+target_include_directories(NPFS_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+
+add_executable(TSPSD_meta
+        src/problem/TSPSD/TSPSD_meta.cpp
+        src/config.cpp
+        src/generic/EA.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/problem/TSPSD/TSPSD.cpp
+        lib/getopt/getopt.c
+        )
+
+target_include_directories(TSPSD_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+
+add_executable(wTSPSD_meta
+        src/problem/wTSPSD/wTSPSD_meta.cpp
+        src/config.cpp
+        src/generic/EA.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/problem/wTSPSD/wTSPSD.cpp
+        lib/getopt/getopt.c
+        )
+
+target_include_directories(wTSPSD_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
+
+
 
 # add_executable(SUDOKU_meta
 #         src/problem/SUDOKU/SUDOKU_meta.cpp
@@ -94,49 +144,6 @@ target_include_directories(EA_meta PUBLIC
 #         lib/getopt/getopt.c
 #         )
 
-# add_executable(TSPSD_meta
-#         src/problem/TSPSD/TSPSD_meta.cpp
-#         src/config.cpp
-#         src/generic/optimizer.cpp
-#         src/generic/instance.cpp
-#         src/generic/solution.cpp
-#         src/problem/TSPSD/TSPSD.cpp
-#         lib/getopt/getopt.c
-#         )
-
-# add_executable(wTSPSD_meta
-#         src/problem/wTSPSD/wTSPSD_meta.cpp
-#         src/config.cpp
-#         src/generic/optimizer.cpp
-#         src/generic/instance.cpp
-#         src/generic/solution.cpp
-#         src/problem/wTSPSD/wTSPSD.cpp
-#         lib/getopt/getopt.c
-#         )
-
-# target_include_directories(CVRP_meta PUBLIC
-#         "${PROJECT_BINARY_DIR}/../"
-#         "${PROJECT_BINARY_DIR}/../src"
-#         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-#         )
-
-# target_include_directories(EVRP_meta PUBLIC
-#         "${PROJECT_BINARY_DIR}/../"
-#         "${PROJECT_BINARY_DIR}/../src"
-#         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-#         )
-
-# target_include_directories(QAP_meta PUBLIC
-#         "${PROJECT_BINARY_DIR}/../"
-#         "${PROJECT_BINARY_DIR}/../src"
-#         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-#         )
-
-# target_include_directories(NPFS_meta PUBLIC
-#         "${PROJECT_BINARY_DIR}/../"
-#         "${PROJECT_BINARY_DIR}/../src"
-#         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-#         )
 
 # target_include_directories(SUDOKU_meta PUBLIC
 #         "${PROJECT_BINARY_DIR}/../"
@@ -144,17 +151,6 @@ target_include_directories(EA_meta PUBLIC
 #         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
 #         )
 
-# target_include_directories(TSPSD_meta PUBLIC
-#         "${PROJECT_BINARY_DIR}/../"
-#         "${PROJECT_BINARY_DIR}/../src"
-#         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-#         )
-
-# target_include_directories(wTSPSD_meta PUBLIC
-#         "${PROJECT_BINARY_DIR}/../"
-#         "${PROJECT_BINARY_DIR}/../src"
-#         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-#         )
 
 ## ************************************
 ##       ILP EXECS

@@ -42,6 +42,7 @@ public:
     bool *chargers;
     boost::numeric::ublas::matrix<double> dist_mat;
 
+
     EVRPInstance(const char *path, int cnt, int charger_cnt);
     ~EVRPInstance();
     bool computeFitness(const std::vector<uint> &permutation, permutator::fitness_t &fitness, std::vector<permutator::fitness_t> &penalties) override;

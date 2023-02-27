@@ -10,6 +10,7 @@ NPFSInstance::NPFSInstance(const string& path, uint jobs, uint machines)
     this->big_m = 0;
     this->job_mat.resize(machines, jobs);
     this->read(path.c_str());
+    this->penalty_func_cnt = 3;
     if (machines != this->machine_cnt || jobs != this->job_cnt) {
         std::cerr << str(format("ERROR: File name does not correspond with it's contents: %s\n") % path);
         throw std::exception();

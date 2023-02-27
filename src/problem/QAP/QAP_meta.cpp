@@ -2,7 +2,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "generic/optimizer.hpp"
+#include "generic/EA.hpp"
 #include "src/problem/QAP/QAP.hpp"
 #include "lib/getopt/getopt.h"
 
@@ -73,10 +73,12 @@ int main (int argc, char *argv[])
 
     string filename = getFilename(data_path);
     parse_filename(filename, &node_cnt);
+    LOG(node_cnt);
     QAPInstance inst = QAPInstance(data_path.c_str(), node_cnt);
     std::cout << "Solving " << inst.name << std::endl;
-    Optimizer optimizer = Optimizer(&inst, config, seed);
+    EA optimizer = EA(&inst, config, seed);
     optimizer.run();
+
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {
         output_file.open(output_path);

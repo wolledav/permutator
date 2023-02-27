@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "generic/optimizer.hpp"
+#include "generic/EA.hpp"
 #include "src/problem/wTSPSD/wTSPSD.hpp"
 #include "lib/getopt/getopt.h"
 
@@ -66,7 +66,7 @@ int main (int argc, char *argv[]) {
 
     // Load instance
     wTSPSDInstance inst = wTSPSDInstance(data_path.c_str());
-    Optimizer optimizer = Optimizer(&inst, config, seed);
+    EA optimizer = EA(&inst, config, seed);
 
     if (!init_path.empty()) {
         std::cout << "Initial solution read from " + init_path << std::endl;
@@ -76,7 +76,7 @@ int main (int argc, char *argv[]) {
             std::cout << "Reindexing initial solution" << std::endl;
             for (auto &i:init_solution) i--;
         }
-        optimizer.setInitSolution(init_solution);
+        //optimizer.setInitSolution(init_solution);
     }
 
     std::cout << "Solving " << data_path << std::endl;

@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <omp.h>
 #include <numeric>
+#include <unordered_set>
 
 #include "instance.hpp"
 #include "solution.hpp"
@@ -66,7 +67,7 @@ class EA
         void constrainedTournament(std::vector<Solution> &parents);
         //crossover
         void swapNode(std::vector<Solution> parents, std::vector<Solution> &children);
-        void OX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void ERX(std::vector<Solution> parents, std::vector<Solution> &children);
         //mutation
         void insert(Solution &child);
         void centeredExchange(uint x, Solution &child); 
@@ -88,4 +89,5 @@ class EA
         void setReplacement(const std::string &constr);
         Solution getSolution() {return this->best_known_solution;}
         void run();
+        void saveToJson(nlohmann::json& container);
 };

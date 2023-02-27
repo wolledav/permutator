@@ -17,6 +17,7 @@ CVRPInstance::CVRPInstance(const char* path, uint count, uint tours)
     this->tours = tours;
     this->dist_mat.resize(count, count);
     this->ubs[this->depot_id] = UINT_MAX;
+    this->penalty_func_cnt = 4;
     this->parseDataFrom(path);
     this->compute_dist_mat();
 }
@@ -124,19 +125,23 @@ bool CVRPInstance::computeFitness(const vector<uint> &permutation, fitness_t &fi
     if (unsatisfied > 0) {
         fitness += 1000*unsatisfied;
         fitness += JOB_MISSING_PENALTY;
-        penalties.push_back(unsatisfied);
         is_feasible = false;
     }
+    penalties.push_back(unsatisfied);
+
     if (curr_tour != this->tours){
         fitness += (JOB_MISSING_PENALTY / 10) * (abs((int)curr_tour - (int)this->tours));
-        penalties.push_back(abs((int)curr_tour - (int)this->tours));
         is_feasible = false;
     }
+    penalties.push_back(abs((int)curr_tour - (int)this->tours));
+
+
     if (permutation.back() != this->depot_id || permutation.front() != this->depot_id) {
         fitness += JOB_MISSING_PENALTY;
-        penalties.push_back(permutation.back() != this->depot_id + permutation.front() != this->depot_id);
         is_feasible = false;
     }
+    penalties.push_back((uint)(permutation.back() != this->depot_id) + (uint)(permutation.front() != this->depot_id));
+
     delete[] visited;
     return is_feasible;
 }

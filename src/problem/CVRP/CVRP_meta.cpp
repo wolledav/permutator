@@ -2,7 +2,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "generic/optimizer.hpp"
+#include "generic/EA.hpp"
 #include "src/problem/CVRP/CVRP.hpp"
 #include "lib/getopt/getopt.h"
 
@@ -85,7 +85,7 @@ int main (int argc, char *argv[])
     parse_filename(filename, &node_cnt, &tours);
     CVRPInstance inst = CVRPInstance(data_path.c_str(), node_cnt, tours);
     std::cout << "Solving " << inst.name << std::endl;
-    Optimizer optimizer = Optimizer(&inst, config, seed);
+    EA optimizer = EA(&inst, config, seed);
     optimizer.run();
 
     // Export solution

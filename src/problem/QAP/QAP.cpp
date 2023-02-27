@@ -6,6 +6,7 @@ QAPInstance::QAPInstance(const char *path, uint count)
  : Instance(generateName(path, "QAP"), count, 1, 1){
     this->dist_mat.resize(count, count);
     this->flow_mat.resize(count, count);
+    this->penalty_func_cnt = 1;
     read(path);
 }
 

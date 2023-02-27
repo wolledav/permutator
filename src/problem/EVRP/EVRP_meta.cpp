@@ -91,9 +91,9 @@ int main (int argc, char *argv[])
     // Export solution
     Solution sol = optimizer.getSolution();
     if (!output_path.empty()) {
-        // output_file.open(output_path);
-        // optimizer.saveToJson(output);
-        // output_file << output.dump(4);
+        output_file.open(output_path);
+        optimizer.saveToJson(output);
+        output_file << output.dump(4);
     } else {
         inst.print_solution(&sol, std::cout);
         std::cout << sol.fitness << std::endl;

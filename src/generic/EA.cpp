@@ -39,14 +39,13 @@ void EA::run()
 {
     while (this->population.size() < this->population_size)
         this->population.push_back(this->construction());
+    population[0].print();
     std::uniform_int_distribution<uint> uni(0, this->mutationList.size() - 1);
-    for (uint i = 0; !population[0].is_feasible; i++)
+    for (uint i = 0; i < 200; i++)
     {
-        if (i % 10 == 0)
+        if (i%10 == 0)
             LOG(i);
 
-        this->update_t_t();
-        this->update_penalty_coefficients();
         vector<Solution> parents(this->population_size);
         vector<Solution> children(this->population_size);
         this->constrainedTournament(parents);
@@ -54,6 +53,8 @@ void EA::run()
         for (auto &child : children)
             this->mutation_map.at(this->mutationList[uni(*this->rng)])(child);
         this->segregational(children);
+        this->update_t_t();
+        this->update_penalty_coefficients();
     }
     // sort_by_pf(population);
     LOGS(population);
@@ -260,16 +261,75 @@ void EA::swapNode(std::vector<Solution> parents, std::vector<Solution> &children
     }
 }
 
-void EA::OX(std::vector<Solution> parents, std::vector<Solution> &children)
+void EA::ERX(std::vector<Solution> parents, std::vector<Solution> &children)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
+    for (uint idx = 0; idx < 1; idx += 2)
     {
-
         vector<uint> perm1 = parents[idx].permutation;
         vector<uint> perm2 = parents[idx + 1].permutation;
-        vector<uint> new_perm = perm1;
-        vector<uint> removed_nodes;
-        std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt - 1);
+
+        std::map<uint, std::unordered_set<uint>> neighborMap;
+        for (auto perm : {perm1, perm2}){
+            for (uint i = 0; i < perm.size(); i++){
+                uint node = perm[i];
+                uint next = perm[(i+1)%perm.size()];
+                uint prev = perm[(i-1)%perm.size()];
+                if (neighborMap.count(node)) {
+                    neighborMap.at(node).insert(next);
+                    neighborMap.at(node).insert(prev);
+                } 
+                else {
+                    neighborMap[node] = {next, prev};
+                }
+            }
+        }
+
+        vector<uint> new_perm = {perm1[0]};
+        vector<uint> new_freq(this->instance->node_cnt, 0);
+        new_freq[perm1[0]] = 1;
+        std::map<uint, std::unordered_set<uint>> newNeighborMap(neighborMap);
+        for (uint i = 0; i < 3; i++){
+            uint node = new_perm[i];
+            uint nextNode;
+            if (newNeighborMap[node].size() > 0)
+                nextNode = *newNeighborMap[node].begin();            
+            
+            
+            newNeighborMap[node].erase(nextNode);
+            newNeighborMap[nextNode].erase(node);
+            new_perm.push_back(nextNode);
+            new_freq[nextNode] += 1;
+        }
+        for (const auto& [key, value] : neighborMap){
+            std::cout << '[' << key << "] = ";
+            for (auto v : value) 
+                std::cout << v << " ";
+            LOG("");
+        }
+        LOG("\n\n");
+
+        for (const auto& [key, value] : newNeighborMap){
+            std::cout << '[' << key << "] = ";
+            for (auto v : value) 
+                std::cout << v << " ";
+            LOG("");
+        }
+
+        exit(1);
+
+        // new_freq[perm1[0]] = 1;
+        // new_freq[perm1[1]] = 1;
+        // vector<uint> removed_nodes;
+        // uint pos = 1;
+        // while(this->instance->getLBPenalty(new_freq) > 0){
+        //     auto nextIdx = find(perm2.begin(), perm2.end(), perm1[pos]);
+        // }
+        // for (const auto& [key, value] : neighborMap){
+        //     std::cout << '[' << key << "] = ";
+        //     for (auto v : value) 
+        //         std::cout << v << " ";
+        //     LOG("");
+        // }
     }
 }
 
@@ -415,8 +475,7 @@ void EA::remove(Solution &child)
 
 void EA::segregational(std::vector<Solution> children)
 {
-    // this->population.clear();
-    // parents.insert(parents.end(), children.begin(), children.end());
+
     vector<Solution> validSolutions(0), rest(0);
 
     std::copy_if(this->population.begin(), this->population.end(), std::back_inserter(validSolutions), [](Solution s)
@@ -559,4 +618,9 @@ fitness_t EA::penalized_fitness(Solution solution)
 fitness_t EA::penalized_fitness(std::vector<fitness_t> penalties)
 {
     return (fitness_t)round(inner_product(penalties.begin(), penalties.end(), this->penalty_coefficients.begin(), 0.));
+}
+
+
+void EA::saveToJson(json& container){
+
 }
