@@ -129,7 +129,7 @@ void Optimizer::run() {
  * Attempts to insert all nodes from A to X.
  * Performs the most improving (or least worsening) insertion.
  * If all nodes are at their upper bounds, does nothing.
- * Complexity: O(n)
+ * Complexity: O(n^2)
  */
 bool Optimizer::insert1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
