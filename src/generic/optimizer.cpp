@@ -129,6 +129,7 @@ void Optimizer::run() {
  * Attempts to insert all nodes from A to X.
  * Performs the most improving (or least worsening) insertion.
  * If all nodes are at their upper bounds, does nothing.
+ * Complexity: O(n)
  */
 bool Optimizer::insert1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -182,7 +183,7 @@ bool Optimizer::insert1() {
  * Attempts to append all nodes from A to X.
  * Performs the most improving (or least worsening) insertion.
  * If all nodes are at their upper bounds, does nothing.
- * Complexity: O(n^2)
+ * Complexity: O(n)
  */
 bool Optimizer::append1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -902,15 +903,10 @@ void Optimizer::cyclicVND() {
 
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max()/2;
     fitness_t current_fitness = prev_fitness - 1;
-    int last_improving_operator = -1;
 
     while (current_fitness < prev_fitness) {
-        for (int i = 0; i < (int)this->operation_list.size(); i++) {
-            if (last_improving_operator == i) return;
-            string operation = this->operation_list[i];
-            if (this->operationCall(operation)) {
-                last_improving_operator = i;
-            }
+        for (const auto& operation : this->operation_list) {
+            this->operationCall(operation);
             if (this->stop()) return;
         }
         prev_fitness = current_fitness;
