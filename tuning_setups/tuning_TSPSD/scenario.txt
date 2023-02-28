@@ -25,7 +25,7 @@ logFile = "./irace.Rdata"
 ## Directory where training instances are located; either absolute path or
 ## relative to current directory. If no trainInstancesFiles is provided, all
 ## the files in trainInstancesDir will be listed as instances.
-trainInstancesDir = "../data/tspsd/tuning_set"
+trainInstancesDir = "../../data_demo/datasets/TSPSD"
 
 ## File that contains a list of training instances and optionally additional
 ## parameters for them. If trainInstancesDir is provided, irace will search
@@ -34,7 +34,7 @@ trainInstancesFile = "./instances-list.txt"
 
 ## File that contains a table of initial configurations. If empty or NULL, all
 ## initial configurations are randomly generated.
-configurationsFile = "./configurations.txt"
+## configurationsFile = "./configurations.txt"
 
 ## File that contains a list of logical expressions that cannot be TRUE for
 ## any evaluated configuration. If empty or NULL, do not use forbidden

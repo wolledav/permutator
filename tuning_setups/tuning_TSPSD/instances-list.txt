@@ -8,13 +8,14 @@
 # Empty lines and comments are ignored.
 # A-n65-k09.xml timeout 600
 
-eil101_sd1_distance.json    timeout 60
-eil101_sd2_distance.json    timeout 60
-eil101_sd3_distance.json    timeout 60
-ch150_sd1_distance.json     timeout 60
-ch150_sd2_distance.json     timeout 60
-ch150_sd3_distance.json     timeout 60
-a280_sd1_distance.json      timeout 600
-a280_sd2_distance.json      timeout 600
-a280_sd3_distance.json      timeout 600
-vm1084_sd1_cl.json          timeout 3600
+burma14-3.1.json    timeout 140
+ulysses22-5.5.json  timeout 220
+berlin52-10.4.json  timeout 520
+berlin52-13.2.json  timeout 520
+eil101-27.5.json    timeout 1010
+gr202-67.3.json     timeout 2020
+lin318-99.3.json    timeout 3180
+fl417-160.6.json    timeout 4170
+d657-322.7.json     timeout 6570
+rat783-481.4.json   timeout 7830
+vm1084-848.9.json   timeout 10840

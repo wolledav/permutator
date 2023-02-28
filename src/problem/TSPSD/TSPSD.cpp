@@ -100,8 +100,8 @@ bool TSPSDInstance::computeFitness(const vector<uint> &permutation, fitness_t &f
 
 uint TSPSDInstance::compute_dist(uint id1, uint id2) {
     if (id1 == id2) { return 0; }
-    int xdiff = this->positions[id1].x - this->positions[id2].x;
-    int ydiff = this->positions[id1].y - this->positions[id2].y;
+    auto xdiff = this->positions[id1].x - this->positions[id2].x;
+    auto ydiff = this->positions[id1].y - this->positions[id2].y;
     double distance = sqrt(xdiff * xdiff + ydiff * ydiff);
 
     return (uint) round(distance);

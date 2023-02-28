@@ -21,8 +21,8 @@ error() {
     exit 1
 }
 
-EXE=../cmake-build-release/TSPSD_meta
-FIXED_PARAMS="num_threads 1 stop_on_feasible 0"
+EXE=../../cmake-build-release/TSPSD_meta
+FIXED_PARAMS="num_threads 2 stop_on_feasible 0"
 
 CONFIG_ID=$1
 INSTANCE_ID=$2
@@ -32,7 +32,7 @@ shift 4 || error "Not enough parameters"
 CONFIG_PARAMS=$*
 CONFIG_FILE=./config_${CONFIG_ID}-${INSTANCE_ID}-${SEED}.json
 
-python3 ../tools/create_config.py $CONFIG_FILE $FIXED_PARAMS $CONFIG_PARAMS
+python3 ../../scripts/common/create_config.py $CONFIG_FILE $FIXED_PARAMS $CONFIG_PARAMS
 
 STDOUT=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stdout
 STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr

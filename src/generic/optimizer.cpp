@@ -129,6 +129,7 @@ void Optimizer::run() {
  * Attempts to insert all nodes from A to X.
  * Performs the most improving (or least worsening) insertion.
  * If all nodes are at their upper bounds, does nothing.
+ * Complexity: O(n^2)
  */
 bool Optimizer::insert1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -182,7 +183,7 @@ bool Optimizer::insert1() {
  * Attempts to append all nodes from A to X.
  * Performs the most improving (or least worsening) insertion.
  * If all nodes are at their upper bounds, does nothing.
- * Complexity: O(n^2)
+ * Complexity: O(n)
  */
 bool Optimizer::append1() {
 #if defined STDOUT_ENABLED && STDOUT_ENABLED==1
@@ -545,7 +546,7 @@ bool Optimizer::exchangeNIds() {
 
 #pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, updated)
     for (uint i = 0; i < this->instance->node_cnt; i++) { // for all nodes i in A
-        if (this->stop() || (updated && this->config["first_improve"])) continue;
+        if (this->stop() || (updated && config["first_improve"])) continue;
         for (uint j = 0; j < i; j++) { // for all pairs of nodes i,j in A
             for (uint n = 1; n < this->current_solution.frequency[i]; n++) { // for all frequencies up to f_i
                 uint counter1 = 0, counter2 = 0;
@@ -634,7 +635,7 @@ void Optimizer::doubleBridge(uint k, bool reverse_all) {
 #endif
 
     if (k < 1) throw std::out_of_range("Double bridge: k < 1");
-    std::uniform_int_distribution<uint> uni(0,this->current_solution.getSize() - 1);
+    std::uniform_int_distribution<uint> uni(0, this->current_solution.getSize() - 1);
     std::vector<uint> idx;
     vector<uint> new_perm = this->current_solution.permutation;
 
@@ -902,15 +903,10 @@ void Optimizer::cyclicVND() {
 
     fitness_t prev_fitness = std::numeric_limits<fitness_t>::max()/2;
     fitness_t current_fitness = prev_fitness - 1;
-    int last_improving_operator = -1;
 
     while (current_fitness < prev_fitness) {
-        for (int i = 0; i < (int)this->operation_list.size(); i++) {
-            if (last_improving_operator == i) return;
-            string operation = this->operation_list[i];
-            if (this->operationCall(operation)) {
-                last_improving_operator = i;
-            }
+        for (const auto& operation : this->operation_list) {
+            this->operationCall(operation);
             if (this->stop()) return;
         }
         prev_fitness = current_fitness;

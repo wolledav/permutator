@@ -8,6 +8,7 @@
     "construction": "greedy",
     "allow_infeasible": true,
     "local_search": "CVND",
+    "first_improve": true,
     "operators": [
         "insert_1",
         "remove_1",
