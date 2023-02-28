@@ -29,6 +29,6 @@ class Instance
         permutator::fitness_t getLBPenalty(const std::vector<uint> &frequency);
         bool FrequencyInBounds(const std::vector<uint> &frequency);
         static void parseArgs(int argc, char *argv[], std::string &data_path, std::string &output_path, std::string &optimizer_type, nlohmann::json &config, uint& seed, std::vector<uint> *init_solution = nullptr);
-        static void show_usage(){ std::cout << "Usage: XXXX_meta -d data_path [-c] config_path [-t] timeout(sec) [-s] seed [-o] output_file_path\n";}
+        static void show_usage(){ std::cout << "Usage: XXXX_meta -d data_path [-c] config_path [-t] timeout(sec) [-s] seed [-o] output_file_path [-i] inital_solution_path [-l] [-e]\n";}
 
 };

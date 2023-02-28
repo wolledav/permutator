@@ -41,7 +41,7 @@ void EA::run()
         this->population.push_back(this->construction());
     population[0].print();
     std::uniform_int_distribution<uint> uni(0, this->mutationList.size() - 1);
-    for (uint i = 0; i < 200; i++)
+    for (uint i = 0; !this->population[0].is_feasible; i++)
     {
         if (i%10 == 0)
             LOG(i);
@@ -578,7 +578,7 @@ void EA::update_t_t()
     vector<uint> penalty_cnt(this->instance->penalty_func_cnt, 0);
     for (auto solution : this->population)
     {
-        penalty_cnt[0] += solution.is_feasible;
+        penalty_cnt[0] += (uint)solution.is_feasible;
         for (uint idx = 1; idx < penalty_cnt.size(); idx++)
         {
             penalty_cnt[idx] += solution.penalties[idx] > 0 ? 1 : 0;

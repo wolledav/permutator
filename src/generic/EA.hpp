@@ -18,19 +18,16 @@
 #include "instance.hpp"
 #include "solution.hpp"
 #include "utils.hpp"
+#include "basic_optimizer.hpp"
 
 inline void LOGS(const std::vector<Solution> parents) {for (auto p : parents) p.print();}
 
 
-class EA
+class EA : public BasicOptimizer
 {
     private:
-        nlohmann::json config;
         uint timeout_s;
         uint unimproved_cnt;
-        std::chrono::steady_clock::time_point start, last_improvement;
-        Instance* instance;
-        Solution best_known_solution;
         std::vector<Solution> population;
         uint population_size;
         double t_target = 0.5;
@@ -87,7 +84,6 @@ class EA
         void setCrossover(const std::string &constr);
         void setMutation(const std::vector<std::string>& constr);
         void setReplacement(const std::string &constr);
-        Solution getSolution() {return this->best_known_solution;}
         void run();
         void saveToJson(nlohmann::json& container);
 };

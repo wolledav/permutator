@@ -16,17 +16,15 @@
 #include "instance.hpp"
 #include "solution.hpp"
 #include "utils.hpp"
+#include "basic_optimizer.hpp"
 
 
-class Optimizer
+class Optimizer : public BasicOptimizer
 {
     private:
-        nlohmann::json config;
         uint timeout_s;
         uint unimproved_cnt;
-        std::chrono::steady_clock::time_point start, last_improvement;
-        Instance* instance;
-        Solution initial_solution, current_solution, best_known_solution;
+        Solution initial_solution, current_solution;
         std::mt19937 *rng;
         std::vector<std::string> operation_list;
         std::vector<std::string> perturbation_list;
@@ -138,6 +136,5 @@ class Optimizer
         void setPerturbations(const std::vector<std::string>& perturbations);
         void run();
         // Output
-        Solution getSolution() {return this->best_known_solution;}
         void saveToJson(nlohmann::json& container);
 };
