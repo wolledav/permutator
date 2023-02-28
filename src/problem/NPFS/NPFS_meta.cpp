@@ -3,8 +3,8 @@
 #include <boost/algorithm/string.hpp>
 
 #include "generic/EA.hpp"
+#include "generic/optimizer.hpp"
 #include "src/problem/NPFS/NPFS.hpp"
-#include "lib/getopt/getopt.h"
 
 using std::string;
 using std::vector;
@@ -25,9 +25,6 @@ void parse_filename(string name, uint *N, uint *M) {
     *M = stoi(temp);
 }
 
-void show_usage(){
-    std::cout << "Usage: NPFS_meta -d dataset_path [-t] timeout(sec) [-s] seed [-o] output file path\n";
-}
 
 int main (int argc, char *argv[])
 {
@@ -37,55 +34,27 @@ int main (int argc, char *argv[])
     std::ofstream output_file, log_file;
     int opt;
     json config, output;
-    // Parse arguments
-    while ((opt = getopt(argc, argv, "d:t:s:o:c:")) != -1) {
-        switch (opt) {
-            case 'd':
-                data_path = optarg;
-                break;
-            case 't':
-                timeout_s = strtoul(optarg, nullptr, 10);
-                break;
-            case 's':
-                seed = strtoul(optarg, nullptr, 10);
-                break;
-            case 'o':
-                output_path = optarg;
-                break;
-            case 'c':
-                conf_path = optarg;
-                break;
-            default: /* '?' */
-                std::cout << "Unknown arg option: " << (char)opt << std::endl;
-                show_usage();
-                exit(EXIT_FAILURE);
-        }
-    }
-    if (data_path.empty()) {
-        show_usage();
-        exit(EXIT_FAILURE);
-    }
+    string optimizer_type = "local";
 
-    if (!conf_path.empty()) {
-        config = readJson(conf_path);
-    } else {
-        config = Config::readDefaultConfig();
-    }
-
-    if (timeout_s != UINT32_MAX) {
-        config["timeout"] = timeout_s;
-    }
+    Instance::parseArgs(argc, argv, data_path, output_path, optimizer_type, config, seed);  
 
     string filename = getFilename(data_path);
     parse_filename(filename, &job_cnt, &machine_cnt);
     NPFSInstance inst = NPFSInstance(data_path, job_cnt, machine_cnt);
     std::cout << "Solving " << inst.name << std::endl;
-    EA optimizer = EA(&inst, config, seed);
-    optimizer.run();
-    Solution sol = optimizer.getSolution();
+    
+     BasicOptimizer* optimizer;
+    if (optimizer_type == "local")
+        optimizer = new Optimizer(&inst, config, seed);
+    else if (optimizer_type == "evolutionary")
+        optimizer = new EA(&inst, config, seed);
+    
+    optimizer->run();
+
+    Solution sol = optimizer->getSolution();
     if (!output_path.empty()) {
         output_file.open(output_path);
-        optimizer.saveToJson(output);
+        optimizer->saveToJson(output);
         output_file << output.dump(4);
     } else {
         inst.print_solution(&sol, std::cout);

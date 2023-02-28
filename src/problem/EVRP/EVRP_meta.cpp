@@ -3,8 +3,8 @@
 #include <boost/algorithm/string.hpp>
 
 #include "generic/EA.hpp"
+#include "generic/optimizer.hpp"
 #include "src/problem/EVRP/EVRP.hpp"
-#include "lib/getopt/getopt.h"
 
 using std::string;
 using std::vector;
@@ -25,74 +25,38 @@ void parse_filename(string name, uint *N, uint *S) {
     *S = stoi(temp);
 }
 
-void show_usage(){
-    std::cout << "Usage: EVRP_meta -d data_path [-c] config_path [-t] timeout(sec) [-s] seed [-o] output_file_path\n";
-}
 
 int main (int argc, char *argv[])
 {
-    uint customer_cnt, charger_cnt, tours, seed = 0;
+    uint node_cnt, tours, customer_cnt, charger_cnt, seed = 0;
     uint timeout_s = UINT32_MAX;
     string data_path, output_path, conf_path;
     std::ofstream output_file, log_file;
     int opt;
     json config, output;
-    // Parse arguments
-    while ((opt = getopt(argc, argv, "d:t:s:o:c:")) != -1) {
-        switch (opt) {
-            case 'd':
-                data_path = optarg;
-                break;
-            case 't':
-                timeout_s = strtoul(optarg, nullptr, 10);
-                break;
-            case 's':
-                seed = strtoul(optarg, nullptr, 10);
-                break;
-            case 'o':
-                output_path = optarg;
-                break;
-            case 'c':
-                conf_path = optarg;
-                break;
-            default: /* '?' */
-                std::cout << "Unknown arg option: " << (char)opt << std::endl;
-                show_usage();
-                exit(EXIT_FAILURE);
-        }
-    }
+    string optimizer_type = "local";
 
-    // Display usage instructions
-    if (data_path.empty()) {
-        show_usage();
-        exit(EXIT_FAILURE);
-    }
-
-    // Load config
-    if (!conf_path.empty()) {
-        config = readJson(conf_path);
-    } else {
-        config = Config::readDefaultConfig();
-    }
-
-    // Rewrite timeout
-    if (timeout_s != UINT32_MAX) {
-        config["timeout"] = timeout_s;
-    }
+    Instance::parseArgs(argc, argv, data_path, output_path, optimizer_type, config, seed);    
 
     // Parse and solve instance
     string filename = getFilename(data_path);
     parse_filename(filename, &customer_cnt, &charger_cnt);
     EVRPInstance inst = EVRPInstance(data_path.c_str(), customer_cnt, charger_cnt);
     std::cout << "Solving " << inst.name << std::endl;
-    EA optimizer = EA(&inst, config, seed);
-    optimizer.run();
+    
+    BasicOptimizer* optimizer;
+    if (optimizer_type == "local")
+        optimizer = new Optimizer(&inst, config, seed);
+    else if (optimizer_type == "evolutionary")
+        optimizer = new EA(&inst, config, seed);
+    
+    optimizer->run();
 
     // Export solution
-    Solution sol = optimizer.getSolution();
+    Solution sol = optimizer->getSolution();
     if (!output_path.empty()) {
         output_file.open(output_path);
-        optimizer.saveToJson(output);
+        optimizer->saveToJson(output);
         output_file << output.dump(4);
     } else {
         inst.print_solution(&sol, std::cout);

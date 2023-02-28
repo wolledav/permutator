@@ -28,6 +28,7 @@ add_executable(CVRP_meta
         src/problem/CVRP/CVRP_meta.cpp
         src/config.cpp
         src/generic/EA.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/CVRP/CVRP.cpp
@@ -50,6 +51,7 @@ add_executable(EVRP_meta
         src/problem/EVRP/EVRP_meta.cpp
         src/config.cpp
         src/generic/EA.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/EVRP/EVRP.cpp
@@ -68,6 +70,7 @@ add_executable(QAP_meta
         src/problem/QAP/QAP_meta.cpp
         src/config.cpp
         src/generic/EA.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/QAP/QAP.cpp
@@ -86,6 +89,7 @@ add_executable(NPFS_meta
         src/problem/NPFS/NPFS_meta.cpp
         src/config.cpp
         src/generic/EA.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/NPFS/NPFS.cpp
@@ -103,6 +107,7 @@ add_executable(TSPSD_meta
         src/problem/TSPSD/TSPSD_meta.cpp
         src/config.cpp
         src/generic/EA.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/TSPSD/TSPSD.cpp
@@ -120,6 +125,7 @@ add_executable(wTSPSD_meta
         src/problem/wTSPSD/wTSPSD_meta.cpp
         src/config.cpp
         src/generic/EA.cpp
+        src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
         src/problem/wTSPSD/wTSPSD.cpp
