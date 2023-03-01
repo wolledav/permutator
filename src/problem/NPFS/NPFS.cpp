@@ -40,7 +40,7 @@ bool NPFSInstance::computeFitness(const vector<uint> &permutation, fitness_t &fi
     vector<bool> processed_jobs (this->job_cnt, false);
     boost::numeric::ublas::matrix<uint> op_end_times (this->machine_cnt, this->job_cnt, 0);
     fitness = 0;
-    fitness_t job_duplication_cnt, empty_machine_cnt = 0; 
+    fitness_t job_duplication_cnt = 0, empty_machine_cnt = 0; 
     penalties.clear(); //[fitness (total runtime), job duplication, empty machine]
     
     // First machine has no waiting time between operations.
