@@ -640,7 +640,7 @@ bool Optimizer::twoOpt()
         vector<uint> new_perm = perm;
         for (uint j = 2; j <= perm.size() - i; j++)
         { 
-            oprtr::twoOpt(new_perm, i, j);
+            oprtr::reverse(new_perm, i, j);
             this->instance->computeFitness(new_perm, fitness, penalties);
 #pragma omp critical
             if (fitness < best_solution.fitness)
@@ -648,7 +648,7 @@ bool Optimizer::twoOpt()
                 best_solution = Solution(new_perm, *this->instance);
                 updated = true;
             }
-            oprtr::twoOpt(new_perm, i, j);
+            oprtr::reverse(new_perm, i, j);
         }
     }
 
@@ -1274,22 +1274,10 @@ void Optimizer::constructRandom()
 #endif
 
     // Construct
-    Solution sol = this->initial_solution;
-
-    uint rnd_idx;
-    for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++)
-    { // for all nodes
-        while (sol.frequency[node_id] < this->instance->lbs[node_id])
-        {
-            std::uniform_int_distribution<uint> uni(0, sol.getSize());
-            rnd_idx = uni(*this->rng);
-            sol.permutation.insert(sol.permutation.begin() + rnd_idx, node_id);
-            sol.frequency[node_id]++;
-        }
-    }
-    this->current_solution = Solution(sol.permutation, *this->instance);
+    construct::random(this->initial_solution.permutation, this->initial_solution.frequency, this->instance->lbs);
 
     // Evaluate
+    this->current_solution = Solution(this->initial_solution.permutation, *this->instance);
     if (this->current_solution < this->best_known_solution)
     {
         this->best_known_solution = this->current_solution;
@@ -1313,50 +1301,10 @@ void Optimizer::constructRandomReplicate()
     this->printOperation(str(format("C: %1%") % __func__));
 #endif
 
-    // Extract permutation from initial solution
-    Solution sol(this->instance->node_cnt);
-    for (auto node : this->initial_solution.permutation)
-    {
-        if (sol.frequency[node] == 0)
-        {
-            sol.permutation.push_back(node);
-            sol.frequency[node]++;
-        }
-    }
-    auto offset = sol.permutation.size();
-
-    // Append missing nodes
-    for (uint i = 0; i < this->instance->node_cnt; i++)
-    {
-        if (sol.frequency[i] == 0)
-        {
-            sol.permutation.push_back(i);
-            sol.frequency[i]++;
-        }
-    }
-
-    // Shuffle missing nodes
-    auto begin = sol.permutation.begin();
-    std::advance(begin, offset);
-    std::shuffle(begin, sol.permutation.end(), *this->rng);
-
-    // Replicate, until all nodes are within bounds
-    auto perm = sol.permutation;
-    sol = Solution(this->instance->node_cnt);
-    do
-    {
-        for (auto elem : perm)
-        {
-            if (sol.frequency[elem] < this->instance->lbs[elem])
-            {
-                sol.frequency[elem]++;
-                sol.permutation.push_back(elem);
-            }
-        }
-    } while (!this->instance->FrequencyInBounds(sol.frequency) && !this->stop());
+    construct::randomReplicate(this->initial_solution.permutation, this->initial_solution.frequency, this->instance->lbs, this->instance->ubs);
 
     // Evaluate
-    this->current_solution = Solution(sol.permutation, *this->instance);
+    this->current_solution = Solution(this->initial_solution.permutation, *this->instance);
     if (this->current_solution < this->best_known_solution)
     {
         this->best_known_solution = this->current_solution;

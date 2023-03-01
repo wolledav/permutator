@@ -2,13 +2,18 @@
 
 #include <vector>
 #include <algorithm>
+#include <random>
 #include "utils.hpp"
+#include "solution.hpp"
 
 using uint = unsigned int;
+using permutator::fitness_t;
+using std::vector;
+
+
 
 namespace oprtr
 {
-
 void insert(std::vector<uint> & permutation, std::vector<uint> & frequency, std::vector<uint> upperBounds, uint node, uint position);
 
 void append(std::vector<uint> &permutation, std::vector<uint> &frequency, std::vector<uint> upperBounds, uint node);
@@ -27,6 +32,18 @@ void exchangeIds(std::vector<uint> &permutation, std::vector<uint> &frequency, s
 
 void exchangeNIds(std::vector<uint> &permutation, std::vector<uint> &frequency, std::vector<uint> lowerBounds, std::vector<uint> upperBounds, uint nodeX, uint nodeY, uint maxSwap);
 
-void twoOpt(std::vector<uint> &permutation, uint position, uint length);
+void reverse(std::vector<uint> &permutation, uint position, uint length);
+
+}
+
+namespace construct
+{
+// void greedy(Solution& initSolution, std::function<fitness_t(bool<uint>)> inBoundsFunc, std::function<fitness_t(std::vector<uint>)> fitnessFunc);
+
+// void nearestNeighbor(Solution& initSolution, std::function<fitness_t(bool<uint>)> inBoundsFunc, std::function<fitness_t(std::vector<uint>)> fitnessFunc);
+
+void random(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs);
+
+void randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs);
 
 }
