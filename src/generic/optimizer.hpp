@@ -17,6 +17,7 @@
 #include "solution.hpp"
 #include "utils.hpp"
 #include "basic_optimizer.hpp"
+#include "operator.hpp"
 
 
 class Optimizer : public BasicOptimizer
