@@ -31,6 +31,7 @@ add_executable(CVRP_meta
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
+        src/generic/operator.cpp
         src/problem/CVRP/CVRP.cpp
         lib/tinyxml/tinyxml.cpp
         lib/tinyxml/tinyxmlerror.cpp
@@ -54,6 +55,7 @@ add_executable(EVRP_meta
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
+        src/generic/operator.cpp
         src/problem/EVRP/EVRP.cpp
         lib/getopt/getopt.c
         )
@@ -73,6 +75,7 @@ add_executable(QAP_meta
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
+        src/generic/operator.cpp
         src/problem/QAP/QAP.cpp
         lib/getopt/getopt.c
         )
@@ -92,6 +95,7 @@ add_executable(NPFS_meta
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
+        src/generic/operator.cpp
         src/problem/NPFS/NPFS.cpp
         lib/getopt/getopt.c
         )
@@ -110,6 +114,7 @@ add_executable(TSPSD_meta
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
+        src/generic/operator.cpp
         src/problem/TSPSD/TSPSD.cpp
         lib/getopt/getopt.c
         )
@@ -128,6 +133,7 @@ add_executable(wTSPSD_meta
         src/generic/optimizer.cpp
         src/generic/instance.cpp
         src/generic/solution.cpp
+        src/generic/operator.cpp
         src/problem/wTSPSD/wTSPSD.cpp
         lib/getopt/getopt.c
         )
@@ -143,9 +149,11 @@ target_include_directories(wTSPSD_meta PUBLIC
 # add_executable(SUDOKU_meta
 #         src/problem/SUDOKU/SUDOKU_meta.cpp
 #         src/config.cpp
+#         src/generic/EA.cpp
 #         src/generic/optimizer.cpp
 #         src/generic/instance.cpp
 #         src/generic/solution.cpp
+#         src/generic/operator.cpp
 #         src/problem/SUDOKU/SUDOKU.cpp
 #         lib/getopt/getopt.c
 #         )
