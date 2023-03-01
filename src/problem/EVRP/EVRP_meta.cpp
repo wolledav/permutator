@@ -28,11 +28,10 @@ void parse_filename(string name, uint *N, uint *S) {
 
 int main (int argc, char *argv[])
 {
-    uint node_cnt, tours, customer_cnt, charger_cnt, seed = 0;
+    uint customer_cnt, charger_cnt, seed = 0;
     uint timeout_s = UINT32_MAX;
     string data_path, output_path, conf_path;
     std::ofstream output_file, log_file;
-    int opt;
     json config, output;
     string optimizer_type = "local";
 

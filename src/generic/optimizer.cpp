@@ -487,7 +487,7 @@ bool Optimizer::moveAll(uint x)
                 positions.push_back(i);
 
         if (positions.size() == 0) continue;
-        oprtr::moveAll(new_perm, node_id, -x-1, &positions);
+        oprtr::moveAll(new_perm, node_id, -(int)x-1, &positions);
         
         // attempt all shifts by i from [-x, x]\{0}
         for (int i = 0; i <= (int)x*2; i++)

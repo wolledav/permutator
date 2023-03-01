@@ -26,7 +26,7 @@ void centeredExchange(std::vector<uint> &permutation,  uint center, uint radius)
 
 void exchange(std::vector<uint> &permutation,  uint from, uint to, uint sizeX, uint sizeY, bool exchange);
 
-void moveAll(std::vector<uint> &permutation, uint node, uint offset, std::vector<uint>* position=nullptr);
+void moveAll(std::vector<uint> &permutation, uint node, int offset, std::vector<uint>* position=nullptr);
 
 void exchangeIds(std::vector<uint> &permutation, std::vector<uint> &frequency, std::vector<uint> lowerBounds, std::vector<uint> upperBounds, uint nodeX, uint nodeY);
 

@@ -32,7 +32,6 @@ int main (int argc, char *argv[])
     uint timeout_s = UINT32_MAX;
     string data_path, output_path, conf_path;
     std::ofstream output_file, log_file;
-    int opt;
     json config, output;
     string optimizer_type = "local";
 

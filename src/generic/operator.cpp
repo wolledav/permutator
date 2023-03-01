@@ -98,7 +98,7 @@ void oprtr::exchange(std::vector<uint> &permutation, uint posX, uint posY, uint 
 
 
 // moves all occurrences of 'node' by 'offset', positions of nodes may by predefined beforehand (unexpected behavior if nodes are not not predefined positions)
-void oprtr::moveAll(std::vector<uint> &permutation, uint node, uint offset, std::vector<uint> *positions)
+void oprtr::moveAll(std::vector<uint> &permutation, uint node, int offset, std::vector<uint> *positions)
 {
 
     if (offset == 0)
