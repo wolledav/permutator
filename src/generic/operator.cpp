@@ -56,7 +56,7 @@ void oprtr::relocate(std::vector<uint> &permutation, uint from, uint to, uint le
 // centeredExchange([1,2,3,4], 2, 1) -> [1,4,3,2]
 void oprtr::centeredExchange(std::vector<uint> &permutation, uint center, uint radius)
 {
-
+    
     uint position = center - radius;
     relocate(permutation, position, position, 2 * radius + 1, true);
 }
@@ -265,4 +265,25 @@ void construct::randomReplicate(std::vector<uint> &permutation, std::vector<uint
     } while (!inBounds(frequency));
 }
 
+
+void crossover::insertNode(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> nodes)
+{
+    child = parent1;
+    
+    // removing chosen nodes from perm1
+    for (auto node : nodes)
+    {
+        auto node_removed_end = std::remove(child.begin(), child.end(), node);
+        child.erase(node_removed_end, child.end());
+    }
+    // inserting removed nodes on indexes as in perm 2
+    for (uint i = 0; i < parent2.size(); i++)
+    {
+        if (std::count(nodes.begin(), nodes.end(), parent2[i]))
+        {
+            auto it = i < child.size() ? child.begin() + i : child.end();
+            child.insert(it, parent2[i]);
+        }
+    }
+}
 

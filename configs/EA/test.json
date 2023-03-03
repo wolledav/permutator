@@ -1,15 +1,16 @@
 {
-    "construction": "random",
+    "construction": "randomReplicate",
     "selection": "constrainedTournament",
-    "crossover": "swapNode",
+    "crossover": "insertNode_10",
     "mutation": [
         "insert",
-        "centeredExchange_3",
+        "remove",
         "relocate_1",
-        "remove"
+        "centExchange_3",
+        "moveAll_5"
     ],
     "replacement": "segregational",
-    "population_size": 20,
+    "population_size": 80,
     "timeout": 60,
     "stop_on_feasible": false
     

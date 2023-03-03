@@ -1,3 +1,4 @@
+
 #include "EA.hpp"
 
 #include <utility>
@@ -17,10 +18,8 @@ EA::EA(Instance *inst, json config, uint seed)
 {
     this->instance = inst;
     this->config = std::move(config);
-    std::vector<Solution> pop;
-    this->population = pop;
-    Solution sol(inst->node_cnt);
-    this->best_known_solution = sol;
+    this->population = vector<Solution>(0);
+    this->best_known_solution = Solution(inst->node_cnt);
     this->population_size = this->config["population_size"].get<uint>();
     this->rng = EA::initRng(seed);
     this->t_t = vector<double>(this->instance->penalty_func_cnt, 1);
@@ -31,20 +30,32 @@ EA::EA(Instance *inst, json config, uint seed)
     this->mutationList = this->config["mutation"].get<vector<string>>();
     this->setReplacement(this->config["replacement"].get<string>());
 
-    while (this->penalty_coefficients.size() < this->instance->penalty_func_cnt)
-        this->penalty_coefficients.push_back(1.);
+    this->lastPop = vector<Solution>(population_size);
 }
+
 
 void EA::run()
 {
-    while (this->population.size() < this->population_size)
-        this->population.push_back(this->construction());
-    population[0].print();
+    this->construction();
+    for (uint i = 0; i < this->population_size; i++)
+        this->lastPop[i] = this->population[i];
+
+    this->initPenaltyCoefs();
     std::uniform_int_distribution<uint> uni(0, this->mutationList.size() - 1);
-    for (uint i = 0; !this->population[0].is_feasible; i++)
+    uint i = 0;
+    
+    for ( ;!this->population[0].is_feasible; i++)
     {
-        if (i%10 == 0)
+        bool same = true;     
+        if (i%10 == 0){
             LOG(i);
+            for (auto p : this->penalty_coefficients)
+                LOG(p);
+            LOG("--");
+            for (auto t : this->t_t)
+                LOG(t);
+            LOG("--------");
+        }
 
         vector<Solution> parents(this->population_size);
         vector<Solution> children(this->population_size);
@@ -55,14 +66,30 @@ void EA::run()
         this->segregational(children);
         this->update_t_t();
         this->update_penalty_coefficients();
+        for (uint j = 0; j < this->population_size; j++){
+            same = same & (this->lastPop[j].permutation == this->population[j].permutation);
+            this->lastPop[j] = this->population[j];
+        }
+
+        if (same) {
+            LOG("------------------------population reset-----------------------------");       
+            this->population.erase(this->population.begin() + this->population_size*3/4, this->population.end());
+            this->construction();
+            for (uint j = 0; j < this->population_size; j++)
+                this->lastPop[j] = this->population[j];
+        }
+        
+        
     }
-    // sort_by_pf(population);
+
     LOGS(population);
     for (auto p : this->penalty_coefficients)
         LOG(p);
     LOG("--------");
     for (auto t : this->t_t)
         LOG(t);
+    LOG("--------");
+    LOG(i);
 }
 
 //**********************************************************************************************************************
@@ -73,40 +100,14 @@ void EA::run()
  * Adds nodes to random positions of the solution, until all nodes are at their LBs.
  * Uses this->initial_solution and sets this->current solution.
  */
-Solution EA::constructRandom()
+void EA::constructRandom()
 {
-    // #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
-    //     this->printOperation(str(format("C: %1%") % __func__));
-    // #endif
-
-    // Construct
-    Solution sol(this->instance->node_cnt);
-
-    uint rnd_idx;
-    for (uint node_id = 0; node_id < this->instance->node_cnt; node_id++)
-    { // for all nodes
-        while (sol.frequency[node_id] < this->instance->lbs[node_id])
-        {
-            std::uniform_int_distribution<uint> uni(0, sol.getSize());
-            rnd_idx = uni(*this->rng);
-            sol.permutation.insert(sol.permutation.begin() + rnd_idx, node_id);
-            sol.frequency[node_id]++;
-        }
+    while (this->population.size() < this->population_size) {
+        Solution sol(this->instance->node_cnt);
+        construct::random(sol.permutation, sol.frequency, this->instance->lbs);
+        sol.is_feasible = this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
+        this->population.push_back(sol);
     }
-    Solution current_solution = Solution(sol.permutation, *this->instance);
-
-    // Evaluate
-    if (current_solution < this->best_known_solution)
-    {
-        this->best_known_solution = current_solution;
-        this->last_improvement = std::chrono::steady_clock::now();
-        // this->steps.emplace_back(this->getRuntime(), child.fitness);
-    }
-
-    // #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
-    //     this->printResult(true);
-    // #endif
-    return current_solution;
 }
 
 /*
@@ -114,59 +115,14 @@ Solution EA::constructRandom()
  * Replicates the permutation, until the solution is not valid w.r.t. LBs and UBs.
  * Uses this->initial_solution and sets this->current solution.
  */
-Solution EA::constructRandomReplicate()
+void EA::constructRandomReplicate()
 {
-#if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
-    // this->printOperation(str(format("C: %1%") % __func__));
-#endif
-
-    // Extract permutation from initial solution
-    Solution sol(this->instance->node_cnt);
-    auto offset = sol.permutation.size();
-
-    // Append missing nodes
-    for (uint i = 0; i < this->instance->node_cnt; i++)
-    {
-        if (sol.frequency[i] == 0)
-        {
-            sol.permutation.push_back(i);
-            sol.frequency[i]++;
-        }
+    while (this->population.size() < this->population_size) {
+        Solution sol(this->instance->node_cnt);
+        construct::randomReplicate(sol.permutation, sol.frequency, this->instance->lbs, this->instance->ubs);
+        sol.is_feasible = this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
+        this->population.push_back(sol);
     }
-
-    // Shuffle missing nodes
-    auto begin = sol.permutation.begin();
-    std::advance(begin, offset);
-    std::shuffle(begin, sol.permutation.end(), *this->rng);
-
-    // Replicate, until all nodes are within bounds
-    auto perm = sol.permutation;
-    sol = Solution(this->instance->node_cnt);
-    do
-    {
-        for (auto elem : perm)
-        {
-            if (sol.frequency[elem] < this->instance->lbs[elem])
-            {
-                sol.frequency[elem]++;
-                sol.permutation.push_back(elem);
-            }
-        }
-    } while (!this->instance->FrequencyInBounds(sol.frequency) /*&& !this->stop()*/);
-
-    // Evaluate
-    Solution current_solution = Solution(sol.permutation, *this->instance);
-    if (current_solution < this->best_known_solution)
-    {
-        this->best_known_solution = current_solution;
-        this->last_improvement = std::chrono::steady_clock::now();
-        // this->steps.emplace_back(this->getRuntime(), child.fitness);
-    }
-
-#if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
-    // this->printResult(true);
-#endif
-    return current_solution;
 }
 
 //**********************************************************************************************************************
@@ -176,15 +132,11 @@ Solution EA::constructRandomReplicate()
 void EA::constrainedTournament(vector<Solution> &parents)
 {
 
-    // vector<Solution> parents(parent_cnt);
     uint tournament_size = 4;
     vector<Solution> tournament(tournament_size);
     vector<Solution> feasibleSolutions(0);
     vector<Solution> source_population;
-    // vector<uint> feasibleIdxs(0);
-    // for (uint idx = 0; idx < this->population.size(); idx++){
-    //     if (this->population[idx].is_feasible) feasibleIdxs.push_back(idx);
-    // }
+
     for (auto p : population)
         if (p.is_feasible)
             feasibleSolutions.push_back(p);
@@ -198,9 +150,8 @@ void EA::constrainedTournament(vector<Solution> &parents)
 
         for (uint tournament_idx = 0; tournament_idx < tournament_size; tournament_idx++)
         {
-            std::uniform_int_distribution<uint> uni(0, source_population.size() - 1);
-            uint rnd_idx = uni(*this->rng);
-            tournament[tournament_idx] = source_population[rnd_idx];
+            std::uniform_int_distribution<uint> rnd_idx(0, source_population.size() - 1);
+            tournament[tournament_idx] = source_population[rnd_idx(*this->rng)];
         }
         sort_by_pf(tournament);
         parents[parent_idx] = tournament[0];
@@ -211,53 +162,25 @@ void EA::constrainedTournament(vector<Solution> &parents)
 // CROSSOVER
 //**********************************************************************************************************************
 
-void EA::swapNode(std::vector<Solution> parents, std::vector<Solution> &children)
+void EA::insertNode(std::vector<Solution> parents, std::vector<Solution> &children, uint x)
 {
     for (uint idx = 0; idx < children.size(); idx += 2)
     {
-
         vector<uint> perm1 = parents[idx].permutation;
         vector<uint> perm2 = parents[idx + 1].permutation;
-        vector<uint> new_perm = perm1;
+        vector<uint> new_perm;
         vector<uint> removed_nodes;
         std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt - 1);
 
         // choosing nodes to be removed from perm1 and perm2
-        for (int i = 0; i < this->instance->node_cnt / 5; i++)
+        for (int i = 0; i < (this->instance->node_cnt*x)/100; i++)
             removed_nodes.push_back(uni(*this->rng));
-        // removing chosen nodes from perm1
-        for (auto node : removed_nodes)
-        {
-            auto node_removed_end = std::remove(new_perm.begin(), new_perm.end(), node);
-            new_perm.erase(node_removed_end, new_perm.end());
-        }
-        // inserting removed nodes on indexes as in perm 2
-        for (uint i = 0; i < perm2.size(); i++)
-        {
-            if (std::count(removed_nodes.begin(), removed_nodes.end(), perm2[i]))
-            {
-                auto it = i < new_perm.size() ? new_perm.begin() + i : new_perm.end();
-                new_perm.insert(it, perm2[i]);
-            }
-        }
+        
+        crossover::insertNode(perm1, perm2, new_perm, removed_nodes);
         children[idx] = Solution(new_perm, *this->instance);
-        new_perm = perm2;
-        // removing chosen nodes from perm2
-        for (auto node : removed_nodes)
-        {
-            auto node_removed_end = std::remove(new_perm.begin(), new_perm.end(), node);
-            new_perm.erase(node_removed_end, new_perm.end());
-        }
-        // inserting removed nodes on indexes as in perm1
-        for (uint i = 0; i < perm1.size(); i++)
-        {
-            if (std::count(removed_nodes.begin(), removed_nodes.end(), perm1[i]))
-            {
-                auto it = i < new_perm.size() ? new_perm.begin() + i : new_perm.end();
-                new_perm.insert(it, perm1[i]);
-            }
-        }
-        children[idx + 1] = Solution(new_perm, *this->instance);
+
+        crossover::insertNode(perm2, perm1, new_perm, removed_nodes);
+        children[idx+1] = Solution(new_perm, *this->instance);
     }
 }
 
@@ -337,136 +260,104 @@ void EA::ERX(std::vector<Solution> parents, std::vector<Solution> &children)
 // MUTATION
 //**********************************************************************************************************************
 
+
 void EA::insert(Solution &child)
 {
+    //LOG(__func__);
+    vector<uint> possibleNodes(0);
+    for (uint i = 0; i < this->instance->node_cnt; i++)
+        if (child.frequency[i] < this->instance->ubs[i]) possibleNodes.push_back(i);
+    
+    if (possibleNodes.size() == 0) return;
 
-    Solution best_solution = child;
-    vector<uint> perm = child.permutation;
-    vector<uint> freq = child.frequency;
-    fitness_t new_fitness;
-    vector<fitness_t> new_penalties;
-    bool updated = false;
+    std::uniform_int_distribution<uint> randNodeIdx(0, possibleNodes.size() - 1);
+    std::uniform_int_distribution<uint> randPosition(0, child.permutation.size());
 
-    for (uint i = 0; i <= perm.size(); i++)
-    { // for all positions i in X
-        vector<uint> new_perm = perm;
-        vector<uint> new_freq = freq;
-        new_perm.insert(new_perm.begin() + i, 0);
-
-        for (uint j = 0; j < this->instance->node_cnt; j++)
-        { // for all nodes j in A
-            if (child.frequency[j] >= this->instance->ubs[j])
-                continue;
-            new_perm[i] = j;
-            new_freq[j]++;
-            this->instance->computeFitness(new_perm, new_fitness, new_penalties);
-
-            if (this->penalized_fitness(new_penalties) < this->penalized_fitness(best_solution))
-            {
-                best_solution = Solution(new_perm, *this->instance);
-                updated = true;
-            }
-            new_freq[j]--;
-        }
-    }
-    child = best_solution;
+    oprtr::insert(child.permutation, child.frequency, this->instance->ubs, possibleNodes[randNodeIdx(*this->rng)], randPosition(*this->rng));
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
-void EA::centeredExchange(uint x, Solution &child)
-{
+void EA::append(Solution &child){
+    vector<uint> possibleNodes(0);
+    for (uint i = 0; i < this->instance->node_cnt; i++)
+        if (child.frequency[i] < this->instance->ubs[i]) possibleNodes.push_back(i);
+    
+    if (possibleNodes.size() == 0) return;
 
-    fitness_t fitness;
-    vector<fitness_t> penalties;
-    if (x > child.permutation.size())
-        return;
-    vector<uint> perm = child.permutation;
-    Solution best_solution = child;
-    bool updated = false;
-
-    for (int i = (int)x; i < (int)perm.size() - (int)x; i++)
-    {
-        vector<uint> new_perm = perm;
-        for (int j = 1; j <= (int)x; j++)
-        {
-            new_perm[i + j] = perm[i - j];
-            new_perm[i - j] = perm[i + j];
-        }
-        this->instance->computeFitness(new_perm, fitness, penalties);
-        if (this->penalized_fitness(penalties) < this->penalized_fitness(best_known_solution))
-        {
-            best_solution = Solution(new_perm, *this->instance);
-            updated = true;
-        }
-    }
-
-    child = best_solution;
-}
-
-void EA::relocate(uint x, bool reverse, Solution &child)
-{
-
-    if (x > child.permutation.size())
-        return;
-
-    fitness_t fitness;
-    vector<fitness_t> penalties;
-    vector<uint> perm = child.permutation;
-    Solution best_solution = child;
-    bool updated = false;
-
-    for (uint i = 0; i < perm.size() - x; i++)
-    {
-        vector<uint> reduced_perm = perm;
-        vector<uint> subsequence(perm.begin() + i, perm.begin() + i + x);
-        reduced_perm.erase(reduced_perm.begin() + i, reduced_perm.begin() + i + x);
-        for (uint j = 0; j < reduced_perm.size(); j++)
-        {
-            vector<uint> new_perm = reduced_perm;
-            if (reverse)
-            {
-                new_perm.insert(new_perm.begin() + j, subsequence.rbegin(), subsequence.rend());
-            }
-            else
-            {
-                new_perm.insert(new_perm.begin() + j, subsequence.begin(), subsequence.end());
-            }
-            this->instance->computeFitness(new_perm, fitness, penalties);
-            if (this->penalized_fitness(penalties) < this->penalized_fitness(best_solution))
-            {
-                best_solution = Solution(new_perm, *this->instance);
-                updated = true;
-            }
-        }
-    }
-    child = best_solution;
+    std::uniform_int_distribution<uint> randNodeIdx(0, possibleNodes.size() - 1);
+    oprtr::append(child.permutation, child.frequency, this->instance->ubs, possibleNodes[randNodeIdx(*this->rng)]);
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
 void EA::remove(Solution &child)
 {
-
-    if (child.permutation.empty())
-        return;
-    vector<uint> perm = child.permutation;
-    fitness_t fitness;
-    vector<fitness_t> penalties;
-    Solution best_solution = child;
-    bool updated = false;
-
-    for (uint i = 0; i < perm.size(); i++)
-    {
-        if (child.frequency[perm[i]] <= this->instance->lbs[perm[i]])
-            continue;
-
-        vector<uint> new_perm = perm;
-        new_perm.erase(new_perm.begin() + i);
-        this->instance->computeFitness(new_perm, fitness, penalties);
-        if (this->penalized_fitness(penalties) <= this->penalized_fitness(best_solution))
-        {
-            best_solution = Solution(new_perm, *this->instance);
-            updated = true;
-        }
+    vector<uint> possiblePositions(0);
+    for (uint i = 0; i < child.permutation.size(); i++){
+        uint node = child.permutation[i];
+        if (child.frequency[node] > this->instance->lbs[node]) possiblePositions.push_back(i);
     }
-    child = best_solution;
+    if (possiblePositions.size() == 0) return;
+
+    std::uniform_int_distribution<uint> randPositionIdx(0, possiblePositions.size() - 1);
+    oprtr::remove(child.permutation, child.frequency, this->instance->lbs, possiblePositions[randPositionIdx(*this->rng)]);
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
+}
+
+void EA::centeredExchange(Solution &child, uint x)
+{
+    std::uniform_int_distribution<uint> randPosition(x, child.permutation.size() - x - 1);
+    oprtr::centeredExchange(child.permutation, randPosition(*this->rng), x);
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
+}
+
+void EA::relocate(Solution &child, uint x, bool reverse)
+{
+    std::uniform_int_distribution<uint> randFrom(0, child.permutation.size() - x);
+    std::uniform_int_distribution<uint> randTo(0, child.permutation.size() - x);
+    oprtr::relocate(child.permutation, randFrom(*this->rng), randTo(*this->rng), x, reverse);
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
+}
+
+void EA::exchange(Solution &child, uint x, uint y, bool reverse)
+{
+    std::uniform_int_distribution<uint> posX(0, child.permutation.size() - x);
+    std::uniform_int_distribution<uint> posY(0, child.permutation.size() - y);
+
+    oprtr::exchange(child.permutation, posX(*this->rng), posY(*this->rng), x, y, reverse);
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
+}
+void EA::moveAll(Solution &child, uint x)
+{
+    std::uniform_int_distribution<uint> randomNode(0, this->instance->node_cnt - 1);
+    std::uniform_int_distribution<int> randomOffset(-x, x);
+    oprtr::moveAll(child.permutation, randomNode(*this->rng), randomOffset(*this->rng));
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
+}
+
+void EA::exchangeIds(Solution &child)
+{
+    std::uniform_int_distribution<uint> randomNode(0, this->instance->node_cnt - 1);
+    uint nodeX, nodeY;
+    do {
+        nodeX = randomNode(*this->rng);
+        nodeY = randomNode(*this->rng);
+    } while (nodeX != nodeY );
+
+    oprtr::exchangeIds(child.permutation, child.frequency, this->instance->lbs, this->instance->ubs, nodeX, nodeY);
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
+}
+
+void EA::twoOpt(Solution &child)
+{
+    std::uniform_int_distribution<uint> randPosition(0, child.permutation.size() - 1);
+    uint posA, posB;
+    do {
+        posA = randPosition(*this->rng);
+        posB = randPosition(*this->rng);
+    } while (posA != posB);
+
+    oprtr::reverse(child.permutation, std::min(posA, posB), std::abs((int)posA-(int)posB));
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
 //**********************************************************************************************************************
@@ -491,27 +382,22 @@ void EA::segregational(std::vector<Solution> children)
     sort_by_pf(validSolutions);
     for (uint idx = 0; idx < validSolutions.size(); idx++)
     {
+        LOG(1234);
         if (this->population.size() < this->population_size * t_select &&
-            find(this->population.begin(), this->population.end(), validSolutions[idx]) == this->population.end())
-        {
+                find(this->population.begin(), this->population.end(), validSolutions[idx]) == this->population.end())
             this->population.push_back(validSolutions[idx]);
-        }
         else
-        {
             rest.push_back(validSolutions[idx]);
-        }
     }
 
     sort_by_pf(rest);
-    uint idx = 0;
     while (this->population.size() < this->population_size)
     {
-        for (; idx < rest.size(); idx++)
-        {
+        for (uint idx = 0; idx < rest.size(); idx++)
             if (this->population.size() < this->population_size && find(this->population.begin(), this->population.end(), rest[idx]) == this->population.end())
                 this->population.push_back(rest[idx]);
-        }
-        this->population.push_back(this->construction());
+        
+        this->construction();
     }
     this->best_known_solution = this->population[0];
 }
@@ -543,10 +429,19 @@ void EA::setSelection(const string &constr)
 
 void EA::setCrossover(const string &constr)
 {
-    if (constr == "swapNode")
+    if (constr == "insertNode_5")
         this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
-        { return this->swapNode(parents, children); };
-    else
+        { return this->insertNode(parents, children, 5); };
+    else if (constr == "insertNode_10")
+        this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
+        { return this->insertNode(parents, children, 10); };
+    else if (constr == "insertNode_20")
+        this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
+        { return this->insertNode(parents, children, 20); };
+    else if (constr == "insertNode_50")
+        this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
+        { return this->insertNode(parents, children, 50); };
+    else 
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
 
@@ -592,12 +487,20 @@ void EA::update_t_t()
 
 void EA::update_penalty_coefficients()
 {
-    double coef;
+    double coef = 1.1;
+    
     for (uint idx = 1; idx < this->instance->penalty_func_cnt; idx++)
-    {
-        coef = this->t_t[idx] > this->t_target ? 1.1 : 0.9;
-        this->penalty_coefficients[idx] *= coef;
-    }
+        if (this->t_t[idx] > this->t_target)
+            this->penalty_coefficients[idx] *= coef;
+        else 
+            this->penalty_coefficients[idx] /= coef;
+
+    double min = *std::min_element(this->penalty_coefficients.begin(), this->penalty_coefficients.end());
+    double max = *std::max_element(this->penalty_coefficients.begin(), this->penalty_coefficients.end());
+    for (auto &penalty : this->penalty_coefficients)
+        penalty = (penalty + 1 - min)*this->penaltyLimit/max; // linear scaling of penalties to range(1 .. this->penaltyLimit)
+    
+    
 }
 
 void EA::sort_by_pf(vector<Solution> &v)
@@ -618,6 +521,19 @@ fitness_t EA::penalized_fitness(Solution solution)
 fitness_t EA::penalized_fitness(std::vector<fitness_t> penalties)
 {
     return (fitness_t)round(inner_product(penalties.begin(), penalties.end(), this->penalty_coefficients.begin(), 0.));
+}
+
+void EA::initPenaltyCoefs(){
+    
+    vector<fitness_t> fitness_stats(this->instance->penalty_func_cnt, 0);
+    for (auto p : this->population)
+        for (uint i = 0; i < fitness_stats.size(); i++)
+            fitness_stats[i] += p.penalties[i];
+    
+    this->penalty_coefficients.push_back(1.);
+    for (uint i = 1; i < fitness_stats.size(); i++)
+        this->penalty_coefficients.push_back(100*((double)fitness_stats[0])/fitness_stats[i]);
+    this->penaltyLimit = *std::max_element(this->penalty_coefficients.begin(), this->penalty_coefficients.end());
 }
 
 

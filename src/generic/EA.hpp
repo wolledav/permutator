@@ -14,11 +14,13 @@
 #include <omp.h>
 #include <numeric>
 #include <unordered_set>
+#include <algorithm>
 
 #include "instance.hpp"
 #include "solution.hpp"
 #include "utils.hpp"
 #include "basic_optimizer.hpp"
+#include "operator.hpp"
 
 inline void LOGS(const std::vector<Solution> parents) {for (auto p : parents) p.print();}
 
@@ -36,13 +38,13 @@ class EA : public BasicOptimizer
         std::vector<double> penalty_coefficients;
         std::mt19937 *rng;
         static std::mt19937* initRng(uint seed);
-        void update_t_t();
-        void update_penalty_coefficients();
-        permutator::fitness_t penalized_fitness(Solution solution);
-        permutator::fitness_t penalized_fitness(std::vector<permutator::fitness_t> penalties);
-        void sort_by_pf(std::vector<Solution> &v);
+        std::vector<Solution> lastPop;
+        double penaltyLimit;
 
-        std::function<Solution()> construction;
+        
+        
+
+        std::function<void()> construction;
         std::function<void(std::vector<Solution> &parents)> selection;
         std::function<void(std::vector<Solution> parents, std::vector<Solution> &children)> crossover;
         std::function<void(Solution &child)> mutation;
@@ -50,30 +52,73 @@ class EA : public BasicOptimizer
 
         std::vector<std::string> mutationList;
 
-        const std::map<std::string, std::function<void(Solution &childe)>> mutation_map = {
-            {"insert",      [this](Solution &childe){return this->insert(childe);}},
-            {"centeredExchange_3",      [this](Solution &childe){return this->centeredExchange(3, childe);}},
-            {"relocate_1",      [this](Solution &childe){return this->relocate(1, false, childe);}},
-            {"remove",      [this](Solution &childe){return this->remove(childe);}},
+        const std::map<std::string, std::function<void(Solution &child)>> mutation_map = {
+            {"insert",      [this](Solution &child){return this->insert(child);}},
+            {"remove",      [this](Solution &child){return this->remove(child);}},
+            {"relocate_1",      [this](Solution &child){return this->relocate(child, 1, false);}},
+            {"relocate_2",      [this](Solution &child){return this->relocate(child, 2, false);}},
+            {"relocate_3",      [this](Solution &child){return this->relocate(child, 3, false);}},
+            {"relocate_4",      [this](Solution &child){return this->relocate(child, 4, false);}},
+            {"relocate_5",      [this](Solution &child){return this->relocate(child, 5, false);}},
+            {"revRelocate_2",      [this](Solution &child){return this->relocate(child, 2, true);}},
+            {"revRelocate_3",      [this](Solution &child){return this->relocate(child, 3, true);}},
+            {"revRelocate_4",      [this](Solution &child){return this->relocate(child, 4, true);}},
+            {"revRelocate_5",      [this](Solution &child){return this->relocate(child, 5, true);}},
+            {"centExchange_1",      [this](Solution &child){return this->centeredExchange(child, 1);}},
+            {"centExchange_2",      [this](Solution &child){return this->centeredExchange(child, 2);}},
+            {"centExchange_3",      [this](Solution &child){return this->centeredExchange(child, 3);}},
+            {"centeredExchange_4",      [this](Solution &child){return this->centeredExchange(child, 4);}},
+            {"exchange_1_1",      [this](Solution &child){return this->exchange(child, 1, 1, false);}},
+            {"exchange_1_2",      [this](Solution &child){return this->exchange(child, 1, 2, false);}},
+            {"exchange_2_2",      [this](Solution &child){return this->exchange(child, 2, 2, false);}},
+            {"exchange_2_3",      [this](Solution &child){return this->exchange(child, 2, 3, false);}},
+            {"exchange_2_4",      [this](Solution &child){return this->exchange(child, 2, 4, false);}},
+            {"exchange_3_3",      [this](Solution &child){return this->exchange(child, 3, 3, false);}},
+            {"exchange_3_4",      [this](Solution &child){return this->exchange(child, 3, 4, false);}},
+            {"exchange_4_4",      [this](Solution &child){return this->exchange(child, 4, 4, false);}},
+            {"revExchange_1_2",      [this](Solution &child){return this->exchange(child, 1, 2, true);}},
+            {"revExchange_2_2",      [this](Solution &child){return this->exchange(child, 2, 2, true);}},
+            {"revExchange_2_3",      [this](Solution &child){return this->exchange(child, 2, 3, true);}},
+            {"revExchange_2_4",      [this](Solution &child){return this->exchange(child, 2, 4, true);}},
+            {"revExchange_3_3",      [this](Solution &child){return this->exchange(child, 3, 3, true);}},
+            {"revExchange_3_4",      [this](Solution &child){return this->exchange(child, 3, 4, true);}},
+            {"revExchange_4_4",      [this](Solution &child){return this->exchange(child, 4, 4, true);}},
+            {"moveAll_1",      [this](Solution &child){return this->moveAll(child, 1);}},
+            {"moveAll_2",      [this](Solution &child){return this->moveAll(child, 2);}},
+            {"moveAll_3",      [this](Solution &child){return this->moveAll(child, 3);}},
+            {"moveAll_4",      [this](Solution &child){return this->moveAll(child, 4);}},
+            {"moveAll_5",      [this](Solution &child){return this->moveAll(child, 5);}},
+            {"exchangeIds",      [this](Solution &child){return this->exchangeIds(child);}},
+            {"twoOpt",      [this](Solution &child){return this->twoOpt(child);}},     
         };
 
         //construction
-        Solution constructRandom();
-        Solution constructRandomReplicate();
+        void constructRandom();
+        void constructRandomReplicate();
         //selection
         void constrainedTournament(std::vector<Solution> &parents);
         //crossover
-        void swapNode(std::vector<Solution> parents, std::vector<Solution> &children);
+        void insertNode(std::vector<Solution> parents, std::vector<Solution> &children, uint x);
         void ERX(std::vector<Solution> parents, std::vector<Solution> &children);
         //mutation
         void insert(Solution &child);
-        void centeredExchange(uint x, Solution &child); 
-        void relocate(uint x, bool reverse, Solution &child);
+        void append(Solution &child);
         void remove(Solution &child);
+        void relocate(Solution &child, uint x, bool reverse);
+        void centeredExchange(Solution &child, uint x); 
+        void exchange(Solution &child, uint x, uint y, bool reverse);
+        void moveAll(Solution &child, uint x);
+        void exchangeIds(Solution &child);
+        void twoOpt(Solution &child);   
         //replacement
         void segregational(std::vector<Solution> children);
-        
-        
+        //utils
+        void update_t_t();
+        void initPenaltyCoefs();
+        void update_penalty_coefficients();
+        permutator::fitness_t penalized_fitness(Solution solution);
+        permutator::fitness_t penalized_fitness(std::vector<permutator::fitness_t> penalties);
+        void sort_by_pf(std::vector<Solution> &v);
 
 
     public:

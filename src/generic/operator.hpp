@@ -24,7 +24,7 @@ void relocate(std::vector<uint> &permutation,  uint from, uint to, uint length, 
 
 void centeredExchange(std::vector<uint> &permutation,  uint center, uint radius);
 
-void exchange(std::vector<uint> &permutation,  uint from, uint to, uint sizeX, uint sizeY, bool exchange);
+void exchange(std::vector<uint> &permutation,  uint from, uint to, uint sizeX, uint sizeY, bool reverse);
 
 void moveAll(std::vector<uint> &permutation, uint node, int offset, std::vector<uint>* position=nullptr);
 
@@ -46,4 +46,9 @@ void random(std::vector<uint> &permutation, std::vector<uint> &frequency, vector
 
 void randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs);
 
+}
+
+namespace crossover
+{
+    void insertNode(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> nodes);
 }

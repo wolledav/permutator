@@ -97,7 +97,7 @@ void Instance::parseArgs(int argc, char *argv[], string &data_path, string &outp
         config["timeout"] = timeout_s;
     }
 
-    if (!init_path.empty()) {
+    if (!init_path.empty() && init_solution != nullptr) {
         std::cout << "Initial solution read from " + init_path << std::endl;
         nlohmann::json data = readJson(init_path);
         std::vector<uint> temp = data["solution"]["route"];
