@@ -42,13 +42,15 @@ namespace construct
 
 // void nearestNeighbor(Solution& initSolution, std::function<fitness_t(bool<uint>)> inBoundsFunc, std::function<fitness_t(std::vector<uint>)> fitnessFunc);
 
-void random(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs);
+void random(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, std::mt19937 *rng);
 
-void randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs);
+void randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng);
 
 }
 
 namespace crossover
 {
     void insertNode(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> nodes);
+
+    void ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
 }

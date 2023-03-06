@@ -1,7 +1,7 @@
 {
-    "construction": "randomReplicate",
+    "construction": "random",
     "selection": "constrainedTournament",
-    "crossover": "insertNode_10",
+    "crossover": "insertNode_5",
     "mutation": [
         "insert",
         "remove",
@@ -12,6 +12,6 @@
     "replacement": "segregational",
     "population_size": 80,
     "timeout": 60,
-    "stop_on_feasible": false
+    "stop_on_feasible": true
     
 }

@@ -191,10 +191,8 @@ void oprtr::reverse(std::vector<uint> &permutation, uint position, uint length)
 
 
 
-void construct::random(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs){
+void construct::random(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, std::mt19937 *rng){
 
-    std::random_device rd;
-    std::mt19937 rng(rd());
     uint rnd_idx;
     uint node_cnt = frequency.size();
     //initSolution.print();
@@ -203,17 +201,15 @@ void construct::random(std::vector<uint> &permutation, std::vector<uint> &freque
         while (frequency[node_id] < lbs[node_id])
         {
             std::uniform_int_distribution<uint> uni(0, permutation.size());
-            rnd_idx = uni(rng);
+            rnd_idx = uni(*rng);
             permutation.insert(permutation.begin() + rnd_idx, node_id);
             frequency[node_id]++;
         }
     }
 }
 
-void construct::randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs){
+void construct::randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng){
 
-    std::random_device rd;
-    std::mt19937 rng(rd());
     uint node_cnt = frequency.size();
 
     for (auto node : permutation)
@@ -239,7 +235,7 @@ void construct::randomReplicate(std::vector<uint> &permutation, std::vector<uint
     // Shuffle missing nodes
     auto begin = permutation.begin();
     std::advance(begin, offset);
-    std::shuffle(begin, permutation.end(), rng);
+    std::shuffle(begin, permutation.end(), *rng);
 
     // Replicate, until all nodes are within bounds
     
@@ -283,6 +279,69 @@ void crossover::insertNode(std::vector<uint> parent1, std::vector<uint> parent2,
         {
             auto it = i < child.size() ? child.begin() + i : child.end();
             child.insert(it, parent2[i]);
+        }
+    }
+}
+
+void crossover::ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng)
+{   
+    child.clear();
+    uint node_cnt = lbs.size();
+    vector<uint> freq(node_cnt, 0);
+
+    std::map<uint, vector<uint>> neighborMap;
+    for (uint node = 0; node < node_cnt; node++)
+        neighborMap[node] = vector<uint>(0);
+
+    for (auto parent : {parent1, parent2}){
+        uint size = parent.size();
+        for (uint i = 0; i < size; i++){
+            uint node = parent[i];
+            uint next = parent[i+1 == size ? 0 : i+1]; //wrap around permutation
+            uint prev = parent[i == 0 ? size-1 : i-1]; //wrap around permutation
+            neighborMap.at(node).push_back(next);
+            neighborMap.at(node).push_back(prev);
+        }
+    }
+
+    auto above_lbs = [lbs, node_cnt](vector<uint> freq)
+        {
+            bool lbsCheck = true;
+            for (uint node = 0; node < node_cnt; node++)
+                lbsCheck = lbsCheck & freq[node] >= lbs[node];
+            return lbsCheck;
+        };
+
+    child.push_back(parent1[0]);
+    freq[parent1[0]] += 1;
+
+    while (!above_lbs(freq)){
+        uint current = child.back();
+        vector<uint> neighbors = neighborMap.at(current);
+        vector<uint> possibleNext(0);
+        
+        // check if any neighbor can be inserted
+        for (auto node : neighbors){
+            if (freq[node] < ubs[node]) possibleNext.push_back(node);
+        }
+        if (possibleNext.empty()){
+            for (uint node = 0; node < node_cnt; node++){
+                if (freq[node] < ubs[node]) possibleNext.push_back(node);
+            }
+        }
+        if (possibleNext.size() == 0) break;
+
+        std::uniform_int_distribution<uint> randNode(0, possibleNext.size()-1);
+        uint next = possibleNext[randNode(*rng)]; 
+        child.push_back(next);
+        freq[next] += 1;
+
+        // erase edge from current and next
+        auto it = find(neighborMap.at(current).begin(), neighborMap.at(current).end(), next);
+        if (it != neighborMap.at(current).end()){
+            neighborMap.at(current).erase(it);
+            it = find(neighborMap.at(next).begin(), neighborMap.at(next).end(), current);
+            neighborMap.at(next).erase(it);
         }
     }
 }

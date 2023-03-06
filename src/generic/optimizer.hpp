@@ -117,8 +117,8 @@ class Optimizer : public BasicOptimizer
         // Utils
         void perturbationCall(const std::string &perturbation_name, uint k);
         bool operationCall(const std::string &operation_name);
-        long getRuntime();
-        bool stop();
+        //long getRuntime();
+        bool stop() override;
         void randomReverse(std::vector<uint>::iterator, std::vector<uint>::iterator);
         void printOperation(const std::string& msg);
         void printResult(bool update);

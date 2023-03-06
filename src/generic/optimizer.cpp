@@ -1274,7 +1274,7 @@ void Optimizer::constructRandom()
 #endif
 
     // Construct
-    construct::random(this->initial_solution.permutation, this->initial_solution.frequency, this->instance->lbs);
+    construct::random(this->initial_solution.permutation, this->initial_solution.frequency, this->instance->lbs, this->rng);
 
     // Evaluate
     this->current_solution = Solution(this->initial_solution.permutation, *this->instance);
@@ -1301,7 +1301,7 @@ void Optimizer::constructRandomReplicate()
     this->printOperation(str(format("C: %1%") % __func__));
 #endif
 
-    construct::randomReplicate(this->initial_solution.permutation, this->initial_solution.frequency, this->instance->lbs, this->instance->ubs);
+    construct::randomReplicate(this->initial_solution.permutation, this->initial_solution.frequency, this->instance->lbs, this->instance->ubs, this->rng);
 
     // Evaluate
     this->current_solution = Solution(this->initial_solution.permutation, *this->instance);
@@ -1360,11 +1360,11 @@ void Optimizer::perturbationCall(const string &perturbation_name, uint k)
     }
 }
 
-long Optimizer::getRuntime()
-{
-    auto now = std::chrono::steady_clock::now();
-    return std::chrono::duration_cast<std::chrono::seconds>(now - this->start).count();
-}
+// long Optimizer::getRuntime()
+// {
+//     auto now = std::chrono::steady_clock::now();
+//     return std::chrono::duration_cast<std::chrono::seconds>(now - this->start).count();
+// }
 
 bool Optimizer::stop()
 {
