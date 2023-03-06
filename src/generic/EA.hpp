@@ -22,7 +22,7 @@
 #include "basic_optimizer.hpp"
 #include "operator.hpp"
 
-inline void LOGS(const std::vector<Solution> parents) {for (auto p : parents) p.print();}
+inline void LOGS(const std::vector<Solution> parents) {for (auto p : parents) p.print(); LOG(parents.size());}
 
 
 class EA : public BasicOptimizer
@@ -40,6 +40,7 @@ class EA : public BasicOptimizer
         static std::mt19937* initRng(uint seed);
         std::vector<Solution> lastPop;
         double penaltyLimit;
+        uint nicheRadius = 5;
 
         
         
@@ -47,7 +48,8 @@ class EA : public BasicOptimizer
         std::function<void()> construction;
         std::function<void(std::vector<Solution> &parents)> selection;
         std::function<void(std::vector<Solution> parents, std::vector<Solution> &children)> crossover;
-        std::function<void(Solution &child)> mutation;
+        // std::function<void(std::vector<Solution> &children)> mutation;
+        void mutation(std::vector<Solution> &children);
         std::function<void(std::vector<Solution> children)> replacement;
 
         std::vector<std::string> mutationList;
@@ -111,7 +113,8 @@ class EA : public BasicOptimizer
         void exchangeIds(Solution &child);
         void twoOpt(Solution &child);   
         //replacement
-        void segregational(std::vector<Solution> children);
+        void segregational(std::vector<Solution> children); 
+        void nicheSegregational(std::vector<Solution> children);
         //utils
         void update_t_t();
         void initPenaltyCoefs();
@@ -119,6 +122,9 @@ class EA : public BasicOptimizer
         permutator::fitness_t penalized_fitness(Solution solution);
         permutator::fitness_t penalized_fitness(std::vector<permutator::fitness_t> penalties);
         void sort_by_pf(std::vector<Solution> &v);
+        bool stop() override;
+        void populationReset();
+        void nichePopulation(std::vector<Solution> population, uint capacity, std::vector<uint> &leaderIdxs, std::vector<uint> &followerIdxs);
 
 
     public:
