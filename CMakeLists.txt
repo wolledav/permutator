@@ -23,6 +23,31 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 #       Metaheuristics
 # ************************************
 
+add_executable(ROADEF_meta
+        src/problem/ROADEF/ROADEF_meta.cpp
+        src/problem/ROADEF/ROADEF.cpp
+        src/problem/ROADEF/code/hashing.cpp
+        src/problem/ROADEF/code/instance.cpp
+        src/problem/ROADEF/code/objective.cpp
+        src/problem/ROADEF/code/params.cpp
+        src/problem/ROADEF/code/parser.cpp
+        src/problem/ROADEF/code/solution.cpp
+        src/problem/ROADEF/code/util.cpp
+        src/config.cpp
+        src/generic/EA.cpp
+        src/generic/optimizer.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/generic/operator.cpp
+        src/problem/EVRP/EVRP.cpp
+        lib/getopt/getopt.c
+        )
+
+target_include_directories(ROADEF_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
 
 add_executable(CVRP_meta
         src/problem/CVRP/CVRP_meta.cpp
