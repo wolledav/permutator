@@ -1,6 +1,6 @@
 {
     "construction": "random",
-    "selection": "constrainedTournament",
+    "selection": "constrainedSortedTournament",
     "crossover": "insertNode_5",
     "mutation": [
         "insert",
@@ -9,9 +9,9 @@
         "centExchange_3",
         "moveAll_5"
     ],
-    "replacement": "segregational",
+    "replacement": "nicheSegregational",
     "population_size": 80,
     "timeout": 60,
-    "stop_on_feasible": true
+    "stop_on_feasible": false
     
 }

@@ -99,6 +99,7 @@ class EA : public BasicOptimizer
         void constructRandomReplicate();
         //selection
         void constrainedTournament(std::vector<Solution> &parents);
+        void constrainedSortedTournament(std::vector<Solution> &parents);
         //crossover
         void insertNode(std::vector<Solution> parents, std::vector<Solution> &children, uint x);
         void ERX(std::vector<Solution> parents, std::vector<Solution> &children);
@@ -124,7 +125,7 @@ class EA : public BasicOptimizer
         void sort_by_pf(std::vector<Solution> &v);
         bool stop() override;
         void populationReset();
-        void nichePopulation(std::vector<Solution> population, uint capacity, std::vector<uint> &leaderIdxs, std::vector<uint> &followerIdxs);
+        void nichePopulation(std::vector<Solution> population, uint capacity, std::vector<bool> &leaders, std::vector<bool> &followers);
 
 
     public:

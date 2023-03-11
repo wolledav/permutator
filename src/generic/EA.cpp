@@ -44,18 +44,19 @@ void EA::run()
     uint gen = 0;
     while (!this->stop())
     {   
-        // if (gen%10 == 0){
-        //     LOG(gen);
-        //     std::cout << this->getRuntime() << "/" << this->timeout_s << "s" << std::endl;
-        //     LOG("--");
-        //     for (auto p : this->penalty_coefficients)
-        //         LOG(p);
-            // LOG("--");
-            // for (auto t : this->t_t)
-            //     LOG(t);
-            // LOG("--------");
+        if (gen%10 == 0){
+            LOG(gen);
+            std::cout << this->getRuntime() << "/" << this->timeout_s << "s" << std::endl;
+            LOG(this->nicheRadius);
+            LOG("--");
+            for (auto p : this->penalty_coefficients)
+                LOG(p);
+            LOG("--");
+            for (auto t : this->t_t)
+                LOG(t);
+            LOG("--------");
         //     //if (i%100 == 0) LOGS(population);
-        // }
+        }
  
         vector<Solution> parents(this->population_size);
         vector<Solution> children(this->population_size);
@@ -63,14 +64,14 @@ void EA::run()
         this->constrainedTournament(parents);
         this->crossover(parents, children);
         this->mutation(children);
-        this->segregational(children);
+        this->replacement(children);
         this->populationReset();
         this->update_t_t();
         this->update_penalty_coefficients(); 
         gen++;
     }
     {
-    // LOGS(this->population);
+    LOGS(this->population);
     // for (auto p : this->penalty_coefficients)
     //     LOG(p);
     // LOG("--------");
@@ -81,24 +82,6 @@ void EA::run()
     std::cout << "runtime: " << this->getRuntime() << "/" << this->timeout_s << "s" << std::endl;
     }
 }
-
-
-void EA::populationReset(){
-    if (this->stop()) return;
-    bool allSame = true; 
-    for (uint j = 0; j < this->population_size; j++){
-        allSame = allSame & (this->lastPop[j].permutation == this->population[j].permutation);
-        this->lastPop[j] = this->population[j];
-    }
-
-    if (allSame) {
-        // LOG("------------------------population reset-----------------------------");       
-        this->population.erase(this->population.begin() + this->instance->penalty_func_cnt, this->population.end());
-        this->construction();
-        copy(this->population.begin(), this->population.end(), this->lastPop.begin());
-    } 
-}
-
 
 
 //**********************************************************************************************************************
@@ -160,13 +143,40 @@ void EA::constrainedTournament(vector<Solution> &parents)
         else
             source_population = population;
 
+        std::uniform_int_distribution<uint> rnd_idx(0, source_population.size() - 1);
         for (uint tournament_idx = 0; tournament_idx < tournament_size; tournament_idx++)
-        {
-            std::uniform_int_distribution<uint> rnd_idx(0, source_population.size() - 1);
             tournament[tournament_idx] = source_population[rnd_idx(*this->rng)];
-        }
+        
         sort_by_pf(tournament);
         parents[parent_idx] = tournament[0];
+    }
+}
+
+void EA::constrainedSortedTournament(vector<Solution> &parents)
+{
+
+    uint tournament_size = 4;
+    vector<uint> tournament(tournament_size);
+    vector<Solution> feasibleSolutions(0);
+    vector<Solution> source_population;
+
+    for (auto p : population)
+        if (p.is_feasible)
+            feasibleSolutions.push_back(p);
+
+    for (uint parent_idx = 0; parent_idx < parents.size(); parent_idx++)
+    {
+        if (this->stop()) return;
+        if (this->t_t[0] < this->t_target && feasibleSolutions.size() > 1 && parent_idx % 2 == 1 && parents[parent_idx - 1].is_feasible)
+            source_population = feasibleSolutions;
+        else
+            source_population = population;
+
+        std::uniform_int_distribution<uint> rnd_idx(0, source_population.size() - 1);
+        for (uint tournament_idx = 0; tournament_idx < tournament_size; tournament_idx++)
+            tournament[tournament_idx] = rnd_idx(*this->rng);
+        
+        parents[parent_idx] = this->population[*min_element(tournament.begin(), tournament.end())];
     }
 }
 
@@ -174,7 +184,7 @@ void EA::constrainedTournament(vector<Solution> &parents)
 // CROSSOVER
 //**********************************************************************************************************************
 
-void EA::insertNode(std::vector<Solution> parents, std::vector<Solution> &children, uint x)
+void EA::insertNode(vector<Solution> parents, vector<Solution> &children, uint x)
 {
     for (uint idx = 0; idx < children.size(); idx += 2)
     {
@@ -197,7 +207,7 @@ void EA::insertNode(std::vector<Solution> parents, std::vector<Solution> &childr
     }
 }
 
-void EA::ERX(std::vector<Solution> parents, std::vector<Solution> &children)
+void EA::ERX(vector<Solution> parents, vector<Solution> &children)
 {
      for (uint idx = 0; idx < children.size(); idx += 2)
     {
@@ -219,7 +229,7 @@ void EA::ERX(std::vector<Solution> parents, std::vector<Solution> &children)
 // MUTATION
 //**********************************************************************************************************************
 
-void EA::mutation(std::vector<Solution> &children){
+void EA::mutation(vector<Solution> &children){
     std::uniform_int_distribution<uint> randMutation(0, this->mutationList.size() - 1);
     for (auto &child : children){
         if (this->stop()) return;
@@ -330,70 +340,20 @@ void EA::twoOpt(Solution &child)
 // REPLACEMENT
 //**********************************************************************************************************************
 
-template <typename StringType>
-size_t levenshtein_distance(const StringType& s1, const StringType& s2) {
-    const size_t m = s1.size();
-    const size_t n = s2.size();
-    if (m == 0)
-        return n;
-    if (n == 0)
-        return m;
-    std::vector<size_t> costs(n + 1);
-    std::iota(costs.begin(), costs.end(), 0);
-    size_t i = 0;
-    for (auto c1 : s1) {
-        costs[0] = i + 1;
-        size_t corner = i;
-        size_t j = 0;
-        for (auto c2 : s2) {
-            size_t upper = costs[j + 1];
-            costs[j + 1] = (c1 == c2) ? corner
-                : 1 + std::min(std::min(upper, corner), costs[j]);
-            corner = upper;
-            ++j;
-        }
-        ++i;
-    }
-    return costs[n];
-}
 
-void EA::nichePopulation(vector<Solution> population, uint capacity, vector<uint> &leaderIdxs, vector<uint> &followerIdxs)
-{ 
-    for (uint i = 0; i < population.size(); i++){
-        if (std::find(followerIdxs.begin(), followerIdxs.end(), i) == followerIdxs.end()){
-            leaderIdxs.push_back(i);
-            uint occupancy = 1;
-            for (uint j = i+1; j < population.size(); j++){
-                if (std::find(followerIdxs.begin(), followerIdxs.end(), j) == followerIdxs.end() &&
-                        levenshtein_distance(population[i].permutation, population[j].permutation) <= this->nicheRadius){
-                    if (occupancy < capacity){
-                        leaderIdxs.push_back(i);
-                        occupancy += 1;
-                    } else {
-                        followerIdxs.push_back(j);
-                    }
-                }
-            }
-        }
-    }
-    if (leaderIdxs.size() > 0.4*this->population_size)
-        this->nicheRadius = this->nicheRadius > 5 ? this->nicheRadius*1.1 : this->nicheRadius + 1;
-    else if (followerIdxs.size() > 0.4*this->population_size)
-        this->nicheRadius = this->nicheRadius > 5 ? this->nicheRadius/1.1 : this->nicheRadius - 1;
-    
-}
-
-
-void EA::nicheSegregational(std::vector<Solution> children)
+void EA::nicheSegregational(vector<Solution> children)
 {
     if(this->stop()) return;
 
     copy(this->population.begin(), this->population.end(), std::back_inserter(children));
     sort_by_pf(children);
-    vector<uint> feasibleIdxs(0), restIdxs(0), leaderIdxs(0), followerIdxs(0);
-    
-    this->nichePopulation(children, 1, leaderIdxs, followerIdxs);
 
+    vector<bool> leaderMask(0), followerMask(0);
+    this->nichePopulation(children, 1, leaderMask, followerMask);
+    int leaderFollowerBalance = 0;
+
+    vector<uint> feasibleIdxs(0), restIdxs(0);
+    
     for (uint i = 0; i < children.size(); i++){
         if (children[i].is_feasible)
             feasibleIdxs.push_back(i);
@@ -403,42 +363,44 @@ void EA::nicheSegregational(std::vector<Solution> children)
 
     this->population.clear();
 
-    for (auto idx : feasibleIdxs)
-    {
-        if (this->population.size() < this->population_size * t_select){
-            if (find(this->population.begin(), this->population.end(), children[idx]) == this->population.end())
-                this->population.push_back(children[idx]);
-        } else {
-            restIdxs.push_back(idx);
+    for(auto mask : {leaderMask, followerMask}){
+        for (auto idx : feasibleIdxs)
+        {
+            if (!mask[idx]) continue;
+            if (this->population.size() < this->population_size * t_select){
+                if (true || find(this->population.begin(), this->population.end(), children[idx]) == this->population.end()){
+                    this->population.push_back(children[idx]);
+                    leaderFollowerBalance += leaderMask[idx] ? 1 : -1;
+                }
+            } else {
+                restIdxs.push_back(idx);
+            }
         }
     }
 
     sort(restIdxs.begin(), restIdxs.end());
 
-    if (this->population.size() == 0){
-        vector<bool> noPenalty(this->instance->penalty_func_cnt, true);
+    for(auto mask : {leaderMask, followerMask}){
         for (auto idx : restIdxs)
-            for (uint i = 0; i < noPenalty.size(); i++)
-                if (noPenalty[i] && children[idx].penalties[i] == 0){
-                    this->population.push_back(children[idx]);
-                    noPenalty[i] = false;
-                }      
+            if (mask[idx] && this->population.size() < this->population_size && (true || find(this->population.begin(), this->population.end(), children[idx]) == this->population.end())){
+                this->population.push_back(children[idx]);  
+                leaderFollowerBalance += leaderMask[idx] ? 1 : -1;
+            }
     }
-
-    while (this->population.size() < this->population_size)
-    {
-        for (auto idx : restIdxs)
-            if (this->population.size() < this->population_size && find(this->population.begin(), this->population.end(), children[idx]) == this->population.end())
-                this->population.push_back(children[idx]);
-        
-        this->construction();
-    }
+    this->construction();
+    
     this->best_known_solution = this->population[0];
+
+    //adaptive niche radius
+    if (leaderFollowerBalance > 0)
+        this->nicheRadius += 1;
+    else if (leaderFollowerBalance < 0)
+        this->nicheRadius -= 1;
 }
  
 
 
-void EA::segregational(std::vector<Solution> children)
+void EA::segregational(vector<Solution> children)
 {
     if(this->stop()) return;
 
@@ -468,7 +430,7 @@ void EA::segregational(std::vector<Solution> children)
     sort(restIdxs.begin(), restIdxs.end());
 
     // if solution exist with some part of the penalty equal to zero, it wont disappear from the population 
-    if (this->population.size() == 0){
+    if (this->population.size() == 0){ // if size > 0 then feasible solution exist and its penalty vector == 0
         vector<bool> noPenalty(this->instance->penalty_func_cnt, true);
         for (auto idx : restIdxs)
             for (uint i = 0; i < noPenalty.size(); i++)
@@ -478,14 +440,12 @@ void EA::segregational(std::vector<Solution> children)
                 }      
     }
 
-    while (this->population.size() < this->population_size)
-    {
-        for (auto idx : restIdxs)
-            if (this->population.size() < this->population_size && find(this->population.begin(), this->population.end(), children[idx]) == this->population.end())
-                this->population.push_back(children[idx]);
-        
-        this->construction();
-    }
+    for (auto idx : restIdxs)
+        if (this->population.size() < this->population_size && find(this->population.begin(), this->population.end(), children[idx]) == this->population.end())
+            this->population.push_back(children[idx]);  
+    
+    this->construction();
+    
     this->best_known_solution = this->population[0];
 }
 
@@ -505,11 +465,14 @@ void EA::setConstruction(const string &constr)
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
 
-void EA::setSelection(const string &constr)
+void EA::setSelection(const string &constr) 
 {
     if (constr == "constrainedTournament")
-        this->selection = [this](std::vector<Solution> &parents)
+        this->selection = [this](vector<Solution> &parents)
         { return constrainedTournament(parents); };
+    else if (constr == "constrainedSortedTournament")
+        this->selection = [this](vector<Solution> &parents)
+        { return constrainedSortedTournament(parents); };
     else
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
@@ -517,19 +480,19 @@ void EA::setSelection(const string &constr)
 void EA::setCrossover(const string &constr)
 {
     if (constr == "insertNode_5")
-        this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
+        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->insertNode(parents, children, 5); };
     else if (constr == "insertNode_10")
-        this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
+        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->insertNode(parents, children, 10); };
     else if (constr == "insertNode_20")
-        this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
+        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->insertNode(parents, children, 20); };
     else if (constr == "insertNode_50")
-        this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
+        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->insertNode(parents, children, 50); };
     else if (constr == "ERX")
-        this->crossover = [this](std::vector<Solution> parents, std::vector<Solution> &children)
+        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->ERX(parents, children); };
     else 
         throw std::system_error(EINVAL, std::system_category(), constr);
@@ -538,10 +501,10 @@ void EA::setCrossover(const string &constr)
 void EA::setReplacement(const string &constr) 
 {
     if (constr == "segregational")
-        this->replacement = [this](std::vector<Solution> children)
+        this->replacement = [this](vector<Solution> children)
         { return segregational(children); };
     else if (constr == "nicheSegregational")
-        this->replacement = [this](std::vector<Solution> children)
+        this->replacement = [this](vector<Solution> children)
         { return nicheSegregational(children); };
     else
         throw std::system_error(EINVAL, std::system_category(), constr);
@@ -550,6 +513,48 @@ void EA::setReplacement(const string &constr)
 //**********************************************************************************************************************
 // UTILS
 //**********************************************************************************************************************
+
+
+void EA::populationReset(){
+    if (this->stop()) return;
+    bool allSame = true; 
+    for (uint j = 0; j < this->population_size; j++){
+        allSame = allSame && (this->lastPop[j].permutation == this->population[j].permutation);
+        this->lastPop[j] = this->population[j];
+    }
+
+    if (allSame) {
+        this->population.erase(this->population.begin() + this->instance->penalty_func_cnt, this->population.end());
+        this->construction();
+        copy(this->population.begin(), this->population.end(), this->lastPop.begin());
+    } 
+}
+
+
+
+void EA::nichePopulation(vector<Solution> population, uint capacity, vector<bool> &leaderMask, vector<bool> &followerMask)
+{ 
+    leaderMask = vector<bool>(population.size(), false);
+    followerMask = vector<bool>(population.size(), false);
+
+    for (uint i = 0; i < population.size(); i++){
+        if (!followerMask[i]){
+            leaderMask[i] = true;
+            uint occupancy = 1;
+            for (uint j = 0; j < population.size(); j++){
+                if (!followerMask[j] && levenshtein_distance(population[i].permutation, population[j].permutation) <= this->nicheRadius){
+                    if (occupancy < capacity){
+                        leaderMask[j] = true;
+                        occupancy += 1;
+                    } else {
+                        followerMask[j] = true;
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 std::mt19937 *EA::initRng(uint seed)
 {
@@ -590,10 +595,12 @@ void EA::update_penalty_coefficients()
 
     double min = *std::min_element(this->penalty_coefficients.begin(), this->penalty_coefficients.end());
     double max = *std::max_element(this->penalty_coefficients.begin(), this->penalty_coefficients.end());
-    for (auto &penalty : this->penalty_coefficients)
-        penalty = (penalty + 1 - min)*this->penaltyLimit/max; // linear scaling of penalties to range(1 .. this->penaltyLimit)
-    
-    
+    if (max > this->penaltyLimit)
+        for (auto &penalty : this->penalty_coefficients) 
+            penalty = 1 + (penalty - min)*(this->penaltyLimit/max); // linear scaling of penalties to range(1 .. this->penaltyLimit)
+    else 
+        for (auto &penalty : this->penalty_coefficients) 
+            penalty = 1 + (penalty - min);
 }
 
 void EA::sort_by_pf(vector<Solution> &v)
@@ -611,7 +618,7 @@ fitness_t EA::penalized_fitness(Solution solution)
     return (fitness_t)round(inner_product(solution.penalties.begin(), solution.penalties.end(), this->penalty_coefficients.begin(), 0.));
 }
 
-fitness_t EA::penalized_fitness(std::vector<fitness_t> penalties)
+fitness_t EA::penalized_fitness(vector<fitness_t> penalties)
 {
     return (fitness_t)round(inner_product(penalties.begin(), penalties.end(), this->penalty_coefficients.begin(), 0.));
 }

@@ -54,3 +54,8 @@ namespace crossover
 
     void ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
 }
+
+namespace replacement
+{
+    
+}

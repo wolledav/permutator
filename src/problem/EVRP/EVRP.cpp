@@ -1,8 +1,4 @@
 #include "EVRP.hpp"
-#include <cmath>
-#include <iostream>
-#include <algorithm>
-#include <numeric>
 
 using permutator::fitness_t;
 using std::vector;
