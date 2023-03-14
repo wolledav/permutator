@@ -9,9 +9,10 @@
         "centExchange_3",
         "moveAll_5"
     ],
-    "replacement": "nicheSegregational",
-    "population_size": 80,
+    "replacement": "segregational",
+    "population_size": 8,
     "timeout": 60,
-    "stop_on_feasible": false
+    "frequency": 4,
+    "stop_on_feasible": true
     
 }

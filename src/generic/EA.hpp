@@ -21,6 +21,7 @@
 #include "utils.hpp"
 #include "basic_optimizer.hpp"
 #include "operator.hpp"
+#include "population.hpp"
 
 inline void LOGS(const std::vector<Solution> parents) {for (auto p : parents) p.print(); LOG(parents.size());}
 
@@ -30,25 +31,18 @@ class EA : public BasicOptimizer
     private:
         uint timeout_s;
         uint unimproved_cnt;
-        std::vector<Solution> population;
-        uint population_size;
-        double t_target = 0.5;
-        std::vector<double> t_t;
+        Population* population;
+        std::vector<Population*> populations = std::vector<Population*>(32, nullptr);
+        std::vector<uint> counter = std::vector<uint>(32, 0);
         double t_select = 0.3;
-        std::vector<double> penalty_coefficients;
         std::mt19937 *rng;
         static std::mt19937* initRng(uint seed);
-        std::vector<Solution> lastPop;
-        double penaltyLimit;
-        uint nicheRadius = 5;
-
-        
-        
+        uint nicheRadius = 5; 
+        uint frequency = 4;      
 
         std::function<void()> construction;
         std::function<void(std::vector<Solution> &parents)> selection;
         std::function<void(std::vector<Solution> parents, std::vector<Solution> &children)> crossover;
-        // std::function<void(std::vector<Solution> &children)> mutation;
         void mutation(std::vector<Solution> &children);
         std::function<void(std::vector<Solution> children)> replacement;
 
@@ -97,12 +91,15 @@ class EA : public BasicOptimizer
         //construction
         void constructRandom();
         void constructRandomReplicate();
+
         //selection
         void constrainedTournament(std::vector<Solution> &parents);
         void constrainedSortedTournament(std::vector<Solution> &parents);
+
         //crossover
         void insertNode(std::vector<Solution> parents, std::vector<Solution> &children, uint x);
         void ERX(std::vector<Solution> parents, std::vector<Solution> &children);
+
         //mutation
         void insert(Solution &child);
         void append(Solution &child);
@@ -113,19 +110,18 @@ class EA : public BasicOptimizer
         void moveAll(Solution &child, uint x);
         void exchangeIds(Solution &child);
         void twoOpt(Solution &child);   
+
         //replacement
         void segregational(std::vector<Solution> children); 
         void nicheSegregational(std::vector<Solution> children);
+
         //utils
-        void update_t_t();
-        void initPenaltyCoefs();
-        void update_penalty_coefficients();
         permutator::fitness_t penalized_fitness(Solution solution);
         permutator::fitness_t penalized_fitness(std::vector<permutator::fitness_t> penalties);
         void sort_by_pf(std::vector<Solution> &v);
         bool stop() override;
-        void populationReset();
         void nichePopulation(std::vector<Solution> population, uint capacity, std::vector<bool> &leaders, std::vector<bool> &followers);
+        void changePopulation();
 
 
     public:
