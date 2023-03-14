@@ -1,5 +1,5 @@
 
-#include "EA.hpp"
+#include "ASCHEA.hpp"
 
 #include <utility>
 
@@ -14,7 +14,7 @@ using std::vector;
 // INITIALIZATION
 //**********************************************************************************************************************
 
-EA::EA(Instance *inst, json config, uint seed)
+ASCHEA::ASCHEA(Instance *inst, json config, uint seed)
 {
     this->instance = inst;
     this->config = std::move(config);
@@ -23,7 +23,7 @@ EA::EA(Instance *inst, json config, uint seed)
     this->best_known_solution = Solution(inst->node_cnt);
     this->timeout_s = this->config["timeout"].get<uint>();
     this->frequency = this->config["frequency"].get<uint>();
-    this->rng = EA::initRng(seed);
+    this->rng = ASCHEA::initRng(seed);
 
     this->setConstruction(this->config["construction"].get<string>());
     this->setSelection(this->config["selection"].get<string>());
@@ -32,7 +32,7 @@ EA::EA(Instance *inst, json config, uint seed)
     this->setReplacement(this->config["replacement"].get<string>());
 }
 
-void EA::run()
+void ASCHEA::run()
 {
     this->start = std::chrono::steady_clock::now();
     this->construction();
@@ -42,19 +42,24 @@ void EA::run()
     while (!this->stop())
     {
         this->changePopulation();
-
+        if (this->population->generation % 1 == 0) std::cout << "pop: " << std::setw(4) << this->population->size << " gen: " << std::setw(4) << this->population->generation << std::endl;
         vector<Solution> parents(this->population->size);
         vector<Solution> children(this->population->size);
 
         this->constrainedTournament(parents);
         this->crossover(parents, children);
         this->mutation(children);
-        this->replacement(children);
+        this->replacement(children); 
         this->population->update();
         gen++;
     }
-    
-    Population* bestPop = *min_element(this->populations.begin(), this->populations.end(), [](Population* a, Population* b){return a->best_known_solution.fitness < b->best_known_solution.fitness;});
+
+    Population* bestPop = this->populations[0];
+    for (auto pop : this->populations){
+        if (pop != nullptr &&  pop->best_known_solution.fitness < bestPop->best_known_solution.fitness ){
+            bestPop = pop;
+        }
+    }
     this->population = bestPop;
     this->population->print();
     std::cout << "runtime: " << this->getRuntime() << "/" << this->timeout_s << "s" << std::endl;
@@ -69,7 +74,7 @@ void EA::run()
  * Adds nodes to random positions of the solution, until all nodes are at their LBs.
  * Uses this->initial_solution and sets this->current solution.
  */
-void EA::constructRandom()
+void ASCHEA::constructRandom()
 {
     while (this->population->getSize() < this->population->size)
     {
@@ -87,7 +92,7 @@ void EA::constructRandom()
  * Replicates the permutation, until the solution is not valid w.r.t. LBs and UBs.
  * Uses this->initial_solution and sets this->current solution.
  */
-void EA::constructRandomReplicate()
+void ASCHEA::constructRandomReplicate()
 {
     while (this->population->getSize() < this->population->size)
     {
@@ -104,13 +109,13 @@ void EA::constructRandomReplicate()
 // SELECTION
 //**********************************************************************************************************************
 
-void EA::constrainedTournament(vector<Solution> &parents)
+void ASCHEA::constrainedTournament(vector<Solution> &parents)
 {
     sort_by_pf(this->population->solutions);
     this->constrainedSortedTournament(parents);
 }
 
-void EA::constrainedSortedTournament(vector<Solution> &parents)
+void ASCHEA::constrainedSortedTournament(vector<Solution> &parents)
 {
 
     uint tournament_size = 4;
@@ -143,7 +148,7 @@ void EA::constrainedSortedTournament(vector<Solution> &parents)
 // CROSSOVER
 //**********************************************************************************************************************
 
-void EA::insertNode(vector<Solution> parents, vector<Solution> &children, uint x)
+void ASCHEA::insertNode(vector<Solution> parents, vector<Solution> &children, uint x)
 {
     for (uint idx = 0; idx < children.size(); idx += 2)
     {
@@ -167,7 +172,7 @@ void EA::insertNode(vector<Solution> parents, vector<Solution> &children, uint x
     }
 }
 
-void EA::ERX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::ERX(vector<Solution> parents, vector<Solution> &children)
 {
     for (uint idx = 0; idx < children.size(); idx += 2)
     {
@@ -190,7 +195,7 @@ void EA::ERX(vector<Solution> parents, vector<Solution> &children)
 // MUTATION
 //**********************************************************************************************************************
 
-void EA::mutation(vector<Solution> &children)
+void ASCHEA::mutation(vector<Solution> &children)
 {
     std::uniform_int_distribution<uint> randMutation(0, this->mutationList.size() - 1);
     for (auto &child : children)
@@ -201,9 +206,8 @@ void EA::mutation(vector<Solution> &children)
     }
 }
 
-void EA::insert(Solution &child)
+void ASCHEA::insert(Solution &child)
 {
-    // LOG(__func__);
     vector<uint> possibleNodes(0);
     for (uint i = 0; i < this->instance->node_cnt; i++)
         if (child.frequency[i] < this->instance->ubs[i])
@@ -219,7 +223,7 @@ void EA::insert(Solution &child)
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
-void EA::append(Solution &child)
+void ASCHEA::append(Solution &child)
 {
     vector<uint> possibleNodes(0);
     for (uint i = 0; i < this->instance->node_cnt; i++)
@@ -234,7 +238,7 @@ void EA::append(Solution &child)
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
-void EA::remove(Solution &child)
+void ASCHEA::remove(Solution &child)
 {
     vector<uint> possiblePositions(0);
     for (uint i = 0; i < child.permutation.size(); i++)
@@ -251,14 +255,14 @@ void EA::remove(Solution &child)
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
-void EA::centeredExchange(Solution &child, uint x)
+void ASCHEA::centeredExchange(Solution &child, uint x)
 {
     std::uniform_int_distribution<uint> randPosition(x, child.permutation.size() - x - 1);
     oprtr::centeredExchange(child.permutation, randPosition(*this->rng), x);
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
-void EA::relocate(Solution &child, uint x, bool reverse)
+void ASCHEA::relocate(Solution &child, uint x, bool reverse)
 {
     std::uniform_int_distribution<uint> randFrom(0, child.permutation.size() - x);
     std::uniform_int_distribution<uint> randTo(0, child.permutation.size() - x);
@@ -266,7 +270,7 @@ void EA::relocate(Solution &child, uint x, bool reverse)
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
-void EA::exchange(Solution &child, uint x, uint y, bool reverse)
+void ASCHEA::exchange(Solution &child, uint x, uint y, bool reverse)
 {
     std::uniform_int_distribution<uint> posX(0, child.permutation.size() - x);
     std::uniform_int_distribution<uint> posY(0, child.permutation.size() - y);
@@ -274,7 +278,7 @@ void EA::exchange(Solution &child, uint x, uint y, bool reverse)
     oprtr::exchange(child.permutation, posX(*this->rng), posY(*this->rng), x, y, reverse);
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
-void EA::moveAll(Solution &child, uint x)
+void ASCHEA::moveAll(Solution &child, uint x)
 {
     std::uniform_int_distribution<uint> randomNode(0, this->instance->node_cnt - 1);
     std::uniform_int_distribution<int> randomOffset(-x, x);
@@ -282,7 +286,7 @@ void EA::moveAll(Solution &child, uint x)
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
-void EA::exchangeIds(Solution &child)
+void ASCHEA::exchangeIds(Solution &child)
 {
     std::uniform_int_distribution<uint> randomNode(0, this->instance->node_cnt - 1);
     uint nodeX, nodeY;
@@ -296,7 +300,7 @@ void EA::exchangeIds(Solution &child)
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
-void EA::twoOpt(Solution &child)
+void ASCHEA::twoOpt(Solution &child)
 {
     std::uniform_int_distribution<uint> randPosition(0, child.permutation.size() - 1);
     uint posA, posB;
@@ -314,7 +318,7 @@ void EA::twoOpt(Solution &child)
 // REPLACEMENT
 //**********************************************************************************************************************
 
-void EA::nicheSegregational(vector<Solution> children)
+void ASCHEA::nicheSegregational(vector<Solution> children)
 {
     if (this->stop())
         return;
@@ -377,12 +381,12 @@ void EA::nicheSegregational(vector<Solution> children)
 
     // adaptive niche radius
     if (leaderFollowerBalance > 0)
-        this->nicheRadius += 1;
+        this->population->nicheRadius += 1;
     else if (leaderFollowerBalance < 0)
-        this->nicheRadius -= 1;
+        this->population->nicheRadius -= 1;
 }
 
-void EA::segregational(vector<Solution> children)
+void ASCHEA::segregational(vector<Solution> children)
 {
     if (this->stop())
         return;
@@ -417,8 +421,7 @@ void EA::segregational(vector<Solution> children)
     sort(restIdxs.begin(), restIdxs.end());
 
     // if solution exist with some part of the penalty equal to zero, it wont disappear from the population
-    if (this->population->getSize() == 0)
-    { // if size > 0 then feasible solution exist and its penalty vector == 0
+    if (this->population->getSize() == 0) { // if size > 0 then feasible solution exist and its penalty vector == 0
         vector<bool> noPenalty(this->instance->penalty_func_cnt, true);
         for (auto idx : restIdxs)
             for (uint i = 0; i < noPenalty.size(); i++)
@@ -443,7 +446,7 @@ void EA::segregational(vector<Solution> children)
 // SET OPERATIONS
 //**********************************************************************************************************************
 
-void EA::setConstruction(const string &constr)
+void ASCHEA::setConstruction(const string &constr)
 {
     if (constr == "random")
         this->construction = [this]
@@ -455,7 +458,7 @@ void EA::setConstruction(const string &constr)
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
 
-void EA::setSelection(const string &constr)
+void ASCHEA::setSelection(const string &constr)
 {
     if (constr == "constrainedTournament")
         this->selection = [this](vector<Solution> &parents)
@@ -467,7 +470,7 @@ void EA::setSelection(const string &constr)
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
 
-void EA::setCrossover(const string &constr)
+void ASCHEA::setCrossover(const string &constr)
 {
     if (constr == "insertNode_5")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
@@ -488,7 +491,7 @@ void EA::setCrossover(const string &constr)
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
 
-void EA::setReplacement(const string &constr)
+void ASCHEA::setReplacement(const string &constr)
 {
     if (constr == "segregational")
         this->replacement = [this](vector<Solution> children)
@@ -504,7 +507,7 @@ void EA::setReplacement(const string &constr)
 // UTILS
 //**********************************************************************************************************************
 
-void EA::nichePopulation(vector<Solution> population, uint capacity, vector<bool> &leaderMask, vector<bool> &followerMask)
+void ASCHEA::nichePopulation(vector<Solution> population, uint capacity, vector<bool> &leaderMask, vector<bool> &followerMask)
 {
     leaderMask = vector<bool>(population.size(), false);
     followerMask = vector<bool>(population.size(), false);
@@ -517,7 +520,7 @@ void EA::nichePopulation(vector<Solution> population, uint capacity, vector<bool
             uint occupancy = 1;
             for (uint j = i + 1; j < population.size(); j++)
             {
-                if (!followerMask[j] && levenshtein_distance(population[i].permutation, population[j].permutation) <= this->nicheRadius)
+                if (!followerMask[j] && levenshtein_distance(population[i].permutation, population[j].permutation) <= this->population->nicheRadius)
                 {
                     if (occupancy < capacity)
                     {
@@ -534,7 +537,7 @@ void EA::nichePopulation(vector<Solution> population, uint capacity, vector<bool
     }
 }
 
-std::mt19937 *EA::initRng(uint seed)
+std::mt19937 *ASCHEA::initRng(uint seed)
 {
     if (seed == 0)
     {
@@ -544,7 +547,7 @@ std::mt19937 *EA::initRng(uint seed)
     return new std::mt19937(seed);
 }
 
-void EA::sort_by_pf(vector<Solution> &v)
+void ASCHEA::sort_by_pf(vector<Solution> &v)
 {
     std::sort(v.begin(), v.end(),
               [this](Solution A, Solution B) -> bool
@@ -553,23 +556,23 @@ void EA::sort_by_pf(vector<Solution> &v)
               });
 }
 
-fitness_t EA::penalized_fitness(Solution solution)
+fitness_t ASCHEA::penalized_fitness(Solution solution)
 {
     return (fitness_t)round(inner_product(solution.penalties.begin(), solution.penalties.end(), this->population->get_penalty_coefficients().begin(), 0.));
 }
 
-fitness_t EA::penalized_fitness(vector<fitness_t> penalties)
+fitness_t ASCHEA::penalized_fitness(vector<fitness_t> penalties)
 {
     return (fitness_t)round(inner_product(penalties.begin(), penalties.end(), this->population->get_penalty_coefficients().begin(), 0.));
 }
 
-bool EA::stop()
+bool ASCHEA::stop()
 {
     return this->getRuntime() > this->timeout_s ||
            (config["stop_on_feasible"] && this->best_known_solution.is_feasible);
 }
 
-void EA::changePopulation()
+void ASCHEA::changePopulation()
 {
     //choose the next population to run
     int activePopIdx = -1;
@@ -590,22 +593,27 @@ void EA::changePopulation()
     this->population->generation++;
 
     //deletes worse or stalled populations
-    if (this->population->is_stalled && this->populations[activePopIdx + 1] != nullptr){
-        std::cout << "---------erased: " << activePopIdx << "|" << this->population->size << " for stall---------" << std::endl;
-        this->populations.erase(this->populations.begin() + activePopIdx);     
-        this->counter.erase(this->counter.begin() + activePopIdx);
-        this->changePopulation();
-    } 
+    // if (this->population->is_stalled && this->populations[activePopIdx + 1] != nullptr){
+    //     std::cout << "---------erased: " << activePopIdx << "|" << this->population->size << " for stall---------" << std::endl;
+    //     this->populations.erase(this->populations.begin() + activePopIdx);     
+    //     this->counter.erase(this->counter.begin() + activePopIdx);
+    //     this->changePopulation();
+    // } 
     for (uint idx2 = 0; idx2 < activePopIdx; idx2++){
         if (this->populations[activePopIdx]->avgFitness < this->populations[idx2]->avgFitness){
             std::cout << "--------erased: " <<  idx2 << "|" << this->populations[idx2]->size << " for lower avg fitness---" <<  this->populations[activePopIdx]->avgFitness << "|" << this->populations[idx2]->avgFitness << "---------" << std::endl;
             this->populations.erase(this->populations.begin() + idx2);
             this->counter.erase(this->counter.begin() + activePopIdx);
             activePopIdx -= 1;    
+        } else if (this->populations[idx2]->is_stalled){
+            std::cout << "---------erased: " << idx2 << "|" << this->populations[idx2]->size << " for stall---------" << std::endl;
+            this->populations.erase(this->populations.begin() + idx2);     
+            this->counter.erase(this->counter.begin() + idx2);
+            activePopIdx -= 1;
         }
     }
 }
 
-void EA::saveToJson(json &container)
+void ASCHEA::saveToJson(json &container)
 {
 }

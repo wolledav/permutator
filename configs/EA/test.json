@@ -9,7 +9,7 @@
         "centExchange_3",
         "moveAll_5"
     ],
-    "replacement": "segregational",
+    "replacement": "nicheSegregational",
     "population_size": 8,
     "timeout": 60,
     "frequency": 4,

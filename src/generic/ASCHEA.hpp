@@ -26,7 +26,7 @@
 inline void LOGS(const std::vector<Solution> parents) {for (auto p : parents) p.print(); LOG(parents.size());}
 
 
-class EA : public BasicOptimizer
+class ASCHEA : public BasicOptimizer
 {
     private:
         uint timeout_s;
@@ -37,7 +37,6 @@ class EA : public BasicOptimizer
         double t_select = 0.3;
         std::mt19937 *rng;
         static std::mt19937* initRng(uint seed);
-        uint nicheRadius = 5; 
         uint frequency = 4;      
 
         std::function<void()> construction;
@@ -125,8 +124,8 @@ class EA : public BasicOptimizer
 
 
     public:
-        explicit EA(Instance* inst, nlohmann::json config, uint seed=0);
-        ~EA() = default;
+        explicit ASCHEA(Instance* inst, nlohmann::json config, uint seed=0);
+        ~ASCHEA() = default;
         void setConstruction(const std::string &constr);
         void setSelection(const std::string &constr);
         void setCrossover(const std::string &constr);

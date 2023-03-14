@@ -2,7 +2,7 @@
 #include <string>
 
 #include "generic/optimizer.hpp"
-#include "generic/EA.hpp"
+#include "generic/ASCHEA.hpp"
 #include "src/problem/TSPSD/TSPSD.hpp"
 
 using std::string;
@@ -31,7 +31,7 @@ int main (int argc, char *argv[]) {
         if (init_solution != nullptr) optimizer->setInitSolution(*init_solution);
     }
     else if (optimizer_type == "evolutionary"){
-        optimizer = new EA(&inst, config, seed);
+        optimizer = new ASCHEA(&inst, config, seed);
     }
     std::cout << "Solving " << data_path << std::endl;
     optimizer->run();    

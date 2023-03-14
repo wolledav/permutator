@@ -4,7 +4,7 @@
 #include <boost/algorithm/string.hpp>
 
 
-#include "generic/EA.hpp"
+#include "generic/ASCHEA.hpp"
 #include "generic/optimizer.hpp"
 #include "src/problem/ROADEF/ROADEF.hpp"
 
@@ -40,7 +40,7 @@ int main (int argc, char *argv[])
     //     if (optimizer_type == "local")
     //         optimizer = new Optimizer(&inst, config, seed);
     //     else if (optimizer_type == "evolutionary")
-    //         optimizer = new EA(&inst, config, seed);
+    //         optimizer = new ASCHEA(&inst, config, seed);
         
     //     optimizer->run();
 
@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
     if (optimizer_type == "local")
         optimizer = new Optimizer(&inst, config, seed);
     else if (optimizer_type == "evolutionary")
-        optimizer = new EA(&inst, config, seed);
+        optimizer = new ASCHEA(&inst, config, seed);
     
     optimizer->run();
 

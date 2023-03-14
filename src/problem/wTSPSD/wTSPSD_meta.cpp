@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "generic/EA.hpp"
+#include "generic/ASCHEA.hpp"
 #include "generic/optimizer.hpp"
 #include "src/problem/wTSPSD/wTSPSD.hpp"
 
@@ -29,7 +29,7 @@ int main (int argc, char *argv[]) {
         if (init_solution != nullptr) optimizer->setInitSolution(*init_solution);
     }
     else if (optimizer_type == "evolutionary"){
-        optimizer = new EA(&inst, config, seed);
+        optimizer = new ASCHEA(&inst, config, seed);
     }
 
     std::cout << "Solving " << data_path << std::endl;

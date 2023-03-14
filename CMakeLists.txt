@@ -34,7 +34,7 @@ add_executable(ROADEF_meta
         src/problem/ROADEF/code/solution.cpp
         src/problem/ROADEF/code/util.cpp
         src/config.cpp
-        src/generic/EA.cpp
+        src/generic/ASCHEA.cpp
         src/generic/population.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
@@ -53,7 +53,7 @@ target_include_directories(ROADEF_meta PUBLIC
 add_executable(CVRP_meta
         src/problem/CVRP/CVRP_meta.cpp
         src/config.cpp
-        src/generic/EA.cpp
+        src/generic/ASCHEA.cpp
         src/generic/population.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
@@ -78,7 +78,7 @@ target_include_directories(CVRP_meta PUBLIC
 add_executable(EVRP_meta
         src/problem/EVRP/EVRP_meta.cpp
         src/config.cpp
-        src/generic/EA.cpp
+        src/generic/ASCHEA.cpp
         src/generic/population.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
@@ -99,7 +99,7 @@ target_include_directories(EVRP_meta PUBLIC
 add_executable(QAP_meta
         src/problem/QAP/QAP_meta.cpp
         src/config.cpp
-        src/generic/EA.cpp
+        src/generic/ASCHEA.cpp
         src/generic/population.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
@@ -120,7 +120,7 @@ target_include_directories(QAP_meta PUBLIC
 add_executable(NPFS_meta
         src/problem/NPFS/NPFS_meta.cpp
         src/config.cpp
-        src/generic/EA.cpp
+        src/generic/ASCHEA.cpp
         src/generic/population.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
@@ -140,7 +140,7 @@ target_include_directories(NPFS_meta PUBLIC
 add_executable(TSPSD_meta
         src/problem/TSPSD/TSPSD_meta.cpp
         src/config.cpp
-        src/generic/EA.cpp
+        src/generic/ASCHEA.cpp
         src/generic/population.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
@@ -160,7 +160,7 @@ target_include_directories(TSPSD_meta PUBLIC
 add_executable(wTSPSD_meta
         src/problem/wTSPSD/wTSPSD_meta.cpp
         src/config.cpp
-        src/generic/EA.cpp
+        src/generic/ASCHEA.cpp
         src/generic/population.cpp
         src/generic/optimizer.cpp
         src/generic/instance.cpp
@@ -178,25 +178,25 @@ target_include_directories(wTSPSD_meta PUBLIC
 
 
 
-# add_executable(SUDOKU_meta
-#         src/problem/SUDOKU/SUDOKU_meta.cpp
-#         src/config.cpp
-#         src/generic/EA.cpp
-#         src/generic/population.cpp
-#         src/generic/optimizer.cpp
-#         src/generic/instance.cpp
-#         src/generic/solution.cpp
-#         src/generic/operator.cpp
-#         src/problem/SUDOKU/SUDOKU.cpp
-#         lib/getopt/getopt.c
-#         )
+add_executable(SUDOKU_meta
+        src/problem/SUDOKU/SUDOKU_meta.cpp
+        src/config.cpp
+        src/generic/ASCHEA.cpp
+        src/generic/population.cpp
+        src/generic/optimizer.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/generic/operator.cpp
+        src/problem/SUDOKU/SUDOKU.cpp
+        lib/getopt/getopt.c
+        )
 
 
-# target_include_directories(SUDOKU_meta PUBLIC
-#         "${PROJECT_BINARY_DIR}/../"
-#         "${PROJECT_BINARY_DIR}/../src"
-#         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-#         )
+target_include_directories(SUDOKU_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
 
 
 ## ************************************

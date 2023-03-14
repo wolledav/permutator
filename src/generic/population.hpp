@@ -36,6 +36,7 @@ class Population
         uint size;
         bool is_stalled = false;
         uint generation = 0;
+        uint nicheRadius = 5;
         std::vector<Solution> solutions = {};
         fitness_t avgFitness = INVALID_SOLUTION_FITNESS;
         Solution best_known_solution;
