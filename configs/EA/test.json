@@ -1,5 +1,12 @@
 {
-    "construction": "random",
+    "population_type": "dynamic",
+    "population_size": 8,
+    "frequency": 4,
+    "t_select": 0.3,
+    "t_target": 0.5,
+    "mutation_rate": 0.8,
+
+    "construction": "NN",
     "selection": "constrainedSortedTournament",
     "crossover": "insertNode_5",
     "mutation": [
@@ -10,9 +17,8 @@
         "moveAll_5"
     ],
     "replacement": "nicheSegregational",
-    "population_size": 8,
+
     "timeout": 60,
-    "frequency": 4,
     "stop_on_feasible": true
     
 }

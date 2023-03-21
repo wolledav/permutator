@@ -30,7 +30,7 @@ class Population
         void resetCheck();
         
     public:
-        Population(uint size, uint penalty_func_cnt);
+        Population(uint size, uint penalty_func_cnt, double t_target);
         Population() {};
         ~Population() = default;
         uint size;

@@ -37,7 +37,8 @@ class ASCHEA : public BasicOptimizer
         double t_select = 0.3;
         std::mt19937 *rng;
         static std::mt19937* initRng(uint seed);
-        uint frequency = 4;      
+        uint frequency = 4; 
+        double mutationRate = 1.0;     
 
         std::function<void()> construction;
         std::function<void(std::vector<Solution> &parents)> selection;
@@ -90,6 +91,8 @@ class ASCHEA : public BasicOptimizer
         //construction
         void constructRandom();
         void constructRandomReplicate();
+        void constructGreedy();
+        void constructNearestNeighbor();
 
         //selection
         void constrainedTournament(std::vector<Solution> &parents);

@@ -18,11 +18,13 @@ ASCHEA::ASCHEA(Instance *inst, json config, uint seed)
 {
     this->instance = inst;
     this->config = std::move(config);
-    this->populations[0] = new Population(this->config["population_size"].get<uint>(), this->instance->penalty_func_cnt);
+    this->populations[0] = new Population(this->config["population_size"].get<uint>(), this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
     this->population = this->populations[0];
     this->best_known_solution = Solution(inst->node_cnt);
     this->timeout_s = this->config["timeout"].get<uint>();
     this->frequency = this->config["frequency"].get<uint>();
+    this->t_select = this->config["t_select"].get<double>();
+    this->mutationRate = this->config["mutation_rate"].get<double>();
     this->rng = ASCHEA::initRng(seed);
 
     this->setConstruction(this->config["construction"].get<string>());
@@ -37,7 +39,8 @@ void ASCHEA::run()
     this->start = std::chrono::steady_clock::now();
     this->construction();
     this->population->initPenaltyCoefs();
-
+    this->population->print();
+    exit(0);
     uint gen = 0;
     while (!this->stop())
     {
@@ -76,10 +79,8 @@ void ASCHEA::run()
  */
 void ASCHEA::constructRandom()
 {
-    while (this->population->getSize() < this->population->size)
+    while (this->population->getSize() < this->population->size && !this->stop())
     {
-        if (this->stop())
-            return;
         Solution sol(this->instance->node_cnt);
         construct::random(sol.permutation, sol.frequency, this->instance->lbs, this->rng);
         sol.is_feasible = this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
@@ -94,12 +95,88 @@ void ASCHEA::constructRandom()
  */
 void ASCHEA::constructRandomReplicate()
 {
-    while (this->population->getSize() < this->population->size)
+    while (this->population->getSize() < this->population->size && !this->stop())
     {
-        if (this->stop())
-            return;
         Solution sol(this->instance->node_cnt);
         construct::randomReplicate(sol.permutation, sol.frequency, this->instance->lbs, this->instance->ubs, this->rng);
+        sol.is_feasible = this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
+        this->population->append(sol);
+    }
+}
+
+void ASCHEA::constructGreedy()
+{
+    while (this->population->getSize() < this->population->size && !this->stop())
+    {
+        // random starting point solution
+        Solution sol(this->instance->node_cnt);
+        for (uint i = 0; i < this->instance->node_cnt/5; i++)
+            this->append(sol);
+
+        bool valid = false;
+        this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
+
+        while (!valid && !this->stop()){
+            Solution best_solution = sol;
+            fitness_t best_LB_penalty = this->instance->getLBPenalty(best_solution.frequency);
+            fitness_t new_fitness;
+            vector<fitness_t> new_penalties;
+            vector<uint> new_perm = sol.permutation;
+            vector<uint> new_freq = sol.frequency;
+
+            for (uint position = 0; position <= sol.permutation.size(); position++)
+            {   
+                for (uint node = 0; node < this->instance->node_cnt; node++)
+                { 
+                    oprtr::insert(new_perm, new_freq, this->instance->ubs, node, position);
+                    this->instance->computeFitness(new_perm, new_fitness, new_penalties);
+                    fitness_t LB_penalty = this->instance->getLBPenalty(new_freq);
+                    if (LB_penalty < best_LB_penalty || (LB_penalty == best_LB_penalty && new_fitness < best_solution.fitness))
+                        best_solution = Solution(new_perm, *this->instance);
+                    oprtr::remove(new_perm, new_freq, this->instance->lbs, position);
+                }
+            }
+            sol = best_solution;
+            valid = this->instance->FrequencyInBounds(sol.frequency);
+        }
+        sol.is_feasible = this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
+        this->population->append(sol);
+    }
+}
+
+void ASCHEA::constructNearestNeighbor()
+{
+    while (this->population->getSize() < this->population->size && !this->stop())
+    {
+        // random starting point solution
+        Solution sol(this->instance->node_cnt);
+        for (uint i = 0; i < 4; i++)
+            this->append(sol);
+
+        bool valid = false;
+        this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
+
+        while (!valid && !this->stop()){
+            Solution best_solution = sol;
+            fitness_t best_LB_penalty = this->instance->getLBPenalty(best_solution.frequency);
+            fitness_t new_fitness;
+            vector<fitness_t> new_penalties;
+            vector<uint> new_perm = sol.permutation;
+            vector<uint> new_freq = sol.frequency;
+
+            for (uint node = 0; node < this->instance->node_cnt; node++)
+            { 
+                oprtr::append(new_perm, new_freq, this->instance->ubs, node);
+                this->instance->computeFitness(new_perm, new_fitness, new_penalties);
+                fitness_t LB_penalty = this->instance->getLBPenalty(new_freq);
+                if (LB_penalty < best_LB_penalty || (LB_penalty == best_LB_penalty && new_fitness < best_solution.fitness))
+                    best_solution = Solution(new_perm, *this->instance);
+
+                oprtr::remove(new_perm, new_freq, this->instance->lbs, new_perm.size()-1);
+            }
+            sol = best_solution;
+            valid = this->instance->FrequencyInBounds(sol.frequency);
+        }
         sol.is_feasible = this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
         this->population->append(sol);
     }
@@ -198,11 +275,13 @@ void ASCHEA::ERX(vector<Solution> parents, vector<Solution> &children)
 void ASCHEA::mutation(vector<Solution> &children)
 {
     std::uniform_int_distribution<uint> randMutation(0, this->mutationList.size() - 1);
+    std::uniform_real_distribution<> randDouble(0.0, 1.0);
     for (auto &child : children)
     {
         if (this->stop())
             return;
-        this->mutation_map.at(this->mutationList[randMutation(*this->rng)])(child);
+        if (randDouble(*this->rng) < this->mutationRate)
+            this->mutation_map.at(this->mutationList[randMutation(*this->rng)])(child);
     }
 }
 
@@ -454,6 +533,12 @@ void ASCHEA::setConstruction(const string &constr)
     else if (constr == "randomReplicate")
         this->construction = [this]
         { return this->constructRandomReplicate(); };
+    else if (constr == "greedy")
+        this->construction = [this]
+        { return this->constructGreedy(); };
+    else if (constr == "NN")
+        this->construction = [this]
+        { return this->constructNearestNeighbor(); };
     else
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
@@ -584,7 +669,7 @@ void ASCHEA::changePopulation()
         this->population = this->populations[activePopIdx];
     }
     else { 
-        this->populations[activePopIdx] = new Population((this->populations[activePopIdx - 1]->size) * 2, this->instance->penalty_func_cnt);
+        this->populations[activePopIdx] = new Population((this->populations[activePopIdx - 1]->size) * 2, this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
         this->population = this->populations[activePopIdx];
         this->construction();
         this->population->initPenaltyCoefs();
@@ -592,13 +677,6 @@ void ASCHEA::changePopulation()
 
     this->population->generation++;
 
-    //deletes worse or stalled populations
-    // if (this->population->is_stalled && this->populations[activePopIdx + 1] != nullptr){
-    //     std::cout << "---------erased: " << activePopIdx << "|" << this->population->size << " for stall---------" << std::endl;
-    //     this->populations.erase(this->populations.begin() + activePopIdx);     
-    //     this->counter.erase(this->counter.begin() + activePopIdx);
-    //     this->changePopulation();
-    // } 
     for (uint idx2 = 0; idx2 < activePopIdx; idx2++){
         if (this->populations[activePopIdx]->avgFitness < this->populations[idx2]->avgFitness){
             std::cout << "--------erased: " <<  idx2 << "|" << this->populations[idx2]->size << " for lower avg fitness---" <<  this->populations[activePopIdx]->avgFitness << "|" << this->populations[idx2]->avgFitness << "---------" << std::endl;

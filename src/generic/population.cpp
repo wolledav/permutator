@@ -2,9 +2,10 @@
 
 using std::vector;
 
-Population::Population(uint size, uint penalty_func_cnt)
+Population::Population(uint size, uint penalty_func_cnt, double t_target)
 {
     this->size = size;
+    this->t_target = t_target;
     this->penalty_func_cnt = penalty_func_cnt;
     this->t_t = vector<double>(this->penalty_func_cnt, 1);
     this->prevSolutions = vector<Solution>(this->size);
