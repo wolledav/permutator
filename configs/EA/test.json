@@ -10,11 +10,11 @@
     "selection": "constrainedSortedTournament",
     "crossover": "insertNode_5",
     "mutation": [
-        "insert",
-        "remove",
+        "insert_1",
+        "remove_1",
         "relocate_1",
         "centExchange_3",
-        "moveAll_5"
+        "moveAll_10"
     ],
     "replacement": "nicheSegregational",
 

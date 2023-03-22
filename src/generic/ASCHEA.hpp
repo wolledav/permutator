@@ -49,8 +49,8 @@ class ASCHEA : public BasicOptimizer
         std::vector<std::string> mutationList;
 
         const std::map<std::string, std::function<void(Solution &child)>> mutation_map = {
-            {"insert",      [this](Solution &child){return this->insert(child);}},
-            {"remove",      [this](Solution &child){return this->remove(child);}},
+            {"insert_1",      [this](Solution &child){return this->insert(child);}},
+            {"remove_1",      [this](Solution &child){return this->remove(child);}},
             {"relocate_1",      [this](Solution &child){return this->relocate(child, 1, false);}},
             {"relocate_2",      [this](Solution &child){return this->relocate(child, 2, false);}},
             {"relocate_3",      [this](Solution &child){return this->relocate(child, 3, false);}},
@@ -63,7 +63,8 @@ class ASCHEA : public BasicOptimizer
             {"centExchange_1",      [this](Solution &child){return this->centeredExchange(child, 1);}},
             {"centExchange_2",      [this](Solution &child){return this->centeredExchange(child, 2);}},
             {"centExchange_3",      [this](Solution &child){return this->centeredExchange(child, 3);}},
-            {"centeredExchange_4",      [this](Solution &child){return this->centeredExchange(child, 4);}},
+            {"centExchange_4",      [this](Solution &child){return this->centeredExchange(child, 4);}},
+            {"centExchange_5",      [this](Solution &child){return this->centeredExchange(child, 5);}},
             {"exchange_1_1",      [this](Solution &child){return this->exchange(child, 1, 1, false);}},
             {"exchange_1_2",      [this](Solution &child){return this->exchange(child, 1, 2, false);}},
             {"exchange_2_2",      [this](Solution &child){return this->exchange(child, 2, 2, false);}},
@@ -83,7 +84,7 @@ class ASCHEA : public BasicOptimizer
             {"moveAll_2",      [this](Solution &child){return this->moveAll(child, 2);}},
             {"moveAll_3",      [this](Solution &child){return this->moveAll(child, 3);}},
             {"moveAll_4",      [this](Solution &child){return this->moveAll(child, 4);}},
-            {"moveAll_5",      [this](Solution &child){return this->moveAll(child, 5);}},
+            {"moveAll_10",      [this](Solution &child){return this->moveAll(child, 10);}},
             {"exchangeIds",      [this](Solution &child){return this->exchangeIds(child);}},
             {"twoOpt",      [this](Solution &child){return this->twoOpt(child);}},     
         };
