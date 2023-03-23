@@ -6,7 +6,7 @@
     "t_target": 0.5,
     "mutation_rate": 0.8,
 
-    "construction": "NN",
+    "construction": "nearestNeighbor",
     "selection": "constrainedSortedTournament",
     "crossover": "insertNode_5",
     "mutation": [

@@ -4,6 +4,7 @@ import json
 output_file = sys.argv[1]
 params = sys.argv[2:]
 operators = []
+mutations = []
 perturbations = []
 config = {}
 
@@ -14,8 +15,31 @@ for i in range(0, len(params), 2):
     if param[0:3] == "op_":
         if value == '1':
             operators.append(param[3:])
+    elif param[0:3] == "mu_":
+        if value == '1':
+            mutations.append(param[3:])
     elif param == "perturbation":
         perturbations.append(value)
+    elif param == "crossover":
+        config[param] = value
+    elif param == "crossover_param":
+        config[param] = int(value)
+    elif param == "selection":
+        config[param] = value
+    elif param == "replacement":
+        config[param] = value
+    elif param == "population_type":
+        config[param] = value
+    elif param == "population_size":
+        config[param] = int(value)
+    elif param == "frequency":
+        config[param] = int(value)
+    elif param == "t_select":
+        config[param] = float(value)
+    elif param == "t_target":
+        config[param] = float(value)
+    elif param == "mutation_rate":
+        config[param] = float(value)
     elif param == "allow_infeasible":
         config[param] = bool(int(value))
     elif param == "ils_k":
@@ -42,6 +66,7 @@ for i in range(0, len(params), 2):
         print(sys.argv[0], "unknown parameter:", param)
 
 config["operators"] = operators
+config["mutation"] = mutations
 config["perturbation"] = perturbations
 
 file = open(output_file, "w")

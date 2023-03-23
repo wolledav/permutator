@@ -38,9 +38,12 @@ metaheuristic       "metaheuristic "    c   (ILS, BVNS)
 ils_k               "ils_k "            i   (1, 8)              | metaheuristic == "ILS"
 bvns_min_k          "bvns_min_k "       i   (1, 8)              | metaheuristic == "BVNS"
 bvns_max_k          "bvns_max_k "       i   (2, 12)             | metaheuristic == "BVNS"
+stop_on_feasible    "stop_on_feasible " c   (0)
+first_improve       "first_improve "    c   (0, 1)
+
 
 ## CONSTRUCTION
-construction        "construction "     c   (greedy, random, randomReplicate)
+construction        "construction "     c   (greedy, random, randomReplicate, nearestNeighbor)
 
 ## PERTURBATION
 perturbation        "perturbation "     c   (doubleBridge, randomDoubleBridge, reinsert, randomMoveAll, randomMove, randomSwap)

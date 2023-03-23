@@ -43,7 +43,7 @@ forbiddenFile = "./forbidden.txt"
 
 ## Script called for each configuration that executes the target algorithm to
 ## be tuned. See the templates and examples provided.
-## /mnt/c/Users/pazou/Documents/CVUT/BAKALARKA/permutator/tuning_setups/tuning_CVRP/target-runner
+## /mnt/c/Users/pazou/Documents/CVUT/BAKALARKA/permutator/tuning_setups/tuning_CVRP_ASCHEA/target-runner
 targetRunner = "./target-runner"
 
 ## An executable that will be used to launch the target runner, when

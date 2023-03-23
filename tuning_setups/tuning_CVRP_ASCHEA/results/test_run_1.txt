@@ -1,0 +1,83 @@
+#------------------------------------------------------------------------------
+# irace: An implementation in R of (Elitist) Iterated Racing
+# Version: 3.4.1.9fcaeaf
+# Copyright (C) 2010-2020
+# Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+# Jeremie Dubois-Lacoste  
+# Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+#
+# This is free software, and you are welcome to redistribute it under certain
+# conditions.  See the GNU General Public License for details. There is NO
+# WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# irace builds upon previous code from the race package:
+#     race: Racing methods for the selection of the best
+#     Copyright (C) 2003 Mauro Birattari
+#------------------------------------------------------------------------------
+# installed at: /usr/local/lib/R/site-library/irace
+# called with: 
+Warning: A default scenario file './scenario.txt' has been found and will be read
+# 2 expression(s) specifying forbidden configurations read from '/root/Projects/permutator/tuning/forbidden.txt'
+# 2022-06-03 13:12:40 CEST: Initialization
+# Elitist race
+# Elitist new instances: 1
+# Elitist limit: 2
+# nbIterations: 7
+# minNbSurvival: 7
+# nbParameters: 47
+# seed: 1685949127
+# confidence level: 0.95
+# budget: 1000
+# mu: 5
+# deterministic: FALSE
+
+# 2022-06-03 13:12:40 CEST: Iteration 1 of 7
+# experimentsUsedSoFar: 0
+# remainingBudget: 1000
+# currentBudget: 142
+# nbConfigurations: 23
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Error : == irace == The output of targetRunner should not be more than two numbers!
+== irace == The call to targetRunner was:
+/root/Projects/permutator/tuning/target-runner 4 1 1368397873 /root/Projects/permutator/data/CVRP-10/A-n65-k09.xml timeout 600   metaheuristic ILS ils_k 7 construction random perturbation randomDoubleBridge allow_infeasible 1 local_search PVND op_insert_1 0 op_remove_1 1 op_twoOpt 0 op_exchangeIds 0 op_exchangeNIds 1 op_exchange_1_1 1 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 1 op_exchange_2_4 0 op_exchange_3_3 1 op_exchange_3_4 0 op_exchange_4_4 1 op_revExchange_1_2 1 op_revExchange_2_2 1 op_revExchange_2_3 0 op_revExchange_2_4 0 op_revExchange_3_3 0 op_revExchange_3_4 1 op_revExchange_4_4 0 op_centExchange_1 0 op_centExchange_2 1 op_centExchange_3 1 op_centExchange_4 1 op_centExchange_5 1 op_relocate_1 1 op_relocate_2 1 op_relocate_3 0 op_relocate_4 0 op_relocate_5 0 op_revRelocate_2 1 op_revRelocate_3 1 op_revRelocate_4 1 op_revRelocate_5 0 op_moveAll_1 1 op_moveAll_2 1 op_moveAll_3 0 op_moveAll_4 1 op_moveAll_10 1
+== irace == The output was:
+/root/Projects/permutator/tuning/target-runner: line 53:  5135 Segmentation fault      (core dumped) $EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE > ${STDOUT} 2> ${STDERR}
+
+== irace == This is not a bug in irace, but means that something failed when running the command(s) above or they were terminated before completion. Try to run the command(s) above from the execution directory '/root/Projects/permutator/tuning' to investigate the issue. See also Appendix B (targetRunner troubleshooting checklist) of the User Guide (https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).
+ Error : == irace == The output of targetRunner should not be more than two numbers!
+== irace == The call to targetRunner was:
+/root/Projects/permutator/tuning/target-runner 20 1 1368397873 /root/Projects/permutator/data/CVRP-10/A-n65-k09.xml timeout 600   metaheuristic ILS ils_k 4 construction randomReplicate perturbation randomMoveAll allow_infeasible 1 local_search PVND op_insert_1 0 op_remove_1 1 op_twoOpt 0 op_exchangeIds 0 op_exchangeNIds 0 op_exchange_1_1 0 op_exchange_1_2 1 op_exchange_2_2 1 op_exchange_2_3 1 op_exchange_2_4 1 op_exchange_3_3 1 op_exchange_3_4 1 op_exchange_4_4 0 op_revExchange_1_2 0 op_revExchange_2_2 1 op_revExchange_2_3 0 op_revExchange_2_4 1 op_revExchange_3_3 1 op_revExchange_3_4 0 op_revExchange_4_4 0 op_centExchange_1 1 op_centExchange_2 1 op_centExchange_3 1 op_centExchange_4 0 op_centExchange_5 0 op_relocate_1 0 op_relocate_2 0 op_relocate_3 0 op_relocate_4 1 op_relocate_5 1 op_revRelocate_2 1 op_revRelocate_3 0 op_revRelocate_4 0 op_revRelocate_5 0 op_moveAll_1 1 op_moveAll_2 0 op_moveAll_3 1 op_moveAll_4 0 op_moveAll_10 1
+== irace == The output was:
+/root/Projects/permutator/tuning/target-runner: line 53:  6717 Segmentation fault      (core dumped) $EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE > ${STDOUT} 2> ${STDERR}
+
+== irace == This is not a bug in irace, but means that something failed when running the command(s) above or they were terminated before completion. Try to run the command(s) above from the execution directory '/root/Projects/permutator/tuning' to investigate the issue. See also Appendix B (targetRunner troubleshooting checklist) of the User Guide (https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).
+ Error : == irace == The output of targetRunner should not be more than two numbers!
+== irace == The call to targetRunner was:
+/root/Projects/permutator/tuning/target-runner 21 1 1368397873 /root/Projects/permutator/data/CVRP-10/A-n65-k09.xml timeout 600   metaheuristic ILS ils_k 1 construction randomReplicate perturbation reinsert allow_infeasible 0 local_search PVND op_insert_1 0 op_remove_1 1 op_twoOpt 1 op_exchangeIds 1 op_exchangeNIds 1 op_exchange_1_1 0 op_exchange_1_2 1 op_exchange_2_2 0 op_exchange_2_3 1 op_exchange_2_4 1 op_exchange_3_3 1 op_exchange_3_4 1 op_exchange_4_4 1 op_revExchange_1_2 0 op_revExchange_2_2 1 op_revExchange_2_3 1 op_revExchange_2_4 1 op_revExchange_3_3 0 op_revExchange_3_4 1 op_revExchange_4_4 1 op_centExchange_1 1 op_centExchange_2 0 op_centExchange_3 1 op_centExchange_4 0 op_centExchange_5 0 op_relocate_1 0 op_relocate_2 0 op_relocate_3 0 op_relocate_4 0 op_relocate_5 1 op_revRelocate_2 1 op_revRelocate_3 1 op_revRelocate_4 0 op_revRelocate_5 1 op_moveAll_1 0 op_moveAll_2 0 op_moveAll_3 1 op_moveAll_4 1 op_moveAll_10 0
+== irace == The output was:
+/root/Projects/permutator/tuning/target-runner: line 53:  6728 Segmentation fault      (core dumped) $EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE > ${STDOUT} 2> ${STDERR}
+
+== irace == This is not a bug in irace, but means that something failed when running the command(s) above or they were terminated before completion. Try to run the command(s) above from the execution directory '/root/Projects/permutator/tuning' to investigate the issue. See also Appendix B (targetRunner troubleshooting checklist) of the User Guide (https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).
+ Error : == irace == The output of targetRunner should not be more than two numbers!
+== irace == The call to targetRunner was:
+/root/Projects/permutator/tuning/target-runner 22 1 1368397873 /root/Projects/permutator/data/CVRP-10/A-n65-k09.xml timeout 600   metaheuristic ILS ils_k 8 construction greedy perturbation randomDoubleBridge allow_infeasible 0 local_search RPVNP op_insert_1 1 op_remove_1 1 op_twoOpt 1 op_exchangeIds 1 op_exchangeNIds 1 op_exchange_1_1 1 op_exchange_1_2 0 op_exchange_2_2 0 op_exchange_2_3 1 op_exchange_2_4 1 op_exchange_3_3 0 op_exchange_3_4 0 op_exchange_4_4 1 op_revExchange_1_2 1 op_revExchange_2_2 0 op_revExchange_2_3 1 op_revExchange_2_4 1 op_revExchange_3_3 0 op_revExchange_3_4 1 op_revExchange_4_4 0 op_centExchange_1 1 op_centExchange_2 0 op_centExchange_3 0 op_centExchange_4 0 op_centExchange_5 1 op_relocate_1 1 op_relocate_2 0 op_relocate_3 1 op_relocate_4 0 op_relocate_5 1 op_revRelocate_2 1 op_revRelocate_3 0 op_revRelocate_4 0 op_revRelocate_5 1 op_moveAll_1 1 op_moveAll_2 1 op_moveAll_3 0 op_moveAll_4 1 op_moveAll_10 0
+== irace == The output was:
+/root/Projects/permutator/tuning/target-runner: line 53:  6739 Aborted                 (core dumped) $EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE > ${STDOUT} 2> ${STDERR}
+
+== irace == This is not a bug in irace, but means that something failed when running the command(s) above or they were terminated before completion. Try to run the command(s) above from the execution directory '/root/Projects/permutator/tuning' to investigate the issue. See also Appendix B (targetRunner troubleshooting checklist) of the User Guide (https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).
+Error: == irace == A child process triggered a fatal error
+In addition: Warning message:
+In parallel::mclapply(experiments, exec.target.runner, mc.preschedule = !scenario$loadBalancing,  :
+  4 function calls resulted in an error
+Execution halted
+
