@@ -20,7 +20,7 @@ class Population
         std::vector<Solution> prevSolutions;
         uint penalty_func_cnt;        
         fitness_t penaltyLimit;
-        std::vector<double> penalty_coefficients;
+        std::vector<double> penalty_coefficients = {};
         std::vector<double> t_t;
         double t_target = 0.5;
 

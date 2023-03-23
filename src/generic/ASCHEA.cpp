@@ -39,8 +39,7 @@ void ASCHEA::run()
     this->start = std::chrono::steady_clock::now();
     this->construction();
     this->population->initPenaltyCoefs();
-    this->population->print();
-    exit(0);
+
     uint gen = 0;
     while (!this->stop())
     {
@@ -53,7 +52,13 @@ void ASCHEA::run()
         this->crossover(parents, children);
         this->mutation(children);
         this->replacement(children); 
+        
         this->population->update();
+        // not penalized fitness because different populations have different penalty coefs
+        if ( this->population->best_known_solution.fitness < this->best_known_solution.fitness){
+            this->best_known_solution = this->population->best_known_solution;
+            this->best_population = this->population;
+        }
         gen++;
     }
 
@@ -106,6 +111,16 @@ void ASCHEA::constructRandomReplicate()
 
 void ASCHEA::constructGreedy()
 {
+    // init of penalty coefs (if they dont exist) based on one random solution
+    if (this->population->get_penalty_coefficients().size() == 0 ){
+        Solution sol(this->instance->node_cnt);
+        construct::randomReplicate(sol.permutation, sol.frequency, this->instance->lbs, this->instance->ubs, this->rng);
+        sol.is_feasible = this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
+        this->population->append(sol);
+        this->population->initPenaltyCoefs();
+        this->population->clear();
+    }
+
     while (this->population->getSize() < this->population->size && !this->stop())
     {
         // random starting point solution
@@ -146,6 +161,16 @@ void ASCHEA::constructGreedy()
 
 void ASCHEA::constructNearestNeighbor()
 {
+    // init of penalty coefs (if they dont exist) based on one random solution
+    if (this->population->get_penalty_coefficients().size() == 0 ){
+        Solution sol(this->instance->node_cnt);
+        construct::randomReplicate(sol.permutation, sol.frequency, this->instance->lbs, this->instance->ubs, this->rng);
+        sol.is_feasible = this->instance->computeFitness(sol.permutation, sol.fitness, sol.penalties);
+        this->population->append(sol);
+        this->population->initPenaltyCoefs();
+        this->population->clear();
+    }
+
     while (this->population->getSize() < this->population->size && !this->stop())
     {
         // random starting point solution
@@ -455,8 +480,7 @@ void ASCHEA::nicheSegregational(vector<Solution> children)
     }
     this->construction();
 
-    this->population->best_known_solution = this->population->solutions[0];
-    this->best_known_solution = this->best_known_solution.fitness <  this->population->solutions[0].fitness ? this->best_known_solution : this->population->solutions[0];
+      
 
     // adaptive niche radius
     if (leaderFollowerBalance > 0)
@@ -516,9 +540,6 @@ void ASCHEA::segregational(vector<Solution> children)
             this->population->append(children[idx]);
 
     this->construction();
-
-    this->population->best_known_solution = this->population->solutions[0];
-    this->best_known_solution = this->best_known_solution.fitness <  this->population->solutions[0].fitness ? this->best_known_solution : this->population->solutions[0];
 }
 
 //**********************************************************************************************************************
@@ -536,7 +557,7 @@ void ASCHEA::setConstruction(const string &constr)
     else if (constr == "greedy")
         this->construction = [this]
         { return this->constructGreedy(); };
-    else if (constr == "NN")
+    else if (constr == "nearestNeighbor")
         this->construction = [this]
         { return this->constructNearestNeighbor(); };
     else

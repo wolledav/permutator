@@ -94,6 +94,7 @@ void Population::update_avg_fitness()
 
 void Population::update()
 {
+    this->best_known_solution = this->solutions[0];
     this->update_avg_fitness();
     this->resetCheck();
     this->update_penalty_coefficients();

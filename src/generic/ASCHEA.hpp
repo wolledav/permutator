@@ -33,6 +33,7 @@ class ASCHEA : public BasicOptimizer
         uint unimproved_cnt;
         Population* population;
         std::vector<Population*> populations = std::vector<Population*>(32, nullptr);
+        Population* best_population;
         std::vector<uint> counter = std::vector<uint>(32, 0);
         double t_select = 0.3;
         std::mt19937 *rng;
