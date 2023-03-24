@@ -47,7 +47,7 @@ class Population
         void clear() {this->solutions.clear();}
         void initPenaltyCoefs();
         void update(); 
-        inline void print() { for (auto solution : this->solutions) solution.print(); std::cout << "popSize: " <<  this->size << " | popGen: " << this->generation << std::endl;};
+        inline void print() { for (int i = solutions.size()-1; i >= 0; i--) solutions[i].print(); std::cout << "popSize: " <<  this->size << " | popGen: " << this->generation << std::endl;}
         std::vector<double> get_penalty_coefficients() {return this->penalty_coefficients;};
         std::vector<double> get_t_t() {return this->t_t;};
         double get_t_target() {return this->t_target;};

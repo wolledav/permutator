@@ -103,6 +103,9 @@ class ASCHEA : public BasicOptimizer
         //crossover
         void insertNode(std::vector<Solution> parents, std::vector<Solution> &children, uint x);
         void ERX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void OX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void CX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void PMX(std::vector<Solution> parents, std::vector<Solution> &children);
 
         //mutation
         void insert(Solution &child);
