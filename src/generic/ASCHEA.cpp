@@ -284,18 +284,31 @@ void ASCHEA::ERX(vector<Solution> parents, vector<Solution> &children)
         vector<uint> perm2 = parents[idx + 1].permutation;
         vector<uint> new_perm(0);
 
-        // LOG("--------------");
-        // parents[idx].print();
-        // parents[idx+1].print();
-
         crossover::ERX(perm1, perm2, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
         children[idx] = Solution(new_perm, *this->instance);
-        // children[idx].print();
 
         new_perm = vector<uint>(0);
         crossover::ERX(perm2, perm1, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
         children[idx + 1] = Solution(new_perm, *this->instance);
-        // children[idx+1].print();
+    }
+}
+
+void ASCHEA::AEX(vector<Solution> parents, vector<Solution> &children)
+{
+    for (uint idx = 0; idx < children.size(); idx += 2)
+    {
+        if (this->stop())
+            return;
+        vector<uint> perm1 = parents[idx].permutation;
+        vector<uint> perm2 = parents[idx + 1].permutation;
+        vector<uint> new_perm(0);
+
+        crossover::AEX(perm1, perm2, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
+        children[idx] = Solution(new_perm, *this->instance);
+
+        new_perm = vector<uint>(0);
+        crossover::AEX(perm2, perm1, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
+        children[idx + 1] = Solution(new_perm, *this->instance);
     }
 }
 
@@ -327,19 +340,12 @@ void ASCHEA::CX(std::vector<Solution> parents, std::vector<Solution> &children)
         vector<uint> perm2 = parents[idx + 1].permutation;
         vector<uint> new_perm(0);
 
-        // LOG("--------------");
-        // parents[idx].print();
-        // parents[idx+1].print();
-
         crossover::CX(perm1, perm2, new_perm, this->instance->node_cnt, this->rng);
         children[idx] = Solution(new_perm, *this->instance);
-        // children[idx].print();
 
         new_perm = vector<uint>(0);
         crossover::CX(perm2, perm1, new_perm, this->instance->node_cnt, this->rng);
         children[idx + 1] = Solution(new_perm, *this->instance);
-        // children[idx+1].print();
-        // exit(0);
     }
 }
 void ASCHEA::PMX(std::vector<Solution> parents, std::vector<Solution> &children)
@@ -668,6 +674,9 @@ void ASCHEA::setCrossover(const string &constr)
     else if (constr == "ERX")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->ERX(parents, children); };
+    else if (constr == "AEX")
+        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
+        { return this->AEX(parents, children); };
     else if (constr == "OX")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->OX(parents, children); };

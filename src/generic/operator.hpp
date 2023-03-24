@@ -55,6 +55,8 @@ namespace crossover
 
     void ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
 
+    void AEX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
+
     void OX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
 
     void CX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint nodeCnt, std::mt19937 *rng);

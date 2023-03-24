@@ -343,6 +343,61 @@ void crossover::ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::v
     }
 }
 
+void crossover::AEX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng)
+{
+    child.clear();
+    uint node_cnt = lbs.size();
+    vector<uint> freq(node_cnt, 0);
+
+    std::unordered_map<uint, vector<uint>> parent1Map;
+    std::unordered_map<uint, vector<uint>> parent2Map;
+    for (uint node = 0; node < node_cnt; node++){
+        parent1Map[node] = {};
+        parent2Map[node] = {};
+    }
+
+    for (uint i = 0; i < parent1.size() - 1; i++)
+        parent1Map.at(parent1[i]).push_back(parent1[i + 1]);
+    for (uint i = 0; i < parent2.size() - 1; i++)
+        parent2Map.at(parent2[i]).push_back(parent2[i + 1]);
+    
+    uint temp = 0;
+    std::unordered_map<uint, vector<uint>>* neighborMap;
+    child.push_back(parent1[0]);
+    freq[parent1[0]] += 1;
+
+    while (true)
+    {
+        neighborMap = temp++%2 == 0 ? &parent1Map : &parent2Map;
+        uint current = child.back();
+        vector<uint> neighbors = neighborMap->at(current);
+        vector<uint> possibleNext(0);
+
+        // check if any neighbor can be inserted
+        for (auto node : neighbors)
+            if (freq[node] < ubs[node])
+                possibleNext.push_back(node);
+        // if not insert node bellow lbs
+        if (possibleNext.empty())
+            for (uint node = 0; node < node_cnt; node++)
+                if (freq[node] < lbs[node])
+                    possibleNext.push_back(node);
+        // no node bellow lbs -> can break    
+        if (possibleNext.size() == 0)
+            break;
+
+        std::uniform_int_distribution<uint> randNode(0, possibleNext.size() - 1);
+        uint next = possibleNext[randNode(*rng)];
+        child.push_back(next);
+        freq[next] += 1;
+
+        // erase edge from current
+        auto it = find(neighborMap->at(current).begin(), neighborMap->at(current).end(), next);
+        if (it != neighborMap->at(current).end())
+            neighborMap->at(current).erase(it);
+    }
+}
+
 void crossover::OX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng)
 {
     std::uniform_int_distribution<uint> randPosition(0, parent1.size());
