@@ -61,7 +61,17 @@ namespace crossover
 
     void CX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint nodeCnt, std::mt19937 *rng);
 
-    void PMX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> freq1, std::vector<uint> freq2, std::mt19937 *rng);
+    void HXHelper(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<uint(std::vector<uint>, std::vector<uint>)> getNextNode, std::mt19937 *rng);
+
+    void HGreX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng);
+
+    void HRndX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng);
+    
+    void HProX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng);
+
+
+
+    // void PMX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> freq1, std::vector<uint> freq2, std::mt19937 *rng);
 }
 
 namespace replacement

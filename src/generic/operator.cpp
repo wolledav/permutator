@@ -1,11 +1,11 @@
 
 #include "operator.hpp"
 
-using std::vector;
 using std::queue;
+using std::abort;
 
 // inserts 'node' at 'position'
-void oprtr::insert(std::vector<uint> &permutation, std::vector<uint> &frequency, std::vector<uint> upperBounds, uint node, uint position)
+void oprtr::insert(vector<uint> &permutation, vector<uint> &frequency, vector<uint> upperBounds, uint node, uint position)
 {
     if (frequency[node] < upperBounds[node] && position <= permutation.size())
     {
@@ -15,7 +15,7 @@ void oprtr::insert(std::vector<uint> &permutation, std::vector<uint> &frequency,
 }
 
 // appends 'node' at the end of 'permutation'
-void oprtr::append(std::vector<uint> &permutation, std::vector<uint> &frequency, std::vector<uint> upperBounds, uint node)
+void oprtr::append(vector<uint> &permutation, vector<uint> &frequency, vector<uint> upperBounds, uint node)
 {
     if (frequency[node] < upperBounds[node])
     {
@@ -25,7 +25,7 @@ void oprtr::append(std::vector<uint> &permutation, std::vector<uint> &frequency,
 }
 
 // removes 'node' at 'position'
-void oprtr::remove(std::vector<uint> &permutation, std::vector<uint> &frequency, std::vector<uint> lowerBounds, uint position)
+void oprtr::remove(vector<uint> &permutation, vector<uint> &frequency, vector<uint> lowerBounds, uint position)
 {
     if (position < permutation.size() && frequency[permutation[position]] > lowerBounds[permutation[position]])
     {
@@ -36,7 +36,7 @@ void oprtr::remove(std::vector<uint> &permutation, std::vector<uint> &frequency,
 
 // moves subsequence starting at 'from' of length 'length' to 'to', reverses subsequence if reverse==true
 // relocate([1,2,3,4], 1, 2, 2, false) -> [1,4,2,3]
-void oprtr::relocate(std::vector<uint> &permutation, uint from, uint to, uint length, bool reverse)
+void oprtr::relocate(vector<uint> &permutation, uint from, uint to, uint length, bool reverse)
 {
     if (from + length > permutation.size() || to > permutation.size() - length)
         return;
@@ -54,7 +54,7 @@ void oprtr::relocate(std::vector<uint> &permutation, uint from, uint to, uint le
 
 // swaps nodes 'radius' distance from 'center'
 // centeredExchange([1,2,3,4], 2, 1) -> [1,4,3,2]
-void oprtr::centeredExchange(std::vector<uint> &permutation, uint center, uint radius)
+void oprtr::centeredExchange(vector<uint> &permutation, uint center, uint radius)
 {
 
     uint position = center - radius;
@@ -62,7 +62,7 @@ void oprtr::centeredExchange(std::vector<uint> &permutation, uint center, uint r
 }
 
 // swaps subsequences at 'posX' and 'posY', lengths of subsequences are 'sizeX' and 'sizeY', reverses subsequences if reverse==true
-void oprtr::exchange(std::vector<uint> &permutation, uint posX, uint posY, uint sizeX, uint sizeY, bool reverse)
+void oprtr::exchange(vector<uint> &permutation, uint posX, uint posY, uint sizeX, uint sizeY, bool reverse)
 {
 
     if ((posX >= posY && posX < posY + sizeY) || (posY >= posX && posY < posX + sizeX))
@@ -96,13 +96,13 @@ void oprtr::exchange(std::vector<uint> &permutation, uint posX, uint posY, uint 
 }
 
 // moves all occurrences of 'node' by 'offset', positions of nodes may by predefined beforehand (unexpected behavior if nodes are not not predefined positions)
-void oprtr::moveAll(std::vector<uint> &permutation, uint node, int offset, std::vector<uint> *positions)
+void oprtr::moveAll(vector<uint> &permutation, uint node, int offset, vector<uint> *positions)
 {
 
     if (offset == 0)
         return;
 
-    std::vector<uint> *new_positions = positions == nullptr ? new vector<uint>(0) : positions;
+    vector<uint> *new_positions = positions == nullptr ? new vector<uint>(0) : positions;
     if (positions == nullptr)
     {
         for (uint i = 0; i < permutation.size(); i++)
@@ -127,7 +127,7 @@ void oprtr::moveAll(std::vector<uint> &permutation, uint node, int offset, std::
 
 // swaps all occurrences of 'nodeX' and 'nodeY', if frequencies are in bounds
 // exchangeIds([1,2,3,1,2,1], freq, lbs, ubs, 1, 2) -> [2,1,3,2,1,2]
-void oprtr::exchangeIds(std::vector<uint> &permutation, std::vector<uint> &frequency, std::vector<uint> lowerBounds, std::vector<uint> upperBounds, uint nodeX, uint nodeY)
+void oprtr::exchangeIds(vector<uint> &permutation, vector<uint> &frequency, vector<uint> lowerBounds, vector<uint> upperBounds, uint nodeX, uint nodeY)
 {
     if (frequency[nodeX] < lowerBounds[nodeY] || frequency[nodeY] < lowerBounds[nodeX] ||
         frequency[nodeX] > upperBounds[nodeY] || frequency[nodeY] > upperBounds[nodeX])
@@ -151,7 +151,7 @@ void oprtr::exchangeIds(std::vector<uint> &permutation, std::vector<uint> &frequ
 }
 // swaps first 'maxSwap' occurrences of 'nodeX' and 'nodeY', if frequencies are in bounds
 // exchangeIds([1,2,3,1,2,1], freq, lbs, ubs, 1, 2, 2) -> [2,1,3,2,1,1]
-void oprtr::exchangeNIds(std::vector<uint> &permutation, std::vector<uint> &frequency, std::vector<uint> lowerBounds, std::vector<uint> upperBounds, uint nodeX, uint nodeY, uint maxSwap)
+void oprtr::exchangeNIds(vector<uint> &permutation, vector<uint> &frequency, vector<uint> lowerBounds, vector<uint> upperBounds, uint nodeX, uint nodeY, uint maxSwap)
 {
     if (frequency[nodeX] < lowerBounds[nodeY] || frequency[nodeY] < lowerBounds[nodeX] ||
         maxSwap < lowerBounds[nodeX] || maxSwap < lowerBounds[nodeY] ||
@@ -180,14 +180,14 @@ void oprtr::exchangeNIds(std::vector<uint> &permutation, std::vector<uint> &freq
 }
 
 // reverses subsequence starting at 'position' of length 'length'
-void oprtr::reverse(std::vector<uint> &permutation, uint position, uint length)
+void oprtr::reverse(vector<uint> &permutation, uint position, uint length)
 {
     if (position + length > permutation.size())
         return;
     reverse(permutation.begin() + position, permutation.begin() + position + length);
 }
 
-void construct::random(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, std::mt19937 *rng)
+void construct::random(vector<uint> &permutation, vector<uint> &frequency, vector<uint> lbs, std::mt19937 *rng)
 {
 
     uint rnd_idx;
@@ -205,7 +205,7 @@ void construct::random(std::vector<uint> &permutation, std::vector<uint> &freque
     }
 }
 
-void construct::randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng)
+void construct::randomReplicate(vector<uint> &permutation, vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng)
 {
 
     uint node_cnt = frequency.size();
@@ -261,7 +261,7 @@ void construct::randomReplicate(std::vector<uint> &permutation, std::vector<uint
     } while (!inBounds(frequency));
 }
 
-void crossover::insertNode(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> nodes)
+void crossover::insertNode(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> nodes)
 {
     child = parent1;
 
@@ -282,7 +282,7 @@ void crossover::insertNode(std::vector<uint> parent1, std::vector<uint> parent2,
     }
 }
 
-void crossover::ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng)
+void crossover::ERX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng)
 {
     child.clear();
     uint node_cnt = lbs.size();
@@ -323,7 +323,7 @@ void crossover::ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::v
             for (uint node = 0; node < node_cnt; node++)
                 if (freq[node] < lbs[node])
                     possibleNext.push_back(node);
-        // no node bellow lbs -> can break    
+        // no node bellow lbs -> can break
         if (possibleNext.size() == 0)
             break;
 
@@ -343,7 +343,7 @@ void crossover::ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::v
     }
 }
 
-void crossover::AEX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng)
+void crossover::AEX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng)
 {
     child.clear();
     uint node_cnt = lbs.size();
@@ -351,7 +351,8 @@ void crossover::AEX(std::vector<uint> parent1, std::vector<uint> parent2, std::v
 
     std::unordered_map<uint, vector<uint>> parent1Map;
     std::unordered_map<uint, vector<uint>> parent2Map;
-    for (uint node = 0; node < node_cnt; node++){
+    for (uint node = 0; node < node_cnt; node++)
+    {
         parent1Map[node] = {};
         parent2Map[node] = {};
     }
@@ -360,51 +361,66 @@ void crossover::AEX(std::vector<uint> parent1, std::vector<uint> parent2, std::v
         parent1Map.at(parent1[i]).push_back(parent1[i + 1]);
     for (uint i = 0; i < parent2.size() - 1; i++)
         parent2Map.at(parent2[i]).push_back(parent2[i + 1]);
-    
+
     uint temp = 0;
-    std::unordered_map<uint, vector<uint>>* neighborMap;
+    std::unordered_map<uint, vector<uint>> *neighborMap;
     child.push_back(parent1[0]);
     freq[parent1[0]] += 1;
 
     while (true)
     {
-        neighborMap = temp++%2 == 0 ? &parent1Map : &parent2Map;
+        neighborMap = temp++ % 2 == 0 ? &parent1Map : &parent2Map;
         uint current = child.back();
         vector<uint> neighbors = neighborMap->at(current);
         vector<uint> possibleNext(0);
 
         // check if any neighbor can be inserted
         for (auto node : neighbors)
+            // first feasible node is selected
             if (freq[node] < ubs[node])
+            {
                 possibleNext.push_back(node);
+                break;
+            }
         // if not insert node bellow lbs
         if (possibleNext.empty())
             for (uint node = 0; node < node_cnt; node++)
                 if (freq[node] < lbs[node])
                     possibleNext.push_back(node);
-        // no node bellow lbs -> can break    
-        if (possibleNext.size() == 0)
-            break;
 
-        std::uniform_int_distribution<uint> randNode(0, possibleNext.size() - 1);
-        uint next = possibleNext[randNode(*rng)];
+        uint next;
+        // no node bellow lbs -> can break
+        if (possibleNext.size() == 0)
+        {
+            break;
+        }
+        // first feasible node is selected
+        else if (possibleNext.size() == 1)
+        {
+            next = possibleNext[0];
+            // erase edge from current
+            auto it = find(neighborMap->at(current).begin(), neighborMap->at(current).end(), next);
+            if (it != neighborMap->at(current).end())
+                neighborMap->at(current).erase(it);
+        }
+        else
+        {
+            std::uniform_int_distribution<uint> randNode(0, possibleNext.size() - 1);
+            next = possibleNext[randNode(*rng)];
+        }
         child.push_back(next);
         freq[next] += 1;
-
-        // erase edge from current
-        auto it = find(neighborMap->at(current).begin(), neighborMap->at(current).end(), next);
-        if (it != neighborMap->at(current).end())
-            neighborMap->at(current).erase(it);
     }
 }
 
-void crossover::OX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng)
+void crossover::OX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng)
 {
     std::uniform_int_distribution<uint> randPosition(0, parent1.size());
     std::uniform_real_distribution<> randNorm(0, 1);
     uint idx1, idx2;
-    
-    do {
+
+    do
+    {
         idx1 = randPosition(*rng);
         idx2 = randPosition(*rng);
     } while (idx1 >= idx2);
@@ -421,9 +437,11 @@ void crossover::OX(std::vector<uint> parent1, std::vector<uint> parent2, std::ve
     std::shuffle(randIdxs.begin(), randIdxs.end(), *rng);
 
     vector<uint> remove(0);
-    for (auto idx : randIdxs){
+    for (auto idx : randIdxs)
+    {
         uint node = child[idx];
-        if (core_frequency[node] > 0){
+        if (core_frequency[node] > 0)
+        {
             remove.push_back(idx);
             core_frequency[node]--;
         }
@@ -436,36 +454,42 @@ void crossover::OX(std::vector<uint> parent1, std::vector<uint> parent2, std::ve
     child.insert(child.begin() + start, core.begin(), core.end());
 }
 
-void crossover::CX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint nodeCnt, std::mt19937 *rng)
+
+void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint nodeCnt, std::mt19937 *rng)
 {
     const uint invalid = nodeCnt;
-    while (parent1.size() < parent2.size()){
+    while (parent1.size() < parent2.size())
+    {
         parent1.push_back(invalid);
-    } 
-    while (parent2.size() < parent1.size()){
+    }
+    while (parent2.size() < parent1.size())
+    {
         parent2.push_back(invalid);
     }
 
     std::unordered_map<uint, vector<uint>> nodeMap;
-    for (uint i = 0; i <= nodeCnt; i++) nodeMap[i] = {};
+    for (uint i = 0; i <= nodeCnt; i++)
+        nodeMap[i] = {}; 
     for (uint i = 0; i < parent1.size(); i++)
         nodeMap.at(parent1[i]).push_back(i);
-    
+
     child = vector<uint>(parent1.size(), invalid);
     uint node = parent1[0];
     queue<uint> toInsert;
     toInsert.push(node);
-    
-    while (toInsert.size() > 0){
+
+    while (toInsert.size() > 0)
+    {
         node = toInsert.front();
         toInsert.pop();
-        for (auto i : nodeMap.at(node)){
+        for (auto i : nodeMap.at(node))
+        {
             child[i] = node;
             toInsert.push(parent2[i]);
         }
-        nodeMap.at(node) = {};    
+        nodeMap.at(node) = {};
     }
-    
+
     for (uint i = 0; i < child.size(); i++)
         if (child[i] == invalid)
             child[i] = parent2[i];
@@ -474,63 +498,192 @@ void crossover::CX(std::vector<uint> parent1, std::vector<uint> parent2, std::ve
     child.erase(end, child.end());
 }
 
-void crossover::PMX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> freq1, std::vector<uint> freq2, std::mt19937 *rng)
+
+void crossover::HGreX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<permutator::fitness_t(vector<uint>)> getFitness, std::mt19937 *rng)
 {
-    if (freq1 != freq2){
-        child = parent1; 
-        return;
-    }
-    std::uniform_int_distribution<uint> randPosition(0, parent1.size());
-    uint start, end;
-    do {
-        start = randPosition(*rng);
-        end = randPosition(*rng);
-    } while (start >= end);
+    std::function<uint(vector<uint>, vector<uint>)> f = [getFitness](vector<uint> permutation, vector<uint> feasibleNext)->uint
+    {
+        fitness_t bestFitness = UINT_MAX;
+        uint bestNode;
 
-    LOG(start);
-    LOG(end);
-
-    vector<uint> core1(parent1.begin()+ start, parent1.begin() + end);
-    vector<uint> core2(parent2.begin()+ start, parent2.begin() + end);
-    
-    child = parent2;
-    vector<uint> randIdxs(child.size());
-    std::iota(randIdxs.begin(), randIdxs.end(), 0);
-    randIdxs.erase(randIdxs.begin() + start, randIdxs.begin() + end);
-    std::shuffle(randIdxs.begin(), randIdxs.end(), *rng);
-    
-    std::unordered_map<uint, vector<uint>> partialMap;
-    for (uint i = 0; i < freq1.size(); i++) partialMap[i] = {};
-    for (uint i = 0; i < core1.size(); i++){
-        partialMap.at(core1[i]).push_back(core2[i]);
-        child[start + i] =  core1[i];
-    }
-
-
-    std::map<uint, vector<uint>> inserts;
-    for (auto idx : randIdxs){
-        auto node = child[idx];
-        if (partialMap.at(node).size() == 0) continue;
-        
-        inserts[idx] = partialMap.at(node);
-        partialMap.at(node) = {};
-        uint i = 0;
-        
-        while (i < inserts.at(idx).size()){    
-            node =  inserts.at(idx)[i];
-            inserts.at(idx).insert(inserts.at(idx).end(), partialMap.at(node).begin(), partialMap.at(node).end());
-            if (partialMap.at(node).size() > 0)
-                inserts.at(idx).erase(inserts.at(idx).begin() + i);
-            else
-                i++;
-            partialMap.at(node) = {};
+        for (auto node : feasibleNext)
+        {
+            permutation.push_back(node);
+            fitness_t fitness = getFitness(permutation);
+            if (fitness < bestFitness)
+            {
+                bestFitness = fitness;
+                bestNode = node;
+            }
+            permutation.erase(permutation.end() - 1);
         }
-    }
-    LOG("--");
-    for (auto [index, values] : inserts){
-        LOG(index);
-        child.erase(child.begin() + index);
-        child.insert(child.begin() + index, values.begin(), values.end());
-    }
-    LOG("--");
+        return bestNode;
+    };
+
+    crossover::HXHelper(parent1, parent2, child, lbs, ubs, f, rng);
 }
+
+void crossover::HRndX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<permutator::fitness_t(vector<uint>)> getFitness, std::mt19937 *rng)
+{
+    std::function<uint(vector<uint>, vector<uint>)> f = [rng](vector<uint> permutation, vector<uint> feasibleNext)->uint
+    {
+        std::uniform_int_distribution<uint> randNode(0, feasibleNext.size() - 1);
+        return feasibleNext[randNode(*rng)];
+    };
+
+    crossover::HXHelper(parent1, parent2, child, lbs, ubs, f, rng);
+}
+
+void crossover::HProX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<permutator::fitness_t(vector<uint>)> getFitness, std::mt19937 *rng)
+{
+    std::function<uint(vector<uint>, vector<uint>)> f = [getFitness, rng](vector<uint> permutation, vector<uint> feasibleNext)->uint
+    {
+        vector<double> probabilities = {};
+        double min = INFINITY;
+
+        for (auto node : feasibleNext)
+        {
+            permutation.push_back(node);
+            double fitness = getFitness(permutation);
+            probabilities.push_back(fitness);
+            if (fitness < min)
+                min = fitness;
+            permutation.erase(permutation.end() - 1);
+        }
+
+        double sum = 0;
+        for (auto &p : probabilities)
+        {
+            p = min/p;
+            sum += p;
+        }
+
+        std::uniform_real_distribution<> randNum(0, sum);
+        double rand = randNum(*rng);
+        uint i = 0;
+        for (; i < probabilities.size(); i++)
+        {
+            rand -= probabilities[i];
+            if (rand < 0)
+                break;
+        }
+        return feasibleNext[i];
+    };
+
+    crossover::HXHelper(parent1, parent2, child, lbs, ubs, f, rng);
+}
+
+void crossover::HXHelper(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<uint(vector<uint>, vector<uint>)> getNextNode, std::mt19937 *rng)
+{
+    child.clear();
+    uint node_cnt = lbs.size();
+    vector<uint> freq(node_cnt, 0);
+
+    std::unordered_map<uint, vector<uint>> nextMap;
+    for (uint i = 0; i < node_cnt; i++)
+        nextMap[i] = {};
+    for (uint i = 0; i < parent1.size(); i++)
+        nextMap.at(parent1[i]).push_back(parent1[(i + 1)%parent1.size()]);
+    for (uint i = 0; i < parent2.size(); i++)
+        nextMap.at(parent2[i]).push_back(parent2[(i + 1)%parent2.size()]);
+
+    std::uniform_int_distribution<uint> randPosition(0, parent1.size() - 1);
+    child.push_back(parent1[randPosition(*rng)]);
+    freq[child.back()] += 1;
+
+    while (true)
+    {
+        uint current = child.back();
+        vector<uint> feasibleNext(0);
+
+        // check if any neighbor can be inserted
+        for (auto node : nextMap.at(current))
+            if (freq[node] < ubs[node])
+                feasibleNext.push_back(node);
+        // if not insert node bellow lbs
+        if (feasibleNext.empty())
+            for (uint node = 0; node < node_cnt; node++)
+                if (freq[node] < lbs[node])
+                    feasibleNext.push_back(node);
+        // no node bellow lbs -> can break
+        if (feasibleNext.size() == 0)
+            break;
+
+        uint next = getNextNode(child, feasibleNext);
+        child.push_back(next);
+        freq[next] += 1;
+
+        // erase edge from current
+        auto it = find(nextMap.at(current).begin(), nextMap.at(current).end(), next);
+        if (it != nextMap.at(current).end())
+            nextMap.at(current).erase(it);
+    }
+}
+
+// void crossover::PMX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> freq1, vector<uint> freq2, std::mt19937 *rng)
+// {
+//     if (freq1 != freq2)
+//     {
+//         child = parent1;
+//         return;
+//     }
+//     std::uniform_int_distribution<uint> randPosition(0, parent1.size());
+//     uint start, end;
+//     do
+//     {
+//         start = randPosition(*rng);
+//         end = randPosition(*rng);
+//     } while (start >= end);
+
+//     LOG(start);
+//     LOG(end);
+
+//     vector<uint> core1(parent1.begin() + start, parent1.begin() + end);
+//     vector<uint> core2(parent2.begin() + start, parent2.begin() + end);
+
+//     child = parent2;
+//     vector<uint> randIdxs(child.size());
+//     std::iota(randIdxs.begin(), randIdxs.end(), 0);
+//     randIdxs.erase(randIdxs.begin() + start, randIdxs.begin() + end);
+//     std::shuffle(randIdxs.begin(), randIdxs.end(), *rng);
+
+//     std::unordered_map<uint, vector<uint>> partialMap;
+//     for (uint i = 0; i < freq1.size(); i++)
+//         partialMap[i] = {};
+//     for (uint i = 0; i < core1.size(); i++)
+//     {
+//         partialMap.at(core1[i]).push_back(core2[i]);
+//         child[start + i] = core1[i];
+//     }
+
+//     std::map<uint, vector<uint>> inserts;
+//     for (auto idx : randIdxs)
+//     {
+//         auto node = child[idx];
+//         if (partialMap.at(node).size() == 0)
+//             continue;
+
+//         inserts[idx] = partialMap.at(node);
+//         partialMap.at(node) = {};
+//         uint i = 0;
+
+//         while (i < inserts.at(idx).size())
+//         {
+//             node = inserts.at(idx)[i];
+//             inserts.at(idx).insert(inserts.at(idx).end(), partialMap.at(node).begin(), partialMap.at(node).end());
+//             if (partialMap.at(node).size() > 0)
+//                 inserts.at(idx).erase(inserts.at(idx).begin() + i);
+//             else
+//                 i++;
+//             partialMap.at(node) = {};
+//         }
+//     }
+//     LOG("--");
+//     for (auto [index, values] : inserts)
+//     {
+//         LOG(index);
+//         child.erase(child.begin() + index);
+//         child.insert(child.begin() + index, values.begin(), values.end());
+//     }
+//     LOG("--");
+// }

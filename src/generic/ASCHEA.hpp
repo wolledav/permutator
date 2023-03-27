@@ -106,6 +106,10 @@ class ASCHEA : public BasicOptimizer
         void AEX(std::vector<Solution> parents, std::vector<Solution> &children);
         void OX(std::vector<Solution> parents, std::vector<Solution> &children);
         void CX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void HGreX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void HRndX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void HProX(std::vector<Solution> parents, std::vector<Solution> &children);
+
         void PMX(std::vector<Solution> parents, std::vector<Solution> &children);
 
         //mutation
@@ -130,6 +134,7 @@ class ASCHEA : public BasicOptimizer
         bool stop() override;
         void nichePopulation(std::vector<Solution> population, uint capacity, std::vector<bool> &leaders, std::vector<bool> &followers);
         void changePopulation();
+        fitness_t getFitness(vector<uint> permutation);
 
 
     public:
