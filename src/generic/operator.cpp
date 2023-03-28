@@ -95,34 +95,34 @@ void oprtr::exchange(vector<uint> &permutation, uint posX, uint posY, uint sizeX
     }
 }
 
-// moves all occurrences of 'node' by 'offset', positions of nodes may by predefined beforehand (unexpected behavior if nodes are not not predefined positions)
+// moves all occurrences of 'node' by 'offset', positions of nodes may by predefined beforehand (unexpected behavior if nodes are not in predefined positions)
 void oprtr::moveAll(vector<uint> &permutation, uint node, int offset, vector<uint> *positions)
 {
-
     if (offset == 0)
         return;
 
     vector<uint> *new_positions = positions == nullptr ? new vector<uint>(0) : positions;
     if (positions == nullptr)
     {
-        for (uint i = 0; i < permutation.size(); i++)
+        for (int i = permutation.size()-1; i >= 0; i--){
             if (permutation[i] == node)
-            {
-                (*new_positions).push_back(i);
-            }
+                new_positions->push_back(i);
+        }
+            
     }
-
     for (auto &pos : *new_positions)
     {                                    // for all positions of node_id
         int new_pos = (int)pos + offset; // shift by i
         if (new_pos < 0)
-            new_pos = (int)permutation.size() + new_pos; // too far left -> overflow from right end
-        else if ((uint)new_pos > permutation.size() - 1)
+            new_pos += (int)permutation.size(); // too far left -> overflow from right end
+        else if ((uint)new_pos >= permutation.size() )
             new_pos = new_pos - (int)permutation.size(); // too far right -> overflow from left end
         permutation.erase(permutation.begin() + pos);
-        permutation.insert(permutation.begin() + new_pos, node);
         pos = new_pos;
     }
+    std::sort(new_positions->begin(), new_positions->end());
+    for (auto pos : *new_positions)
+        permutation.insert(permutation.begin() + pos, node);
 }
 
 // swaps all occurrences of 'nodeX' and 'nodeY', if frequencies are in bounds
@@ -261,7 +261,7 @@ void construct::randomReplicate(vector<uint> &permutation, vector<uint> &frequen
     } while (!inBounds(frequency));
 }
 
-void crossover::insertNode(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> nodes)
+void crossover::NBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, std::unordered_set<uint> nodes)
 {
     child = parent1;
 
@@ -274,7 +274,7 @@ void crossover::insertNode(vector<uint> parent1, vector<uint> parent2, vector<ui
     // inserting removed nodes on indexes as in perm 2
     for (uint i = 0; i < parent2.size(); i++)
     {
-        if (std::count(nodes.begin(), nodes.end(), parent2[i]))
+        if (nodes.count(parent2[i]))
         {
             auto it = i < child.size() ? child.begin() + i : child.end();
             child.insert(it, parent2[i]);
@@ -452,6 +452,41 @@ void crossover::OX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
 
     uint start = std::min(idx1, (uint)child.size());
     child.insert(child.begin() + start, core.begin(), core.end());
+}
+
+
+void crossover::OBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> freq1, vector<uint>freq2, std::mt19937 *rng)
+{
+    uint nodeCnt = freq1.size();
+    std::uniform_int_distribution<uint> randNodeRng(0, nodeCnt - 1);
+    uint randNodeCnt = randNodeRng(*rng) + 1;
+    std::unordered_set<uint> nodes = {};
+
+    int freqBalance = 0;
+    while (nodes.size() != randNodeCnt || freqBalance != 0){
+        if (nodes.size() == randNodeCnt){
+            nodes = {};
+            freqBalance = 0;
+            randNodeCnt = randNodeRng(*rng) + 1;
+        }
+        uint node = randNodeRng(*rng);
+
+        if (nodes.insert(node).second) // if insertion took place
+            freqBalance = freqBalance + freq1[node] - freq2[node]; // sum of node frequencies must be same in both parents
+    }
+
+    std::queue<uint> toInsert;
+    for (uint node : parent1)
+        if (nodes.count(node))
+            toInsert.push(node);
+    
+    child = parent2;
+    for (uint &node : child)
+        if (nodes.count(node)){
+            node = toInsert.front();
+            toInsert.pop();
+        }
+    
 }
 
 

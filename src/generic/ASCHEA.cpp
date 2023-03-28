@@ -255,7 +255,7 @@ void ASCHEA::constrainedSortedTournament(vector<Solution> &parents)
 // CROSSOVER
 //**********************************************************************************************************************
 
-void ASCHEA::insertNode(vector<Solution> parents, vector<Solution> &children, uint x)
+void ASCHEA::NBX(vector<Solution> parents, vector<Solution> &children, uint x)
 {
     for (uint idx = 0; idx < children.size(); idx += 2)
     {
@@ -264,17 +264,22 @@ void ASCHEA::insertNode(vector<Solution> parents, vector<Solution> &children, ui
         vector<uint> perm1 = parents[idx].permutation;
         vector<uint> perm2 = parents[idx + 1].permutation;
         vector<uint> new_perm;
-        vector<uint> removed_nodes;
+        std::unordered_set<uint> removed_nodes;
         std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt - 1);
 
         // choosing nodes to be removed from perm1 and perm2
-        for (int i = 0; i < (this->instance->node_cnt * x) / 100; i++)
-            removed_nodes.push_back(uni(*this->rng));
-
-        crossover::insertNode(perm1, perm2, new_perm, removed_nodes);
+        if (x == 101){
+            uint cnt = uni(*this->rng) + 1;
+            while (removed_nodes.size() < cnt) 
+                removed_nodes.insert(uni(*this->rng));
+        } else {
+            while (removed_nodes.size() <  (this->instance->node_cnt * x) / 100)
+                removed_nodes.insert(uni(*this->rng));
+        }
+        crossover::NBX(perm1, perm2, new_perm, removed_nodes);
         children[idx] = Solution(new_perm, *this->instance);
 
-        crossover::insertNode(perm2, perm1, new_perm, removed_nodes);
+        crossover::NBX(perm2, perm1, new_perm, removed_nodes);
         children[idx + 1] = Solution(new_perm, *this->instance);
     }
 }
@@ -336,6 +341,27 @@ void ASCHEA::OX(std::vector<Solution> parents, std::vector<Solution> &children)
     }
 }
 
+void ASCHEA::OBX(std::vector<Solution> parents, std::vector<Solution> &children)
+{
+    for (uint idx = 0; idx < children.size(); idx += 2)
+    {
+        if (this->stop())
+            return;
+        vector<uint> perm1 = parents[idx].permutation;
+        vector<uint> perm2 = parents[idx + 1].permutation;
+        vector<uint> freq1 = parents[idx].frequency;
+        vector<uint> freq2 = parents[idx + 1].frequency;
+        vector<uint> new_perm(0);
+
+        crossover::OBX(perm1, perm2, new_perm, freq1, freq2, this->rng);
+        children[idx] = Solution(new_perm, *this->instance);
+
+        new_perm = vector<uint>(0);
+        crossover::OBX(perm2, perm1, new_perm, freq2, freq1, this->rng);
+        children[idx + 1] = Solution(new_perm, *this->instance);  
+    }
+}
+
 void ASCHEA::CX(std::vector<Solution> parents, std::vector<Solution> &children)
 {
     for (uint idx = 0; idx < children.size(); idx += 2)
@@ -375,11 +401,6 @@ void ASCHEA::HGreX(std::vector<Solution> parents, std::vector<Solution> &childre
         new_perm = vector<uint>(0);
         crossover::HGreX(perm1, perm2, new_perm, this->instance->lbs,this->instance->ubs, f, this->rng);
         children[idx + 1] = Solution(new_perm, *this->instance);
-        // LOG("--------------");
-        // parents[idx].print();
-        // parents[idx+1].print();
-        // children[idx].print();
-        // children[idx+1].print();
     }
 }
 
@@ -397,20 +418,12 @@ void ASCHEA::HRndX(std::vector<Solution> parents, std::vector<Solution> &childre
         vector<uint> perm2 = parents[idx + 1].permutation;
         vector<uint> new_perm(0);
 
-        // LOG("--------------");
-        // parents[idx].print();
-        // parents[idx+1].print();
-
         crossover::HRndX(perm1, perm2, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
         children[idx] = Solution(new_perm, *this->instance);
-
-        // children[idx].print();
 
         new_perm = vector<uint>(0);
         crossover::HRndX(perm1, perm2, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
         children[idx + 1] = Solution(new_perm, *this->instance);        
-        
-        // children[idx+1].print();
     }
 }
 
@@ -434,12 +447,6 @@ void ASCHEA::HProX(std::vector<Solution> parents, std::vector<Solution> &childre
         new_perm = vector<uint>(0);
         crossover::HProX(perm1, perm2, new_perm, this->instance->lbs,this->instance->ubs, f, this->rng);
         children[idx + 1] = Solution(new_perm, *this->instance);
-        // LOG("--------------");
-        // parents[idx].print();
-        // parents[idx+1].print();
-        // children[idx].print();
-        // children[idx+1].print();
-    
     }
 }
 
@@ -759,16 +766,19 @@ void ASCHEA::setCrossover(const string &constr)
 {
     if (constr == "insertNode_5")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->insertNode(parents, children, 5); };
+        { return this->NBX(parents, children, 5); };
     else if (constr == "insertNode_10")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->insertNode(parents, children, 10); };
+        { return this->NBX(parents, children, 10); };
     else if (constr == "insertNode_20")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->insertNode(parents, children, 20); };
+        { return this->NBX(parents, children, 20); };
     else if (constr == "insertNode_50")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->insertNode(parents, children, 50); };
+        { return this->NBX(parents, children, 50); };
+    else if (constr == "NBX")
+        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
+        { return this->NBX(parents, children, 101); };
     else if (constr == "ERX")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->ERX(parents, children); };
@@ -778,6 +788,9 @@ void ASCHEA::setCrossover(const string &constr)
     else if (constr == "OX")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->OX(parents, children); };
+    else if (constr == "OBX")
+        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
+        { return this->OBX(parents, children); };
     else if (constr == "CX")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->CX(parents, children); };
