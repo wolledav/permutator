@@ -5,6 +5,7 @@
 #include <random>
 #include <queue>
 #include <unordered_set>
+#include <set>
 #include "utils.hpp"
 #include "solution.hpp"
 
@@ -52,11 +53,13 @@ void randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequenc
 
 namespace crossover
 {
-    void NBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::unordered_set<uint> nodes);
-
     void ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
 
     void AEX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
+
+    void NBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
+
+    void PBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
 
     void OX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
 

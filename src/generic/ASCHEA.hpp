@@ -101,9 +101,10 @@ class ASCHEA : public BasicOptimizer
         void constrainedSortedTournament(std::vector<Solution> &parents);
 
         //crossover
-        void NBX(std::vector<Solution> parents, std::vector<Solution> &children, uint x);
         void ERX(std::vector<Solution> parents, std::vector<Solution> &children);
         void AEX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void NBX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void PBX(std::vector<Solution> parents, std::vector<Solution> &children);
         void OX(std::vector<Solution> parents, std::vector<Solution> &children);
         void OBX(std::vector<Solution> parents, std::vector<Solution> &children);
         void CX(std::vector<Solution> parents, std::vector<Solution> &children);

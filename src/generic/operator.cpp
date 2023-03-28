@@ -1,8 +1,8 @@
 
 #include "operator.hpp"
 
+using std::vector;
 using std::queue;
-using std::abort;
 
 // inserts 'node' at 'position'
 void oprtr::insert(vector<uint> &permutation, vector<uint> &frequency, vector<uint> upperBounds, uint node, uint position)
@@ -104,18 +104,18 @@ void oprtr::moveAll(vector<uint> &permutation, uint node, int offset, vector<uin
     vector<uint> *new_positions = positions == nullptr ? new vector<uint>(0) : positions;
     if (positions == nullptr)
     {
-        for (int i = permutation.size()-1; i >= 0; i--){
+        for (int i = permutation.size() - 1; i >= 0; i--)
+        {
             if (permutation[i] == node)
                 new_positions->push_back(i);
         }
-            
     }
     for (auto &pos : *new_positions)
     {                                    // for all positions of node_id
         int new_pos = (int)pos + offset; // shift by i
         if (new_pos < 0)
             new_pos += (int)permutation.size(); // too far left -> overflow from right end
-        else if ((uint)new_pos >= permutation.size() )
+        else if ((uint)new_pos >= permutation.size())
             new_pos = new_pos - (int)permutation.size(); // too far right -> overflow from left end
         permutation.erase(permutation.begin() + pos);
         pos = new_pos;
@@ -261,27 +261,6 @@ void construct::randomReplicate(vector<uint> &permutation, vector<uint> &frequen
     } while (!inBounds(frequency));
 }
 
-void crossover::NBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, std::unordered_set<uint> nodes)
-{
-    child = parent1;
-
-    // removing chosen nodes from perm1
-    for (auto node : nodes)
-    {
-        auto node_removed_end = std::remove(child.begin(), child.end(), node);
-        child.erase(node_removed_end, child.end());
-    }
-    // inserting removed nodes on indexes as in perm 2
-    for (uint i = 0; i < parent2.size(); i++)
-    {
-        if (nodes.count(parent2[i]))
-        {
-            auto it = i < child.size() ? child.begin() + i : child.end();
-            child.insert(it, parent2[i]);
-        }
-    }
-}
-
 void crossover::ERX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng)
 {
     child.clear();
@@ -413,6 +392,75 @@ void crossover::AEX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
     }
 }
 
+void crossover::NBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng)
+{
+    child = parent2;
+    std::unordered_set<uint> nodes;
+    std::uniform_int_distribution<uint> nodeRng(0, node_cnt - 1);
+
+    uint cnt = nodeRng(*rng) + 1;
+    while (nodes.size() < cnt) 
+        nodes.insert(nodeRng(*rng));
+
+    // removing chosen nodes from child
+    for (auto node : nodes)
+    {
+        auto node_removed_end = std::remove(child.begin(), child.end(), node);
+        child.erase(node_removed_end, child.end());
+    }
+    // inserting removed nodes on indexes as in parent1
+    for (uint i = 0; i < parent1.size(); i++)
+    {
+        if (nodes.count(parent1[i]))
+        {
+            auto it = i < child.size() ? child.begin() + i : child.end();
+            child.insert(it, parent1[i]);
+        }
+    }
+}
+
+void crossover::PBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng)
+{
+    const uint invalid = node_cnt;
+    std::uniform_int_distribution<uint> positionRng(0, parent1.size() - 1);
+    uint positionCnt = positionRng(*rng) + 1;
+    vector<uint> nodeFreq(node_cnt, 0);
+    std::set<uint> insertIdx = {};
+
+
+    while (insertIdx.size() < positionCnt)
+    {
+        uint idx = positionRng(*rng);
+        uint node = parent1[idx];
+        if (insertIdx.insert(idx).second)
+            nodeFreq[node] += 1;
+    }
+
+    child = parent2;
+    vector<uint> randIdxs(child.size());
+    std::iota(randIdxs.begin(), randIdxs.end(), 0);
+    std::shuffle(randIdxs.begin(), randIdxs.end(), *rng);
+    vector<uint> remove(0);
+    // randomly iter over child and erase at most the same number of nodes as chosen to insert
+    for (auto idx : randIdxs)
+    {
+        uint node = child[idx];
+        if (nodeFreq[node] > 0)
+        {
+            nodeFreq[node] -= 1;
+            remove.push_back(idx);
+        }
+    }
+
+    std::sort(remove.begin(), remove.end(), std::greater<>());
+    for (auto idx : remove)
+        child.erase(child.begin() + idx);   
+
+    for (auto idx : insertIdx)
+        child.insert(child.begin() + std::min(idx, (uint)child.size()), parent1[idx]);
+    
+}
+
 void crossover::OX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng)
 {
     std::uniform_int_distribution<uint> randPosition(0, parent1.size());
@@ -454,8 +502,7 @@ void crossover::OX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
     child.insert(child.begin() + start, core.begin(), core.end());
 }
 
-
-void crossover::OBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> freq1, vector<uint>freq2, std::mt19937 *rng)
+void crossover::OBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> freq1, vector<uint> freq2, std::mt19937 *rng)
 {
     uint nodeCnt = freq1.size();
     std::uniform_int_distribution<uint> randNodeRng(0, nodeCnt - 1);
@@ -463,15 +510,17 @@ void crossover::OBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
     std::unordered_set<uint> nodes = {};
 
     int freqBalance = 0;
-    while (nodes.size() != randNodeCnt || freqBalance != 0){
-        if (nodes.size() == randNodeCnt){
+    while (nodes.size() != randNodeCnt || freqBalance != 0)
+    {
+        if (nodes.size() == randNodeCnt)
+        {
             nodes = {};
             freqBalance = 0;
             randNodeCnt = randNodeRng(*rng) + 1;
         }
         uint node = randNodeRng(*rng);
 
-        if (nodes.insert(node).second) // if insertion took place
+        if (nodes.insert(node).second)                             // if insertion took place
             freqBalance = freqBalance + freq1[node] - freq2[node]; // sum of node frequencies must be same in both parents
     }
 
@@ -479,16 +528,15 @@ void crossover::OBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
     for (uint node : parent1)
         if (nodes.count(node))
             toInsert.push(node);
-    
+
     child = parent2;
     for (uint &node : child)
-        if (nodes.count(node)){
+        if (nodes.count(node))
+        {
             node = toInsert.front();
             toInsert.pop();
         }
-    
 }
-
 
 void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint nodeCnt, std::mt19937 *rng)
 {
@@ -504,7 +552,7 @@ void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
 
     std::unordered_map<uint, vector<uint>> nodeMap;
     for (uint i = 0; i <= nodeCnt; i++)
-        nodeMap[i] = {}; 
+        nodeMap[i] = {};
     for (uint i = 0; i < parent1.size(); i++)
         nodeMap.at(parent1[i]).push_back(i);
 
@@ -533,10 +581,9 @@ void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
     child.erase(end, child.end());
 }
 
-
 void crossover::HGreX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<permutator::fitness_t(vector<uint>)> getFitness, std::mt19937 *rng)
 {
-    std::function<uint(vector<uint>, vector<uint>)> f = [getFitness](vector<uint> permutation, vector<uint> feasibleNext)->uint
+    std::function<uint(vector<uint>, vector<uint>)> f = [getFitness](vector<uint> permutation, vector<uint> feasibleNext) -> uint
     {
         fitness_t bestFitness = UINT_MAX;
         uint bestNode;
@@ -560,7 +607,7 @@ void crossover::HGreX(vector<uint> parent1, vector<uint> parent2, vector<uint> &
 
 void crossover::HRndX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<permutator::fitness_t(vector<uint>)> getFitness, std::mt19937 *rng)
 {
-    std::function<uint(vector<uint>, vector<uint>)> f = [rng](vector<uint> permutation, vector<uint> feasibleNext)->uint
+    std::function<uint(vector<uint>, vector<uint>)> f = [rng](vector<uint> permutation, vector<uint> feasibleNext) -> uint
     {
         std::uniform_int_distribution<uint> randNode(0, feasibleNext.size() - 1);
         return feasibleNext[randNode(*rng)];
@@ -571,7 +618,7 @@ void crossover::HRndX(vector<uint> parent1, vector<uint> parent2, vector<uint> &
 
 void crossover::HProX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<permutator::fitness_t(vector<uint>)> getFitness, std::mt19937 *rng)
 {
-    std::function<uint(vector<uint>, vector<uint>)> f = [getFitness, rng](vector<uint> permutation, vector<uint> feasibleNext)->uint
+    std::function<uint(vector<uint>, vector<uint>)> f = [getFitness, rng](vector<uint> permutation, vector<uint> feasibleNext) -> uint
     {
         vector<double> probabilities = {};
         double min = INFINITY;
@@ -589,7 +636,7 @@ void crossover::HProX(vector<uint> parent1, vector<uint> parent2, vector<uint> &
         double sum = 0;
         for (auto &p : probabilities)
         {
-            p = min/p;
+            p = min / p;
             sum += p;
         }
 
@@ -618,9 +665,9 @@ void crossover::HXHelper(vector<uint> parent1, vector<uint> parent2, vector<uint
     for (uint i = 0; i < node_cnt; i++)
         nextMap[i] = {};
     for (uint i = 0; i < parent1.size(); i++)
-        nextMap.at(parent1[i]).push_back(parent1[(i + 1)%parent1.size()]);
+        nextMap.at(parent1[i]).push_back(parent1[(i + 1) % parent1.size()]);
     for (uint i = 0; i < parent2.size(); i++)
-        nextMap.at(parent2[i]).push_back(parent2[(i + 1)%parent2.size()]);
+        nextMap.at(parent2[i]).push_back(parent2[(i + 1) % parent2.size()]);
 
     std::uniform_int_distribution<uint> randPosition(0, parent1.size() - 1);
     child.push_back(parent1[randPosition(*rng)]);

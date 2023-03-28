@@ -255,35 +255,6 @@ void ASCHEA::constrainedSortedTournament(vector<Solution> &parents)
 // CROSSOVER
 //**********************************************************************************************************************
 
-void ASCHEA::NBX(vector<Solution> parents, vector<Solution> &children, uint x)
-{
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> perm1 = parents[idx].permutation;
-        vector<uint> perm2 = parents[idx + 1].permutation;
-        vector<uint> new_perm;
-        std::unordered_set<uint> removed_nodes;
-        std::uniform_int_distribution<uint> uni(0, this->instance->node_cnt - 1);
-
-        // choosing nodes to be removed from perm1 and perm2
-        if (x == 101){
-            uint cnt = uni(*this->rng) + 1;
-            while (removed_nodes.size() < cnt) 
-                removed_nodes.insert(uni(*this->rng));
-        } else {
-            while (removed_nodes.size() <  (this->instance->node_cnt * x) / 100)
-                removed_nodes.insert(uni(*this->rng));
-        }
-        crossover::NBX(perm1, perm2, new_perm, removed_nodes);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        crossover::NBX(perm2, perm1, new_perm, removed_nodes);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
-}
-
 void ASCHEA::ERX(vector<Solution> parents, vector<Solution> &children)
 {
     for (uint idx = 0; idx < children.size(); idx += 2)
@@ -319,6 +290,43 @@ void ASCHEA::AEX(vector<Solution> parents, vector<Solution> &children)
         new_perm = vector<uint>(0);
         crossover::AEX(perm2, perm1, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
         children[idx + 1] = Solution(new_perm, *this->instance);
+    }
+}
+
+void ASCHEA::NBX(vector<Solution> parents, vector<Solution> &children)
+{
+    for (uint idx = 0; idx < children.size(); idx += 2)
+    {
+        if (this->stop())
+            return;
+        vector<uint> perm1 = parents[idx].permutation;
+        vector<uint> perm2 = parents[idx + 1].permutation;
+        vector<uint> new_perm;
+        
+        crossover::NBX(perm1, perm2, new_perm, this->instance->node_cnt, this->rng);
+        children[idx] = Solution(new_perm, *this->instance);
+
+        crossover::NBX(perm2, perm1, new_perm, this->instance->node_cnt, this->rng);
+        children[idx + 1] = Solution(new_perm, *this->instance);
+    }
+}
+
+void ASCHEA::PBX(std::vector<Solution> parents, std::vector<Solution> &children)
+{
+    for (uint idx = 0; idx < children.size(); idx += 2)
+    {
+        if (this->stop())
+            return;
+        vector<uint> perm1 = parents[idx].permutation;
+        vector<uint> perm2 = parents[idx + 1].permutation;
+        vector<uint> new_perm(0);
+
+        crossover::PBX(perm1, perm2, new_perm, this->instance->node_cnt, this->rng);
+        children[idx] = Solution(new_perm, *this->instance);
+
+        new_perm = vector<uint>(0);
+        crossover::PBX(perm2, perm1, new_perm, this->instance->node_cnt, this->rng);
+        children[idx + 1] = Solution(new_perm, *this->instance);  
     }
 }
 
@@ -764,21 +772,12 @@ void ASCHEA::setSelection(const string &constr)
 
 void ASCHEA::setCrossover(const string &constr)
 {
-    if (constr == "insertNode_5")
+    if (constr == "NBX")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->NBX(parents, children, 5); };
-    else if (constr == "insertNode_10")
+        { return this->NBX(parents, children); };
+    else if (constr == "PBX")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->NBX(parents, children, 10); };
-    else if (constr == "insertNode_20")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->NBX(parents, children, 20); };
-    else if (constr == "insertNode_50")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->NBX(parents, children, 50); };
-    else if (constr == "NBX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->NBX(parents, children, 101); };
+        { return this->PBX(parents, children); };
     else if (constr == "ERX")
         this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
         { return this->ERX(parents, children); };
