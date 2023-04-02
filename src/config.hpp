@@ -9,6 +9,9 @@
 
 // Compile time config macros
 #define GUROBI_THREAD_CNT 1
+
+#define NDEBUG
+
 #ifdef NDEBUG
 #define STDOUT_ENABLED 0
 #else

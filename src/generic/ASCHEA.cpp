@@ -1,8 +1,6 @@
 
 #include "ASCHEA.hpp"
 
-#include <utility>
-
 using boost::format;
 using nlohmann::json;
 using permutator::fitness_t;
@@ -920,11 +918,13 @@ void ASCHEA::changePopulation()
     for (uint idx2 = 0; idx2 < activePopIdx; idx2++){
         if (this->populations[activePopIdx]->avgFitness < this->populations[idx2]->avgFitness){
             std::cout << "--------erased: " <<  idx2 << "|" << this->populations[idx2]->size << " for lower avg fitness---" <<  this->populations[activePopIdx]->avgFitness << "|" << this->populations[idx2]->avgFitness << "---------" << std::endl;
+            delete this->populations[idx2];
             this->populations.erase(this->populations.begin() + idx2);
             this->counter.erase(this->counter.begin() + activePopIdx);
             activePopIdx -= 1;    
         } else if (this->populations[idx2]->is_stalled){
             std::cout << "---------erased: " << idx2 << "|" << this->populations[idx2]->size << " for stall---------" << std::endl;
+            delete this->populations[idx2];
             this->populations.erase(this->populations.begin() + idx2);     
             this->counter.erase(this->counter.begin() + idx2);
             activePopIdx -= 1;

@@ -41,7 +41,7 @@ int main (int argc, char *argv[])
     string filename = getFilename(data_path);
     parse_filename(filename, &customer_cnt, &charger_cnt);
     EVRPInstance inst = EVRPInstance(data_path.c_str(), customer_cnt, charger_cnt);
-    std::cout << "Solving " << inst.name << std::endl;
+    if (STDOUT_ENABLED) std::cout << "Solving " << inst.name << std::endl;
     
     BasicOptimizer* optimizer;
     if (optimizer_type == "local")

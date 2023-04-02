@@ -43,7 +43,7 @@ forbiddenFile = "./forbidden.txt"
 
 ## Script called for each configuration that executes the target algorithm to
 ## be tuned. See the templates and examples provided.
-## /mnt/c/Users/pazou/Documents/CVUT/BAKALARKA/permutator/tuning_setups/tuning_CVRP_ASCHEA/target-runner
+## /mnt/c/Users/pazou/Documents/CVUT/BAKALARKA/permutator/tuning_setups/tuning_CVRP/target-runner
 targetRunner = "./target-runner"
 
 ## An executable that will be used to launch the target runner, when
@@ -142,7 +142,7 @@ deterministic = 0
 
 ## Number of calls to targetRunner to execute in parallel. Values 0 or 1 mean
 ## no parallelization.
-parallel = 32
+parallel = 4
 
 ## Enable/disable load-balancing when executing experiments in parallel.
 ## Load-balancing makes better use of computing resources, but increases
