@@ -58,7 +58,7 @@ int main (int argc, char *argv[])
         optimizer->saveToJson(output);
         output_file << output.dump(4);
     } else {
-        inst.print_solution(&sol, std::cout);
+        if (STDOUT_ENABLED) inst.print_solution(&sol, std::cout);
         std::cout << sol.fitness << std::endl;
     }
     return 0;

@@ -107,10 +107,13 @@ void oprtr::moveAll(vector<uint> &permutation, uint node, int offset, vector<uin
         for (int i = permutation.size() - 1; i >= 0; i--)
         {
             if (permutation[i] == node)
-                new_positions->push_back(i);
+                positions->push_back(i);
         }
     }
-    for (auto &pos : *new_positions)
+
+    std::sort(positions->begin(), positions->end(), std::greater<>());
+
+    for (auto &pos : *positions)
     {                                    // for all positions of node_id
         int new_pos = (int)pos + offset; // shift by i
         if (new_pos < 0)
@@ -120,8 +123,8 @@ void oprtr::moveAll(vector<uint> &permutation, uint node, int offset, vector<uin
         permutation.erase(permutation.begin() + pos);
         pos = new_pos;
     }
-    std::sort(new_positions->begin(), new_positions->end());
-    for (auto pos : *new_positions)
+    std::sort(positions->begin(), positions->end());
+    for (auto pos : *positions)
         permutation.insert(permutation.begin() + pos, node);
 }
 

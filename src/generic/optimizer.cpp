@@ -31,11 +31,11 @@ Optimizer::Optimizer(Instance *inst, json config, uint seed)
     if (this->config.contains("timeout"))
     {
         this->timeout_s = this->config["timeout"].get<uint>();
-        std::cout << "Timeout set to " << this->timeout_s << "s" << std::endl;
+        if (STDOUT_ENABLED) std::cout << "Timeout set to " << this->timeout_s << "s" << std::endl;
     }
     else
     {
-        std::cout << "No timeout set" << std::endl;
+        if (STDOUT_ENABLED) std::cout << "No timeout set" << std::endl;
         this->timeout_s = UINT32_MAX;
     }
     this->unimproved_cnt = 0;
@@ -482,17 +482,19 @@ bool Optimizer::moveAll(uint x)
         vector<uint> new_perm = perm;
         // find all positions of node_id in perm
         vector<uint> positions = {};
-        for (uint i = 0; i < perm.size(); i++) 
+        for (int i = 0; i < perm.size(); i++) 
             if (perm[i] == node_id) 
                 positions.push_back(i);
 
         if (positions.size() == 0) continue;
-        oprtr::moveAll(new_perm, node_id, -(int)x-1, &positions);
+        oprtr::moveAll(new_perm, node_id, -((int)x)-1, &positions);
         
         // attempt all shifts by i from [-x, x]\{0}
         for (int i = 0; i <= (int)x*2; i++)
         {
+            // LOG(i);
             oprtr::moveAll(new_perm, node_id, 1, &positions);
+            // LOG(i);
             // Evaluate
             this->instance->computeFitness(new_perm, fitness, penalties);
 #pragma omp critical
@@ -1117,11 +1119,11 @@ void Optimizer::ILS()
 
     if (this->timeout_s == UINT32_MAX)
     {
-        std::cout << __func__ << " terminated after " << UNIMPROVING_ITERS_MAX << " non-improving iterations" << std::endl;
+        if (STDOUT_ENABLED) std::cout << __func__ << " terminated after " << UNIMPROVING_ITERS_MAX << " non-improving iterations" << std::endl;
     }
     else
     {
-        std::cout << __func__ << " terminated after reaching " << this->timeout_s << "s timeout" << std::endl;
+        if (STDOUT_ENABLED) std::cout << __func__ << " terminated after reaching " << this->timeout_s << "s timeout" << std::endl;
     }
 }
 
