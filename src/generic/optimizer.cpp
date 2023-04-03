@@ -31,11 +31,11 @@ Optimizer::Optimizer(Instance *inst, json config, uint seed)
     if (this->config.contains("timeout"))
     {
         this->timeout_s = this->config["timeout"].get<uint>();
-        if (STDOUT_ENABLED) std::cout << "Timeout set to " << this->timeout_s << "s" << std::endl;
+        std::cout << "Timeout set to " << this->timeout_s << "s" << std::endl;
     }
     else
     {
-        if (STDOUT_ENABLED) std::cout << "No timeout set" << std::endl;
+        std::cout << "No timeout set" << std::endl;
         this->timeout_s = UINT32_MAX;
     }
     this->unimproved_cnt = 0;
@@ -1119,11 +1119,11 @@ void Optimizer::ILS()
 
     if (this->timeout_s == UINT32_MAX)
     {
-        if (STDOUT_ENABLED) std::cout << __func__ << " terminated after " << UNIMPROVING_ITERS_MAX << " non-improving iterations" << std::endl;
+        std::cout << __func__ << " terminated after " << UNIMPROVING_ITERS_MAX << " non-improving iterations" << std::endl;
     }
     else
     {
-        if (STDOUT_ENABLED) std::cout << __func__ << " terminated after reaching " << this->timeout_s << "s timeout" << std::endl;
+        std::cout << __func__ << " terminated after reaching " << this->timeout_s << "s timeout" << std::endl;
     }
 }
 
