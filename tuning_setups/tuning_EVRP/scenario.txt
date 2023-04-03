@@ -25,7 +25,7 @@ logFile = "./irace.Rdata"
 ## Directory where training instances are located; either absolute path or
 ## relative to current directory. If no trainInstancesFiles is provided, all
 ## the files in trainInstancesDir will be listed as instances.
-trainInstancesDir = "../../data_demo/datasets/CVRP"
+trainInstancesDir = "../../data_demo/datasets/EVRP"
 
 ## File that contains a list of training instances and optionally additional
 ## parameters for them. If trainInstancesDir is provided, irace will search
@@ -43,7 +43,7 @@ forbiddenFile = "./forbidden.txt"
 
 ## Script called for each configuration that executes the target algorithm to
 ## be tuned. See the templates and examples provided.
-## /mnt/c/Users/pazou/Documents/CVUT/BAKALARKA/permutator/tuning_setups/tuning_CVRP/target-runner
+## /mnt/c/Users/pazou/Documents/CVUT/BAKALARKA/permutator/tuning_setups/tuning_EVRP/target-runner
 targetRunner = "./target-runner"
 
 ## An executable that will be used to launch the target runner, when

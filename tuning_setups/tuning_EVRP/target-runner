@@ -28,14 +28,16 @@ CONFIG_ID=$1
 INSTANCE_ID=$2
 SEED=$3
 INSTANCE=$4
+readarray -d / -t inst_split <<< $INSTANCE
+INSTANCE="../../${inst_split[-4]}/${inst_split[-3]}/${inst_split[-2]}/${inst_split[-1]}"
 shift 4 || error "Not enough parameters"
 CONFIG_PARAMS=$*
 CONFIG_FILE=./config_${CONFIG_ID}-${INSTANCE_ID}-${SEED}.json
 
 python3 ../../scripts/common/create_config.py $CONFIG_FILE $FIXED_PARAMS $CONFIG_PARAMS
 
-STDOUT=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stdout
-STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr
+STDOUT=./c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stdout
+STDERR=./c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr
 
 if [ ! -x "${EXE}" ]; then
     error "${EXE}: not found or not executable (pwd: $(pwd))"
@@ -45,29 +47,36 @@ fi
 # creating another process, but there can be no other commands after exec.
 #exec $EXE ${FIXED_PARAMS} -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS}
 # exit 1
-# 
+#
 # Otherwise, save the output to a file, and parse the result from it.
 # (If you wish to ignore segmentation faults you can use '{}' around
 # the command.)
 # $EXE ${FIXED_PARAMS} -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
-echo "insatence run"
+
+echo $INSTANCE >> test.txt
+echo $SEED >> test.txt
+echo $CONFIG_FILE >> test.txt
+echo $EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE  $STDOUT  $STDERR >> test.txt
+echo "--------------------------" >> test.txt
+
 $EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE 1> ${STDOUT} 2> ${STDERR}
-echo "done"
+
 # # This may be used to introduce a delay if there are filesystem
 # # issues.
-SLEEPTIME=1
-while [ ! -s "${STDOUT}" ]; do
-    sleep $SLEEPTIME
-    let "SLEEPTIME += 1"
-done
+#SLEEPTIME=1
+#while [ ! -s "${STDOUT}" ]; do
+#    sleep $SLEEPTIME
+#    let "SLEEPTIME += 1"
+#done
 
 # This is an example of reading a number from the output.
 # It assumes that the objective value is the first number in
 # the first column of the last line of the output.
+
 if [ -s "${STDOUT}" ]; then
     COST=$(tail -n 1 ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
     echo "$COST"
-    rm -f "${STDOUT}" "${STDERR}" "${CONFIG_FILE}"
+    # rm -f "${STDOUT}" "${STDERR}" "${CONFIG_FILE}"
     exit 0
 else
     error "${STDOUT}: No such file or directory"

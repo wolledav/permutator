@@ -12,4 +12,3 @@ module add cmake
 cmake -S . -B"./build"
 cmake --build build
 cd tuning_setups/tuning_EVRP/
-irace
