@@ -284,7 +284,7 @@ bool Optimizer::remove1()
     Solution best_solution = this->current_solution;
     bool updated = false;
 
-#pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, updated)
+#pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, freq, updated)
     for (uint i = 0; i < perm.size(); i++)
     {
         if (this->stop() || (updated && config["first_improve"]))
@@ -531,7 +531,7 @@ bool Optimizer::exchangeIds()
     Solution best_solution = this->current_solution;
     bool updated = false;
 
-#pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, updated)
+#pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, freq, updated)
     for (uint i = 0; i < this->instance->node_cnt; i++)
     { // for all nodes i
         if (this->stop() || (updated && config["first_improve"]))
@@ -580,7 +580,7 @@ bool Optimizer::exchangeNIds()
     Solution best_solution = this->current_solution;
     bool updated = false;
 
-#pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, updated)
+#pragma omp parallel for default(none) private(fitness, penalties) shared(best_solution, perm, freq, updated)
     for (uint i = 0; i < this->instance->node_cnt; i++)
     { // for all nodes i in A
         if (this->stop() || (updated && config["first_improve"]))
