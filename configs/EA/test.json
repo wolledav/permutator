@@ -6,9 +6,9 @@
     "t_target": 0.5,
     "mutation_rate": 0.8,
 
-    "construction": "nearestNeighbor",
+    "construction": "random",
     "selection": "constrainedSortedTournament",
-    "crossover": "insertNode_5",
+    "crossover": "NBX",
     "mutation": [
         "insert_1",
         "remove_1",
@@ -16,7 +16,7 @@
         "centExchange_3",
         "moveAll_10"
     ],
-    "replacement": "nicheSegregational",
+    "replacement": "segregational",
 
     "timeout": 60,
     "stop_on_feasible": true

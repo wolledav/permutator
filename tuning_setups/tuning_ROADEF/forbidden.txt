@@ -1,0 +1,17 @@
+## Template for specifying forbidden parameter configurations in irace.
+##
+## This filename must be specified via the --forbidden-file command-line option
+## (or forbiddenFile in scenario.txt).
+##
+## The format is one constraint per line. Each constraint is a logical
+## expression (in R syntax). If a parameter configuration
+## is generated that makes the logical expression evaluate to TRUE,
+## then the configuration is discarded.
+##
+## Examples of valid logical operators are: ==  !=  >=  <=  >  <  &  |  !  %in%
+# param1 < 5 & mode == "x1"
+# (param2 > 6 & mode == "x1") | (param2 <= 6 & mode == "x2")
+# real < 4 & mode %in% c("x2", "x3")
+
+insert_1 == 0 & remove_1 == 0 & twoOpt == 0 & exchangeIds == 0 & exchangeNIds == 0 & exchange_1_1 == 0 & exchange_1_2 == 0 & exchange_2_2 == 0 & exchange_2_3 == 0 & exchange_2_4 == 0 & exchange_3_3 == 0 & exchange_3_4 == 0 & exchange_4_4 == 0 & revExchange_1_2 == 0 & revExchange_2_2 == 0 & revExchange_2_3 == 0 & revExchange_2_4 == 0 & revExchange_3_3 == 0 & revExchange_3_4 == 0 & revExchange_4_4 == 0 & centExchange_1 == 0 & centExchange_2 == 0 & centExchange_3 == 0 & centExchange_4 == 0 & centExchange_5 == 0 & relocate_1 == 0 & relocate_2 == 0 & relocate_3 == 0 & relocate_4 == 0 & relocate_5 == 0 & revRelocate_2 == 0 & revRelocate_3 == 0 & revRelocate_4 == 0 & revRelocate_5 == 0 & moveAll_1 == 0 & moveAll_2 == 0 & moveAll_3 == 0 & moveAll_4 == 0 & moveAll_10 == 0
+bvns_min_k >= bvns_max_k

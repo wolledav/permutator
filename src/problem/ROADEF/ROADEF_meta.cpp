@@ -20,41 +20,7 @@ int main (int argc, char *argv[])
     json config, output;
     string optimizer_type = "local";
 
-    // vector<string> data =   {
-    //                         // "data_demo\\datasets\\ROADEF\\A_09.json",
-    //                         // "data_demo\\datasets\\ROADEF\\A_07.json",
-    //                         // "data_demo\\datasets\\ROADEF\\A_12.json",
-    //                         // "data_demo\\datasets\\ROADEF\\A_10.json",
-    //                         // "data_demo\\datasets\\ROADEF\\A_08.json",
-    //                         // "data_demo\\datasets\\ROADEF\\A_03.json"                
-    //                         };
-
     Instance::parseArgs(argc, argv, data_path, output_path, optimizer_type, config, seed);    
-
-    // for (auto data_path : data){
-    //     std::cout << data_path << std::endl;
-    //     ROADEFInstance inst = ROADEFInstance(data_path.c_str());
-    //     std::cout << "Solving " << inst.name << std::endl;
-
-    //     BasicOptimizer* optimizer;
-    //     if (optimizer_type == "local")
-    //         optimizer = new Optimizer(&inst, config, seed);
-    //     else if (optimizer_type == "evolutionary")
-    //         optimizer = new ASCHEA(&inst, config, seed);
-        
-    //     optimizer->run();
-
-    //     // Export solution
-    //     Solution sol = optimizer->getSolution();
-    //     if (!output_path.empty()) {
-    //         output_file.open(output_path);
-    //         optimizer->saveToJson(output);
-    //         output_file << output.dump(4);
-    //     } else {
-    //         inst.print_solution(&sol, std::cout);
-    //         std::cout << sol.fitness << std::endl;
-    //     }
-    // }
 
     ROADEFInstance inst = ROADEFInstance(data_path.c_str());
     std::cout << "Solving " << inst.name << std::endl;

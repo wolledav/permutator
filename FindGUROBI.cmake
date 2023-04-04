@@ -6,7 +6,7 @@ find_path(GUROBI_INCLUDE_DIRS
     PATH_SUFFIXES include)
 
 find_library(GUROBI_LIBRARY
-    NAMES  gurobi gurobi91 gurobi95 libgurobi libgurobi91 libgurobi95
+    NAMES  gurobi100.lib
     HINTS ${GUROBI_DIR} $ENV{GUROBI_HOME}
     PATH_SUFFIXES lib)
 
@@ -26,7 +26,7 @@ if(CXX)
         else()
             set(M_FLAG "md")
         endif()
-        
+
         find_library(GUROBI_CXX_LIBRARY
             NAMES gurobi_c++${M_FLAG}${MSVC_YEAR}
             HINTS ${GUROBI_DIR} $ENV{GUROBI_HOME}
@@ -44,5 +44,11 @@ if(CXX)
     endif()
 endif()
 
+
+
 include(FindPackageHandleStandardArgs)
+# set(GUROBI_LIBRARY C:/gurobi1001/win64/lib/gurobi100.lib)
+# set(GUROBI_CXX_LIBRARY  C:/gurobi1001/win64/lib/gurobi_c++md2017.lib)
+# set(GUROBI_CXX_DEBUG_LIBRARY  C:/gurobi1001/win64/lib/gurobi_c++mdd2017.lib)
 find_package_handle_standard_args(GUROBI DEFAULT_MSG GUROBI_LIBRARY)
+
