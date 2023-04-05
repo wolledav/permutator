@@ -21,7 +21,7 @@ error() {
     exit 1
 }
 
-EXE=../../build/EVRP_meta
+EXE=../../build/ROADEF_meta
 FIXED_PARAMS="num_threads 1"
 
 CONFIG_ID=$1

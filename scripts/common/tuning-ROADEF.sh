@@ -7,7 +7,7 @@ cd permutator/
 module add cmake
 cmake -S . -B"./build"
 cmake --build build
-cd tuning_setups/tuning_RAODEF/
+cd tuning_setups/tuning_ROADEF/
 
 PATH=$PATH:/storage/praha1/home/pazoudav/Rpackages/irace/bin/
 module load r/r-4.1.1-intel-19.0.4-ilb46fy
