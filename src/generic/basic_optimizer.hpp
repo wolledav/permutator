@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chrono>
+#include <random>
+
 
 #include "instance.hpp"
 #include "solution.hpp"
@@ -12,6 +14,7 @@ class BasicOptimizer
     protected:
         nlohmann::json config;
         uint timeout_s;
+        std::mt19937 *rng;
         Solution best_known_solution;
         std::chrono::steady_clock::time_point start, last_improvement;
         Instance* instance;

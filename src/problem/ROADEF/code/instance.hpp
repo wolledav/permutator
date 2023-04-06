@@ -32,7 +32,7 @@ typedef vector<uint_pair_t> uint_pair_vector_t;
 typedef vector<vector<uint_t>> uint_vector_2d_t;
 typedef vector<uint_set_t> uint_set_vector_t;
 
-namespace ins
+namespace ROADEF
 {
 
 class Instance {

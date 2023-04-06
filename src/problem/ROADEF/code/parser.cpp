@@ -13,7 +13,7 @@ void Parser::load() {
 }
 
 /* extracts data from json object and translates them to instance object */
-void Parser::process(ins::Instance *instance) {
+void Parser::process(ROADEF::Instance *instance) {
      /* extract scenarios */
     for (auto& i : j[SCENARIOS]) {
         instance->add_scenario(i);
@@ -87,7 +87,7 @@ void Parser::process(ins::Instance *instance) {
 }
 
 /* extracts exclusions from json and maps pair of instances to row index in season table */
-void Parser::process_exclusions(ins::Instance *instance) {
+void Parser::process_exclusions(ROADEF::Instance *instance) {
     /* fill season table with basic seasons (first line is emtpy, will be popped) */
     unordered_map<string, uint_t> seas_names;
     instance->append_season();
@@ -151,13 +151,13 @@ bool cmp_pair(pair<uint_t, fitness_t_>& a,
     return a.second < b.second;
 }
 
-void Parser::process_avg_properties(ins::Instance *instance) {
+void Parser::process_avg_properties(ROADEF::Instance *instance) {
     vector<pair<uint_t, fitness_t_>> avg_deltas;
     vector<pair<uint_t, fitness_t_>> avg_costs;
     vector<pair<uint_t, fitness_t_>> avg_rds;
 
     std::default_random_engine engine(1);
-    sol::Solution s(instance, &engine);
+    ROADEF::Solution s(instance, &engine);
 
     for (auto i:instance->get_interventions()) {
         // cout << "i: " << i << endl;

@@ -1,7 +1,5 @@
 #include "optimizer.hpp"
 
-#include <utility>
-
 using boost::format;
 using nlohmann::json;
 using permutator::fitness_t;

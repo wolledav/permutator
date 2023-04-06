@@ -1,23 +1,11 @@
 #pragma once
 
+#include "utils.hpp"
 #include "generic/instance.hpp"
 #include "lib/tinyxml/tinyxml.h"
 #include "generic/solution.hpp"
-#include <vector>
+
 #include <boost/numeric/ublas/matrix.hpp>
-#include <climits>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string>
-#include <cstring>
-#include <math.h>
-#include <fstream>
-#include <time.h>
-#include <limits.h>
-#include <cmath>
-#include <algorithm>
-#include <numeric>
 
 #define JOB_MISSING_PENALTY 100000000
 #define NEGATIVE_CHARGE_PENALTY 100000000

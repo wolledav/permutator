@@ -1,7 +1,3 @@
-#include <iostream>
-#include <string>
-#include <boost/algorithm/string.hpp>
-
 #include "generic/ASCHEA.hpp"
 #include "generic/optimizer.hpp"
 #include "src/problem/EVRP/EVRP.hpp"

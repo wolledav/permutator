@@ -15,8 +15,8 @@ ROADEFInstance::ROADEFInstance(const char *path)
         lbs[i] = 1;
         ubs[i] = 1;
     }
-    lbs[0] = 0;
-    ubs[0] = this->instance.get_horizon_num();
+    this->lbs[0] = 0;
+    this->ubs[0] = this->instance.get_horizon_num();
 }
 
 
@@ -29,7 +29,7 @@ void ROADEFInstance::parseDataFrom(const char *path)
 
     delete parser;
     std::default_random_engine* rng(0);
-    this->solution = sol::Solution(&this->instance, rng);
+    this->solution = ROADEF::Solution(&this->instance, rng);
 }
 
 void ROADEFInstance::scheduleStartTimes(const std::vector<uint> &permutation)

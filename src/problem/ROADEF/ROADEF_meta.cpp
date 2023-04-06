@@ -1,14 +1,10 @@
+#include <filesystem>
 
-#include <iostream>
-#include <string>
-#include <boost/algorithm/string.hpp>
-
-
+#include "utils.hpp"
 #include "generic/ASCHEA.hpp"
 #include "generic/optimizer.hpp"
 #include "src/problem/ROADEF/ROADEF.hpp"
 
-#include <filesystem>
 namespace fs = std::filesystem;
 
 int main (int argc, char *argv[])

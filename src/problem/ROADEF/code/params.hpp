@@ -271,7 +271,7 @@ std::string format_output_path(std::string directories, std::string input);
 
 void parse_global_params(int argc, char *argv[]);
 
-void determine_dependent_params(ins::Instance *instance);
+void determine_dependent_params(ROADEF::Instance *instance);
 
 bool stop();
 

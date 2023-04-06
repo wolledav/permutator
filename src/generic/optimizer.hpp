@@ -1,15 +1,9 @@
 #pragma once
 
 #include <utility>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <iomanip>
 #include <map>
 #include <algorithm>
 #include <boost/format.hpp>
-#include <random>
-#include <chrono>
 #include <stdexcept>
 #include <omp.h>
 
@@ -26,7 +20,6 @@ class Optimizer : public BasicOptimizer
         uint timeout_s;
         uint unimproved_cnt;
         Solution initial_solution, current_solution;
-        std::mt19937 *rng;
         std::vector<std::string> operation_list;
         std::vector<std::string> perturbation_list;
         std::function<void()> construction;

@@ -19,12 +19,12 @@ class Parser {
     private:
         const string path_to_file; /* path to parsed json file */
         json j; /* library object which parses the file */
-        void process_exclusions(ins::Instance *instance); /* extracts exclusions from json to ins::Instance object */
-        static void process_avg_properties(ins::Instance *instance); /* determine average values of some intervention properties */
+        void process_exclusions(ROADEF::Instance *instance); /* extracts exclusions from json to ROADEF::Instance object */
+        static void process_avg_properties(ROADEF::Instance *instance); /* determine average values of some intervention properties */
     public:
         Parser(string path_to_file);
         void load(); /* reads file and fills j object */
-        void process(ins::Instance *instance); /* reads j object and translates data to instance object */
+        void process(ROADEF::Instance *instance); /* reads j object and translates data to instance object */
 };
 
 #endif

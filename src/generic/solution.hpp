@@ -1,10 +1,9 @@
 #pragma once
 
-#include <vector>
-#include <limits>
+#include <functional>
 
-#include "../config.hpp"
-#include "../utils.hpp"
+#include "config.hpp"
+#include "utils.hpp"
 #include "instance.hpp"
 
 class Solution

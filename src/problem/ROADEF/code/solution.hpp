@@ -31,7 +31,7 @@
 
 using namespace std;
 
-namespace sol
+namespace ROADEF
 {
 
 class Solution {
@@ -43,7 +43,7 @@ class Solution {
         string exclusion_details(const string &first, const string &second, const uint_t horizon);
         uint_to_uint_t start_times; /* map that holds the solution <intervention, start_time> */
     public:
-        ins::Instance *instance;
+        ROADEF::Instance *instance;
         std::default_random_engine *engine;
         set<uint_t> unscheduled; /* set that holds interventions not yet scheduled */
         set<uint_t> scheduled; /* set that holds interventions already scheduled */
@@ -80,7 +80,7 @@ class Solution {
         vector<uint_t> unscheduled_cnt; /* counter of interventions unscheduling */
 
         Solution() = default;
-        Solution(ins::Instance *instance, std::default_random_engine *engine);
+        Solution(ROADEF::Instance *instance, std::default_random_engine *engine);
         void schedule(uint_t intervention_id, uint_t start_time);
         void unschedule(uint_t intervention_id);
         bool is_scheduled(uint_t intervention_id);

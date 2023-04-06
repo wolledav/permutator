@@ -1,6 +1,6 @@
 #include "solution.hpp"
 
-sol::Solution::Solution(ins::Instance *instance, std::default_random_engine *engine) {
+ROADEF::Solution::Solution(ROADEF::Instance *instance, std::default_random_engine *engine) {
     this->instance = instance;
     this->engine = engine;
     for (uint_t intervention : instance->get_interventions()) {
@@ -53,7 +53,7 @@ sol::Solution::Solution(ins::Instance *instance, std::default_random_engine *eng
     this->unscheduled_cnt = vector<uint_t> (instance->get_intervention_count() + 1, 0);
 }
 
-void sol::Solution::schedule(uint_t intervention_id, uint_t start_time) {
+void ROADEF::Solution::schedule(uint_t intervention_id, uint_t start_time) {
     if (this->is_scheduled(intervention_id)) {
         cerr << "!! Trying to schedule intervention that is already scheduled " << this->instance->get_intervention(intervention_id) << " !!" << endl;
         exit(SCHEDULE_ERR);
@@ -65,7 +65,7 @@ void sol::Solution::schedule(uint_t intervention_id, uint_t start_time) {
     this->update_extended_state_on_schedule(intervention_id, start_time);
 }
 
-void sol::Solution::unschedule(uint_t intervention_id) {
+void ROADEF::Solution::unschedule(uint_t intervention_id) {
     if (!this->is_scheduled(intervention_id)) {
         cerr << "!! Trying to unschedule intervention that is not scheduled, id: " << intervention_id << " !!" << endl;
         exit(SCHEDULE_ERR);
@@ -78,11 +78,11 @@ void sol::Solution::unschedule(uint_t intervention_id) {
 //    this->unscheduled_cnt[intervention_id] ++;
 }
 
-bool sol::Solution::is_scheduled(uint_t intervention_id) {
+bool ROADEF::Solution::is_scheduled(uint_t intervention_id) {
     return this->scheduled.find(intervention_id) != this->scheduled.end();
 }
 
-uint_t sol::Solution::get_start_time(uint_t intervention_id) {
+uint_t ROADEF::Solution::get_start_time(uint_t intervention_id) {
     if (this->is_scheduled(intervention_id)) return this->start_times[intervention_id];
     else {
         cerr << "!! Trying to get start time of intervention that is not scheduled " << this->instance->get_intervention(intervention_id) << " !!" << endl;
@@ -90,19 +90,19 @@ uint_t sol::Solution::get_start_time(uint_t intervention_id) {
     }
 }
 
-uint_t sol::Solution::get_unscheduled_count() {
+uint_t ROADEF::Solution::get_unscheduled_count() {
     return (uint_t)this->unscheduled.size();
 }
 
-bool sol::Solution::has_unscheduled() {
+bool ROADEF::Solution::has_unscheduled() {
     return !(this->unscheduled.empty());
 }
 
-uint_t sol::Solution::get_first_unscheduled() {
+uint_t ROADEF::Solution::get_first_unscheduled() {
     return *(this->unscheduled.begin());
 }
 
-void sol::Solution::save(string output_file_path) {
+void ROADEF::Solution::save(string output_file_path) {
     std::ofstream output;
     output.open(output_file_path);
     if (!output.is_open()) util::throw_err("Error while opening output file");
@@ -119,13 +119,13 @@ void sol::Solution::save(string output_file_path) {
     output.close();
 }
 
-bool sol::Solution::is_valid() {
+bool ROADEF::Solution::is_valid() {
     return this->workload_overuse < NUMERIC_TOLERANCE &&
            this->workload_underuse < NUMERIC_TOLERANCE &&
            this->exclusion_penalty == 0;
 }
 
-Objective sol::Solution::estimate_schedule(uint_t intervention_id, uint_t start_time) {
+Objective ROADEF::Solution::estimate_schedule(uint_t intervention_id, uint_t start_time) {
     if (this->is_scheduled(intervention_id)) {
         cerr << "!! Trying to estimate schedule of intervention that is already scheduled " << this->instance->get_intervention(intervention_id) << " !!" << endl;
         exit(SCHEDULE_ERR);
@@ -136,7 +136,7 @@ Objective sol::Solution::estimate_schedule(uint_t intervention_id, uint_t start_
     return o;
 }
 
-Objective sol::Solution::estimate_unschedule(uint_t intervention_id) {
+Objective ROADEF::Solution::estimate_unschedule(uint_t intervention_id) {
     if (!this->is_scheduled(intervention_id)) {
         cerr << "!! Trying to estimate unschedule of intervention that is not scheduled " << this->instance->get_intervention(intervention_id) << " !!" << endl;
         exit(SCHEDULE_ERR);
@@ -148,7 +148,7 @@ Objective sol::Solution::estimate_unschedule(uint_t intervention_id) {
     return o;
 }
 
-void sol::Solution::update_state_on_schedule(uint_t scheduled_intervention, uint_t start_time) {
+void ROADEF::Solution::update_state_on_schedule(uint_t scheduled_intervention, uint_t start_time) {
     uint_t scenarios;
     uint_t horizons = this->instance->get_horizon_num();
     fitness_t_ risk_st;
@@ -189,7 +189,7 @@ void sol::Solution::update_state_on_schedule(uint_t scheduled_intervention, uint
     this->final_objective = this->instance->get_alpha() * this->mean_risk + (1 - this->instance->get_alpha()) * this->expected_excess;
 }
 
-void sol::Solution::update_extended_state_on_schedule(uint scheduled_intervention, uint_t start_time) {
+void ROADEF::Solution::update_extended_state_on_schedule(uint scheduled_intervention, uint_t start_time) {
     fitness_t_ before;
     fitness_t_ after;
     fitness_t_ gain;
@@ -253,7 +253,7 @@ void sol::Solution::update_extended_state_on_schedule(uint scheduled_interventio
     this->extended_objective = this->final_objective + BETA_LOWER * this->workload_underuse + BETA_UPPER  * this->workload_overuse + GAMMA * this->exclusion_penalty;
 }
 
-void sol::Solution::update_state_on_unschedule(uint_t unscheduled_intervention, uint_t start_time) {
+void ROADEF::Solution::update_state_on_unschedule(uint_t unscheduled_intervention, uint_t start_time) {
     uint_t scenarios;
     uint_t horizons = this->instance->get_horizon_num();
     fitness_t_ risk_st;
@@ -292,7 +292,7 @@ void sol::Solution::update_state_on_unschedule(uint_t unscheduled_intervention, 
     this->final_objective = this->instance->get_alpha() * this->mean_risk + (1 - this->instance->get_alpha()) * this->expected_excess;
 }
 
-void sol::Solution::update_extended_state_on_unschedule(uint unscheduled_intervention, uint_t start_time) {
+void ROADEF::Solution::update_extended_state_on_unschedule(uint unscheduled_intervention, uint_t start_time) {
     fitness_t_ before;
     fitness_t_ after;
     fitness_t_ loss;
@@ -356,7 +356,7 @@ void sol::Solution::update_extended_state_on_unschedule(uint unscheduled_interve
     this->extended_objective = this->final_objective + BETA_LOWER * this->workload_underuse + BETA_UPPER  * this->workload_overuse + GAMMA * this->exclusion_penalty;
 }
 
-void sol::Solution::estimate_state_on_schedule(uint_t scheduled_intervention, uint_t start_time, Objective *objective) {
+void ROADEF::Solution::estimate_state_on_schedule(uint_t scheduled_intervention, uint_t start_time, Objective *objective) {
     fitness_t_ mean_risk = this->mean_risk;
     fitness_t_ expected_excess = this->expected_excess;
     fitness_t_ risk_st;
@@ -405,7 +405,7 @@ void sol::Solution::estimate_state_on_schedule(uint_t scheduled_intervention, ui
     objective->final_objective = this->instance->get_alpha() * mean_risk + (1 - this->instance->get_alpha()) * expected_excess;
 }
 
-void sol::Solution::estimate_extended_state_on_schedule(uint scheduled_intervention, uint_t start_time, Objective *objective) {
+void ROADEF::Solution::estimate_extended_state_on_schedule(uint scheduled_intervention, uint_t start_time, Objective *objective) {
     fitness_t_ before;
     fitness_t_ after;
     fitness_t_ gain;
@@ -469,7 +469,7 @@ void sol::Solution::estimate_extended_state_on_schedule(uint scheduled_intervent
     objective->extended_objective = objective->final_objective + BETA_LOWER * workload_underuse + BETA_UPPER  * workload_overuse + GAMMA * exclusion_penalty;
 }
 
-void sol::Solution::estimate_state_on_unschedule(uint_t unscheduled_intervention, uint_t start_time, Objective *objective) {
+void ROADEF::Solution::estimate_state_on_unschedule(uint_t unscheduled_intervention, uint_t start_time, Objective *objective) {
     fitness_t_ mean_risk = this->mean_risk;
     fitness_t_ expected_excess = this->expected_excess;
     fitness_t_ risk_st;
@@ -518,7 +518,7 @@ void sol::Solution::estimate_state_on_unschedule(uint_t unscheduled_intervention
     objective->final_objective = this->instance->get_alpha() * mean_risk + (1 - this->instance->get_alpha()) * expected_excess;
 }
 
-void sol::Solution::estimate_extended_state_on_unschedule(uint unscheduled_intervention, uint_t start_time, Objective *objective) {
+void ROADEF::Solution::estimate_extended_state_on_unschedule(uint unscheduled_intervention, uint_t start_time, Objective *objective) {
     fitness_t_ before;
     fitness_t_ after;
     fitness_t_ loss;
@@ -582,13 +582,13 @@ void sol::Solution::estimate_extended_state_on_unschedule(uint unscheduled_inter
     objective->extended_objective = objective->final_objective + BETA_LOWER * workload_underuse + BETA_UPPER  * workload_overuse + GAMMA * exclusion_penalty;
 }
 
-void sol::Solution::print() {
+void ROADEF::Solution::print() {
     for (uint_to_uint_t::iterator it = this->start_times.begin(); it != this->start_times.end(); ++it) {
         cout << this->instance->get_intervention(it->first) << " -> " << it->second << endl;
     }
 }
 
-void sol::Solution::print_state() {
+void ROADEF::Solution::print_state() {
     printf("Restarts cnt: \t\t%u\n", this->restarts_cnt);
     printf("Valid: \t\t%u\n", this->is_valid());
     printf("Mean risk: \t\t%f\n", this->mean_risk);
@@ -602,15 +602,15 @@ void sol::Solution::print_state() {
     printf("Extended objective: \t%f\n\n", this->extended_objective);
 }
 
-void sol::Solution::print_objective() {
+void ROADEF::Solution::print_objective() {
     printf("%f\n", this->final_objective);
 }
 
-void sol::Solution::print_extended_objective() {
+void ROADEF::Solution::print_extended_objective() {
     printf("%f\n", this->extended_objective);
 }
 
-bool sol::Solution::check() {
+bool ROADEF::Solution::check() {
     return this->undefined_intervention() &&
            this->unscheduled_intervention() &&
            this->start_time_out_of_range() &&
@@ -619,13 +619,13 @@ bool sol::Solution::check() {
            this->unmet_exclusion();
 }
 
-void sol::Solution::info() {
+void ROADEF::Solution::info() {
     cerr << "Info:" << endl;
     cerr << '\t' << "Interventions number: " << this->instance->get_intervention_count() << endl;
     cerr << '\t' << "Scenarios number: " << this->instance->get_scenarios_count() << endl;
 }
 
-void sol::Solution::eval() {
+void ROADEF::Solution::eval() {
     this->compute_objectives();
     this->compute_final_objective();
     this->compute_workload_misuse();
@@ -635,7 +635,7 @@ void sol::Solution::eval() {
     this->print_state();
 }
 
-void sol::Solution::print_unscheduled_cnt() {
+void ROADEF::Solution::print_unscheduled_cnt() {
     for (auto i:instance->get_interventions()) {
         cout << i << ": " << unscheduled_cnt[i] << endl;
     }
@@ -643,38 +643,38 @@ void sol::Solution::print_unscheduled_cnt() {
 
 #if VERBOSE_SOLUTION
 
-    void sol::Solution::throw_message(const bool error, const string &label, const string &message) {}
-    string sol::Solution::time_bounds_details(const string &item, const uint_t start_time, const uint_t bound) { return ""; }
-    string sol::Solution::intervention_time_bounds_details(const string &item, const uint_t start_time, const uint_t bound) { return ""; }
-    string sol::Solution::workload_bounds_details(const bool upper, const string &item, const uint_t horizon, const fitness_t_ value, const uint_t bound) { return ""; }
-    string sol::Solution::exclusion_details(const string &first, const string &second, const uint_t horizon) { return ""; }
+    void ROADEF::Solution::throw_message(const bool error, const string &label, const string &message) {}
+    string ROADEF::Solution::time_bounds_details(const string &item, const uint_t start_time, const uint_t bound) { return ""; }
+    string ROADEF::Solution::intervention_time_bounds_details(const string &item, const uint_t start_time, const uint_t bound) { return ""; }
+    string ROADEF::Solution::workload_bounds_details(const bool upper, const string &item, const uint_t horizon, const fitness_t_ value, const uint_t bound) { return ""; }
+    string ROADEF::Solution::exclusion_details(const string &first, const string &second, const uint_t horizon) { return ""; }
 
 #else
 
-    void sol::Solution::throw_message(const bool correct, const string &label, const string &message) {
+    void ROADEF::Solution::throw_message(const bool correct, const string &label, const string &message) {
         cerr << (correct ? "#  >> Test passed <<" : "!  >> Error in solution <<") << endl;
         cerr << "\t" << label << " - " << message << endl;
     }
 
-    string sol::Solution::time_bounds_details(const string &item, const uint_t start_time, const uint_t bound) {
+    string ROADEF::Solution::time_bounds_details(const string &item, const uint_t start_time, const uint_t bound) {
         ostringstream msg;
         msg << "Intervention '" << item << "' starts at time horizon " << start_time << " but planification range ends in " << bound << endl;
         return msg.str();
     }
 
-    string sol::Solution::intervention_time_bounds_details(const string &item, const uint_t start_time, const uint_t bound) {
+    string ROADEF::Solution::intervention_time_bounds_details(const string &item, const uint_t start_time, const uint_t bound) {
         ostringstream msg;
         msg << "Intervention '" << item << "' starts at time horizon " << start_time << " but cannot start after " << bound << endl;
         return msg.str();
     }
 
-    string sol::Solution::workload_bounds_details(const bool upper, const string &item, const uint_t horizon, const fitness_t_ value, const uint_t bound) {
+    string ROADEF::Solution::workload_bounds_details(const bool upper, const string &item, const uint_t horizon, const fitness_t_ value, const uint_t bound) {
         ostringstream msg;
         msg << "Workload on resource '" << item << "' at time " << horizon << " is " << value << " and that is " << (upper ? "above the upper" : "below the lower") << " bound " << bound << endl;
         return msg.str();
     }
 
-    string sol::Solution::exclusion_details(const string &first, const string &second, const uint_t horizon) {
+    string ROADEF::Solution::exclusion_details(const string &first, const string &second, const uint_t horizon) {
         ostringstream msg;
         msg << "Interventions '" << first << "' and '" << second << "' cannot be performed together at time horizon " << horizon << endl;
         return msg.str();
@@ -682,7 +682,7 @@ void sol::Solution::print_unscheduled_cnt() {
 
 #endif
 
-bool sol::Solution::undefined_intervention() {
+bool ROADEF::Solution::undefined_intervention() {
     bool ret = CORRECT;
     for (uint_to_uint_t::iterator iter = this->start_times.begin(); iter != this->start_times.end(); ++iter) {
         if (find(this->instance->get_interventions().begin(), this->instance->get_interventions().end(), iter->first) == this->instance->get_interventions().end()) {
@@ -695,7 +695,7 @@ bool sol::Solution::undefined_intervention() {
     return ret;
 }
 
-bool sol::Solution::unscheduled_intervention() {
+bool ROADEF::Solution::unscheduled_intervention() {
     bool ret = CORRECT;
     for (uint_t intervention : this->instance->get_interventions()) {
         if (this->start_times.find(intervention) == this->start_times.end()) {
@@ -708,7 +708,7 @@ bool sol::Solution::unscheduled_intervention() {
     return ret;
 }
 
-bool sol::Solution::start_time_out_of_range() {
+bool ROADEF::Solution::start_time_out_of_range() {
     bool ret = CORRECT;
     for (uint_to_uint_t::iterator iter = this->start_times.begin(); iter != this->start_times.end(); ++iter) {
         if (iter->second < 1 || iter->second > this->instance->get_horizon_num()) {
@@ -721,7 +721,7 @@ bool sol::Solution::start_time_out_of_range() {
     return ret;
 }
 
-bool sol::Solution::start_time_out_of_intervention_range() {
+bool ROADEF::Solution::start_time_out_of_intervention_range() {
     bool ret = CORRECT;
     for (uint_to_uint_t::iterator iter = this->start_times.begin(); iter != this->start_times.end(); ++iter) {
         if (iter->second > this->instance->get_t_max(iter->first)) {
@@ -734,7 +734,7 @@ bool sol::Solution::start_time_out_of_intervention_range() {
     return ret;
 }
 
-bool sol::Solution::resource_out_of_bounds() {
+bool ROADEF::Solution::resource_out_of_bounds() {
     bool ret = CORRECT;
     fitness_t_  workload;
     for (uint_t resource : this->instance->get_resources()) {
@@ -763,7 +763,7 @@ bool sol::Solution::resource_out_of_bounds() {
     return ret;
 }
 
-bool sol::Solution::unmet_exclusion() {
+bool ROADEF::Solution::unmet_exclusion() {
     bool ret = CORRECT;
     uint_t i1_start;
     uint_t i2_start;
@@ -799,7 +799,7 @@ bool sol::Solution::unmet_exclusion() {
     return ret;
 }
 
-void sol::Solution::compute_objectives() {
+void ROADEF::Solution::compute_objectives() {
     fitness_t_ mean_risk = 0.0; /* sum of mean risks in all times */
     fitness_t_ mean_risk_in_time; /* help variable to store mean risk in current time */
     fitness_t_ temp; /* help variable to hold values which are used on multiple places to avoid computing the same thing */
@@ -840,11 +840,11 @@ void sol::Solution::compute_objectives() {
     this->final_objective = this->instance->get_alpha() * this->mean_risk + (1 - this->instance->get_alpha()) * this->expected_excess;
 }
 
-void sol::Solution::compute_final_objective() {
+void ROADEF::Solution::compute_final_objective() {
     this->final_objective = this->instance->get_alpha() * this->mean_risk + (1 - this->instance->get_alpha()) * this->expected_excess;
 }
 
-void sol::Solution::compute_workload_misuse() {
+void ROADEF::Solution::compute_workload_misuse() {
     fitness_t_ workload_ct;
     this->workload_underuse = 0.0;
     this->workload_overuse = 0.0;
@@ -877,7 +877,7 @@ void sol::Solution::compute_workload_misuse() {
     }
 }
 
-void sol::Solution::count_unmet_exclusions() {
+void ROADEF::Solution::count_unmet_exclusions() {
     fill(this->exclusions_at_time.begin(), this->exclusions_at_time.end(), 0);
     this->exclusion_penalty = 0;
     uint_t i1_start;
@@ -910,11 +910,11 @@ void sol::Solution::count_unmet_exclusions() {
     }
 }
 
-void sol::Solution::compute_extended_objective() {
+void ROADEF::Solution::compute_extended_objective() {
     this->extended_objective = this->final_objective + BETA_LOWER * this->workload_underuse + BETA_UPPER  * this->workload_overuse + GAMMA * this->exclusion_penalty;
 }
 
-void sol::Solution::generate_random_solution() {
+void ROADEF::Solution::generate_random_solution() {
     /* init random generator */
     this->start_times.clear();
     random_device random;
@@ -926,7 +926,7 @@ void sol::Solution::generate_random_solution() {
     }
 }
 
-void sol::Solution::round_up(int digits) {
+void ROADEF::Solution::round_up(int digits) {
     this->workload_overuse = floor(pow(10, digits) * this->workload_overuse + 0.5)/pow(10, digits);
     this->workload_underuse = floor(pow(10, digits) * this->workload_underuse + 0.5)/pow(10, digits);
     this->compute_extended_objective();

@@ -420,7 +420,7 @@ double round3(double var)
 }
 
 
-void determine_dependent_params(ins::Instance *instance) {
+void determine_dependent_params(ROADEF::Instance *instance) {
     double x0 = instance->get_intervention_count();
     double x1 = instance->get_horizon_num();
     double x2 = instance->get_exclusion_pairs().size();

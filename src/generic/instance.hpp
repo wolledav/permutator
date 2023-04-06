@@ -1,13 +1,7 @@
 #pragma once
 
-#include <cstdio>
-#include <limits>
-#include <utility>
-#include <vector>
-#include <iostream>
-
-#include "../config.hpp"
-#include "../utils.hpp"
+#include "config.hpp"
+#include "utils.hpp"
 #include "lib/getopt/getopt.h"
 
 class Instance

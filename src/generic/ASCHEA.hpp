@@ -1,19 +1,8 @@
 #pragma once
 
-#include <utility>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <iomanip>
 #include <map>
-#include <algorithm>
-#include <boost/format.hpp>
-#include <random>
-#include <chrono>
-#include <stdexcept>
-#include <omp.h>
-#include <numeric>
-#include <unordered_set>
+#include <functional>
+#include <iterator>
 #include <algorithm>
 
 #include "instance.hpp"
@@ -22,6 +11,15 @@
 #include "basic_optimizer.hpp"
 #include "operator.hpp"
 #include "population.hpp"
+#include "lib/nlohmann/json.hpp"
+
+#define T_SELECT 0.3
+#define POPULATION_FREQUENCY 4
+#define MUTATION_RATE 0.8
+#define POPULATIONS_MAX_CNT 32
+#define STATIC_POPULATION "static"
+#define DYNAMIC_POPULATION "dynamic"
+
 
 inline void LOGS(const std::vector<Solution> parents) {for (auto p : parents) p.print(); LOG(parents.size());}
 
@@ -31,15 +29,14 @@ class ASCHEA : public BasicOptimizer
     private:
         uint timeout_s;
         uint unimproved_cnt;
-        Population* population;
-        std::vector<Population*> populations = std::vector<Population*>(32, nullptr);
+        Population* active_population;
+        std::vector<Population*> populations = std::vector<Population*>(POPULATIONS_MAX_CNT, nullptr);
         Population* best_population;
-        std::vector<uint> counter = std::vector<uint>(32, 0);
-        double t_select = 0.3;
-        std::mt19937 *rng;
-        static std::mt19937* initRng(uint seed);
-        uint frequency = 4; 
-        double mutationRate = 1.0;     
+        std::vector<uint> population_counter = std::vector<uint>(POPULATIONS_MAX_CNT, 0);
+        double t_select = T_SELECT;
+        uint population_frequency = POPULATION_FREQUENCY; 
+        std::string population_type = DYNAMIC_POPULATION;
+        double mutation_rate = MUTATION_RATE;     
 
         std::function<void()> construction;
         std::function<void(std::vector<Solution> &parents)> selection;
@@ -47,7 +44,7 @@ class ASCHEA : public BasicOptimizer
         void mutation(std::vector<Solution> &children);
         std::function<void(std::vector<Solution> children)> replacement;
 
-        std::vector<std::string> mutationList;
+        std::vector<std::string> mutation_list;
 
         const std::map<std::string, std::function<void(Solution &child)>> mutation_map = {
             {"insert_1",      [this](Solution &child){return this->insert(child);}},
@@ -130,13 +127,16 @@ class ASCHEA : public BasicOptimizer
         void nicheSegregational(std::vector<Solution> children);
 
         //utils
-        permutator::fitness_t penalized_fitness(Solution solution);
-        permutator::fitness_t penalized_fitness(std::vector<permutator::fitness_t> penalties);
-        void sort_by_pf(std::vector<Solution> &v);
+        static std::mt19937* initRng(uint seed);
         bool stop() override;
+        permutator::fitness_t getFitness(std::vector<uint> permutation);
+        permutator::fitness_t penalizedFitness(Solution solution);
+        permutator::fitness_t penalizedFitness(std::vector<permutator::fitness_t> penalties);
+        void sortByPenalizedFitness(std::vector<Solution> &v);
+        
         void nichePopulation(std::vector<Solution> population, uint capacity, std::vector<bool> &leaders, std::vector<bool> &followers);
-        void changePopulation();
-        fitness_t getFitness(vector<uint> permutation);
+        void swapPopulation();
+        
 
 
     public:
