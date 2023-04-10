@@ -613,44 +613,56 @@ void crossover::OBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
         }
 }
 
-void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng)
+void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> & x, vector<uint> & y, uint gap_node)> alignmentFunction)
 {
-    const uint invalid = node_cnt;
-    while (parent1.size() < parent2.size())
-        parent1.push_back(invalid);
-
-    while (parent2.size() < parent1.size())
-        parent2.push_back(invalid);
+    const uint gap_node = node_cnt;
+    alignmentFunction(parent1, parent2, gap_node);
 
     std::unordered_map<uint, vector<uint>> node_idxs;
     for (uint i = 0; i <= node_cnt; i++)
         node_idxs[i] = {};
     for (uint i = 0; i < parent1.size(); i++)
         node_idxs.at(parent1[i]).push_back(i);
+     node_idxs.at(gap_node) = {};
 
-    child = vector<uint>(parent1.size(), invalid);
-    uint node = parent1[0];
-    queue<uint> to_insert;
-    to_insert.push(node);
+    child = vector<uint>(parent1.size(), gap_node);
+    queue<uint> queue;
+    queue.push(0);
 
-    while (to_insert.size() > 0)
-    {
-        node = to_insert.front();
-        to_insert.pop();
-        for (auto i : node_idxs.at(node))
-        {
-            child[i] = node;
-            to_insert.push(parent2[i]);
+    uint invalid_idx = child.size();
+    uint final_idx = invalid_idx;
+    vector<uint> walk(child.size(), invalid_idx);
+    
+    bool search = true;
+    while(queue.size() > 0 && search){
+        uint idx = queue.back();
+        queue.pop();
+
+        for (auto i : node_idxs.at(parent2[idx])){
+            if (walk[i] == invalid_idx){
+                queue.push(i);
+                walk[i] = idx;
+                if (i == 0){
+                    search = false;
+                    break;
+                }
+            }
         }
-        node_idxs.at(node) = {};
+    }
+    if (walk[0] != invalid_idx){
+        uint idx = walk[0];
+        while (idx != 0){
+            child[idx] = parent1[idx];
+            idx = walk[idx];
+        }
+        child[0] = parent1[0];
     }
 
-    for (uint i = 0; i < child.size(); i++)
-        if (child[i] == invalid)
-            child[i] = parent2[i];
+    for (uint idx = 0; idx < child.size(); idx++)
+        if (child[idx] == gap_node)
+            child[idx] = parent2[idx];
 
-    auto end = std::remove(child.begin(), child.end(), invalid);
-    child.erase(end, child.end());
+    alignment::removeGap(child, gap_node);
 }
 
 void crossover::HGreX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<permutator::fitness_t(vector<uint>)> getFitness, std::mt19937 *rng)

@@ -398,11 +398,11 @@ void ASCHEA::CX(vector<Solution> parents, vector<Solution> &children)
         vector<uint> permutation_2 = parents[idx + 1].permutation;
         vector<uint> new_perm(0);
 
-        crossover::CX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng);
+        crossover::CX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng, this->alignment);
         children[idx] = Solution(new_perm, *this->instance);
 
         new_perm = vector<uint>(0);
-        crossover::CX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng);
+        crossover::CX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng, this->alignment);
         children[idx + 1] = Solution(new_perm, *this->instance);
     }
 }
@@ -599,11 +599,9 @@ void ASCHEA::SPX(vector<Solution> parents, vector<Solution> &children)
     {
         if (this->stop())
             return;
-        vector<uint> permutation_1 =  parents[idx].permutation; // {22, 4, 6, 0, 1, 2, 3, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21}; //
-        vector<uint> permutation_2 =  parents[idx + 1].permutation; // {28, 4, 23, 5, 0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21}; // 
+        vector<uint> permutation_1 =  parents[idx].permutation; 
+        vector<uint> permutation_2 =  parents[idx + 1].permutation;
         vector<uint> new_perm(0);
-
-        // LOG("start");
 
         crossover::SPX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, f, this->rng, this->alignment);
         children[idx] = Solution(new_perm, *this->instance);
@@ -611,7 +609,6 @@ void ASCHEA::SPX(vector<Solution> parents, vector<Solution> &children)
         new_perm = vector<uint>(0);
         crossover::SPX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, f, this->rng, this->alignment);
         children[idx + 1] = Solution(new_perm, *this->instance);
-        // exit(0);
     }
 }
 

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <numeric>
 #include <functional>
+#include <stack>
 
 #include "utils.hpp"
 
@@ -59,7 +60,7 @@ namespace crossover
 
     void OBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> freq1, std::vector<uint>freq2, std::mt19937 *rng);
 
-    void CX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
+    void CX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
 
     void HXHelper(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<uint(std::vector<uint>, std::vector<uint>)> getNextNode, std::mt19937 *rng);
 
