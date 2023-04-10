@@ -4,6 +4,7 @@
 #include <functional>
 #include <iterator>
 #include <algorithm>
+#include <cmath>
 
 #include "instance.hpp"
 #include "solution.hpp"
@@ -43,6 +44,7 @@ class ASCHEA : public BasicOptimizer
         std::function<void(std::vector<Solution> parents, std::vector<Solution> &children)> crossover;
         void mutation(std::vector<Solution> &children);
         std::function<void(std::vector<Solution> children)> replacement;
+        std::function<void(std::vector<uint> & permutation_1, std::vector<uint> & permutation_2, uint gap_node)> alignment;
 
         std::vector<std::string> mutation_list;
 
@@ -108,6 +110,12 @@ class ASCHEA : public BasicOptimizer
         void HGreX(std::vector<Solution> parents, std::vector<Solution> &children);
         void HRndX(std::vector<Solution> parents, std::vector<Solution> &children);
         void HProX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void ULX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void RULX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void EULX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void ERULX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void UPMX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void SPX(std::vector<Solution> parents, std::vector<Solution> &children);
 
         void PMX(std::vector<Solution> parents, std::vector<Solution> &children);
 
@@ -146,6 +154,7 @@ class ASCHEA : public BasicOptimizer
         void setSelection(const std::string &constr);
         void setCrossover(const std::string &constr);
         void setMutation(const std::vector<std::string>& constr);
+        void setAlignment(const std::string &constr);
         void setReplacement(const std::string &constr);
         void run();
         void saveToJson(nlohmann::json& container);

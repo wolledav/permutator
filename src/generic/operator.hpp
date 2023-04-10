@@ -11,8 +11,6 @@
 #include <functional>
 
 #include "utils.hpp"
-#include "config.hpp"
-
 
 namespace oprtr
 {
@@ -46,17 +44,18 @@ void randomReplicate(std::vector<uint> &permutation, std::vector<uint> &frequenc
 
 }
 
+
 namespace crossover
 {
     void ERX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
 
     void AEX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
 
-    void NBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
+    void NBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
 
-    void PBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
+    void PBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
 
-    void OX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
+    void OX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
 
     void OBX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> freq1, std::vector<uint>freq2, std::mt19937 *rng);
 
@@ -70,5 +69,33 @@ namespace crossover
     
     void HProX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng);
 
+    void rULX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs,  bool random, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
+
+    void EULX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::function<permutator::fitness_t(std::vector<uint>)> getFitness);
+
+    void UPMX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
+
+    void SPX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
+
+
+
     // void PMX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> freq1, std::vector<uint> freq2, std::mt19937 *rng);
+}
+
+namespace alignment
+{
+    void globalUniform(std::vector<uint> &x, std::vector<uint> &y, uint gap_node, uint difference_penalty, uint gap_penalty);
+
+    void globalOneGap(std::vector<uint> &x, std::vector<uint> &y, uint gap_node);
+
+    void randomOneGap(std::vector<uint> &x, std::vector<uint> &y, uint gap_node, std::mt19937 *rng);
+
+    void randomUniform(std::vector<uint> &x, std::vector<uint> &y, uint gap_node, std::mt19937 *rng);
+
+    void backfillOneGap(std::vector<uint> &x, std::vector<uint> &y, uint gap_node);
+
+    void frontfillOneGap(std::vector<uint> &x, std::vector<uint> &y, uint gap_node);
+
+    void removeGap(std::vector<uint> &x, uint gap_node);
+
 }

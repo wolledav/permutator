@@ -46,4 +46,8 @@ class Population
         void clear();
         void update(); 
         void print();
+
+        Solution& operator[](int x){
+            return this->solutions[x];
+        }
 };
