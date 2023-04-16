@@ -27,7 +27,17 @@ void Population::initializePenalty()
         else
             this->penalty.push_back(100 * ((double)fitness_stats[0]) / fitness_stats[idx]);
 
-    this->penalty_ceiling = *std::max_element(this->penalty.begin(), this->penalty.end());
+    double min = *std::min_element(this->penalty.begin(), this->penalty.end());
+    double max = *std::max_element(this->penalty.begin(), this->penalty.end());
+    this->penalty_ceiling = std::max(*std::max_element(this->penalty.begin(), this->penalty.end()), PENALTY_CEILING);
+    
+    for (auto &p : this->penalty){
+            p = 1 + (p - min) * (this->penalty_ceiling / max);
+            LOG(p);
+    }
+    LOG("ceiling:");
+    //this->penalty_ceiling = std::max(*std::max_element(this->penalty.begin(), this->penalty.end()), PENALTY_CEILING);
+    LOG(penalty_ceiling);
 }
 
 void Population::updatePenalty()

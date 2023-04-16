@@ -25,5 +25,5 @@
     "stop_on_feasible": false,
     "diff_p": 1,
     "gap_p": 1,
-    "alignment": "greedyUniform"
+    "alignment": "randomUniform"
 }

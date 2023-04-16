@@ -6,6 +6,7 @@
 #define INVALID_SOLUTION_FITNESS ULONG_MAX
 #define GROWTH_COEFFICIENT 1.1
 #define NICHE_RADIUS 5
+#define PENALTY_CEILING 1000000.0
 
 using permutator::fitness_t;
 
