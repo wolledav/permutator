@@ -108,7 +108,6 @@ void Population::update()
     this->stallPopulationCheck();
     this->update_t_t();
     this->updatePenalty();
-    
 }
 
 uint Population::getRealSize()

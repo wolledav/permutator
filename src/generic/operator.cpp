@@ -47,6 +47,7 @@ void oprtr::relocate(vector<uint> &permutation, uint from, uint to, uint length,
 {
     if (from + length > permutation.size() || to > permutation.size() - length)
         return;
+        
     vector<uint> subsequence(permutation.begin() + from, permutation.begin() + from + length);
     permutation.erase(permutation.begin() + from, permutation.begin() + from + length);
     if (reverse)
@@ -794,6 +795,7 @@ void crossover::HXHelper(vector<uint> parent1, vector<uint> parent2, vector<uint
         auto it = find(next_node.at(current).begin(), next_node.at(current).end(), next);
         if (it != next_node.at(current).end())
             next_node.at(current).erase(it);
+        
     }
 }
 

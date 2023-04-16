@@ -41,6 +41,7 @@ void ASCHEA::run()
 {
     this->start = std::chrono::steady_clock::now();
     this->construction();
+    this->best_known_solution = this->active_population->solutions[0];
     this->active_population->initializePenalty();
 
     uint gen = 0;
@@ -49,15 +50,15 @@ void ASCHEA::run()
         this->swapPopulation();
         vector<Solution> parents(this->active_population->getMaxSize());
         vector<Solution> children(this->active_population->getMaxSize());
-
-        this->sortingTournament(parents);
+        this->selection(parents);
         this->crossover(parents, children);
         this->mutation(children);
         this->replacement(children);
-        this->active_population->update();
+        if (!this->stop())
+            this->active_population->update();
 
         // not penalized fitness because different populations have different penalties
-        if (this->active_population->best_known_solution.fitness < this->best_known_solution.fitness)
+        if (!this->stop() && this->active_population->best_known_solution.fitness < this->best_known_solution.fitness)
         {
             this->best_known_solution = this->active_population->best_known_solution;
             this->best_population = this->active_population;
@@ -235,6 +236,8 @@ void ASCHEA::presortedTournament(vector<Solution> &parents)
 
 void ASCHEA::crossover(vector<Solution> parents, vector<Solution> &children)
 {
+    if (this->stop())
+        return;
     std::uniform_int_distribution<uint> crossover_rng(0, this->crossover_list.size() - 1);
     string xover = this->crossover_list[crossover_rng(*this->rng)];
     #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
@@ -1084,7 +1087,7 @@ void ASCHEA::swapPopulation()
     }
     else
     {
-        this->populations[active_population_idx] = new Population((this->populations[active_population_idx - 1]->getMaxSize()) * 2, this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
+        this->populations[active_population_idx] = new Population(this->populations[active_population_idx - 1]->getMaxSize()*2, this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
         this->active_population = this->populations[active_population_idx];
         this->construction();
         this->active_population->initializePenalty();
