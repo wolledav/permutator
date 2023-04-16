@@ -21,7 +21,7 @@ error() {
     exit 1
 }
 
-EXE=../../build/ROADEF_meta
+EXE=../../build/EVRP_meta
 FIXED_PARAMS="num_threads 1"
 
 CONFIG_ID=$1
@@ -53,7 +53,7 @@ fi
 # the command.)
 # $EXE ${FIXED_PARAMS} -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
 
-$EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE 1> ${STDOUT} 2> ${STDERR}
+$EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE -e 1> ${STDOUT} 2> ${STDERR}
 
 # # This may be used to introduce a delay if there are filesystem
 # # issues.

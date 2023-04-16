@@ -5,20 +5,25 @@
     "t_select": 0.3,
     "t_target": 0.5,
     "mutation_rate": 0.8,
+    "tournament_size": 4,
 
     "construction": "random",
-    "selection": "constrainedSortedTournament",
-    "crossover": "NBX",
+    "selection": "presortedTournament",
+    "crossover": [
+        "SPX"
+    ],
     "mutation": [
         "insert_1",
         "remove_1",
         "relocate_1",
         "centExchange_3",
-        "moveAll_10"
+        "exchangeNIds"
     ],
     "replacement": "segregational",
 
     "timeout": 60,
-    "stop_on_feasible": true
-    
+    "stop_on_feasible": false,
+    "diff_p": 1,
+    "gap_p": 1,
+    "alignment": "greedyUniform"
 }

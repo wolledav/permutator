@@ -15,17 +15,17 @@ execDir = "./"
 
 ## File to save tuning results as an R dataset, either absolute path or
 ## relative to execDir.
-logFile = "./irace.Rdata"
+logFile = "/storage/praha1/home/pazoudav/irace-tuning-data/EA-EVRP-1.Rdata"
 
 ## Previously saved log file to recover the execution of irace, either
 ## absolute path or relative to the current directory.  If empty or NULL,
 ## recovery is not performed.
-# recoveryFile = ""
+# recoveryFile = "/storage/praha1/home/pazoudav/irace-tuning-data/EA-EVRP-1.Rdata"
 
 ## Directory where training instances are located; either absolute path or
 ## relative to current directory. If no trainInstancesFiles is provided, all
 ## the files in trainInstancesDir will be listed as instances.
-trainInstancesDir = "../../data_demo/datasets/CVRP"
+trainInstancesDir = "../../data_demo/datasets/EVRP"
 
 ## File that contains a list of training instances and optionally additional
 ## parameters for them. If trainInstancesDir is provided, irace will search

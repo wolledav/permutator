@@ -5,6 +5,12 @@ using permutator::fitness_t;
 using std::queue;
 using std::vector;
 
+
+//**********************************************************************************************************************
+// BASIC OPERATORS
+//**********************************************************************************************************************
+
+
 // inserts 'node' at 'position'
 void oprtr::insert(vector<uint> &permutation, vector<uint> &frequency, vector<uint> ubs, uint node, uint position)
 {
@@ -158,27 +164,23 @@ void oprtr::exchangeIds(vector<uint> &permutation, vector<uint> &frequency, vect
         }
     }
 }
+
 // swaps first 'maxSwap' occurrences of 'nodeX' and 'nodeY', if frequencies are in bounds
 // exchangeIds([1,2,3,1,2,1], freq, lbs, ubs, 1, 2, 2) -> [2,1,3,2,1,1]
 void oprtr::exchangeNIds(vector<uint> &permutation, vector<uint> &frequency, vector<uint> lbs, vector<uint> ubs, uint nodeX, uint nodeY, uint maxSwap)
 {
-    if (frequency[nodeX] < lbs[nodeY] || frequency[nodeY] < lbs[nodeX] ||
-        maxSwap < lbs[nodeX] || maxSwap < lbs[nodeY] ||
-        (frequency[nodeX] > ubs[nodeY] && maxSwap > ubs[nodeY]) ||
-        (frequency[nodeY] > ubs[nodeX] && maxSwap > ubs[nodeX]))
-        return;
     uint counter1 = 0, counter2 = 0;
     vector<uint> new_perm = permutation;
     for (unsigned int &node : new_perm)
     { // for all nodes in new_perm
-        if (node == nodeX && counter1 < maxSwap)
+        if (node == nodeX && counter1 < maxSwap && frequency[nodeX] > lbs[nodeX] && frequency[nodeY] < ubs[nodeY])
         { // if i swapped less than n times
             counter1++;
             node = nodeY;
             frequency[nodeX]--;
             frequency[nodeY]++;
         }
-        else if (node == nodeY && counter2 < maxSwap)
+        else if (node == nodeY && counter2 < maxSwap&& frequency[nodeY] > lbs[nodeY] && frequency[nodeX] < ubs[nodeX])
         { // if j swapped less than n times
             counter2++;
             node = nodeX;
@@ -195,6 +197,14 @@ void oprtr::reverse(vector<uint> &permutation, uint position, uint length)
         return;
     reverse(permutation.begin() + position, permutation.begin() + position + length);
 }
+
+
+
+//**********************************************************************************************************************
+// CONSTRUCTIONS
+//**********************************************************************************************************************
+
+
 
 // Adds nodes to random positions of the solution, until all nodes are at their LBs.
 // Uses permutation as initial solution
@@ -272,15 +282,9 @@ void construct::randomReplicate(vector<uint> &permutation, vector<uint> &frequen
     } while (!inBounds(frequency));
 }
 
-
-
-
 //**********************************************************************************************************************
 // CROSSOVER
 //**********************************************************************************************************************
-
-
-
 
 void crossover::ERX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng)
 {
@@ -342,7 +346,7 @@ void crossover::ERX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
         uint current = child.back();
         vector<uint> possibleNext(0);
 
-        // check if any neighbor can be inserted
+        // check if any neighbor can be inserted...
         for (auto node : neighborhood.at(current))
             if (frequency[node] < ubs[node])
             {
@@ -353,7 +357,7 @@ void crossover::ERX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
                 if (neighborhood.at(node).size() == neighborhood_size)
                     possibleNext.push_back(node);
             }
-        // if not insert node bellow lbs
+        // ...if not insert node bellow lbs
         if (possibleNext.empty())
             for (uint node = 0; node < node_cnt; node++)
                 if (frequency[node] < lbs[node])
@@ -408,7 +412,7 @@ void crossover::AEX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
         uint current = child.back();
         vector<uint> possible_next_node(0);
 
-        // check if any neighbor can be inserted
+        // check if any neighbor can be inserted...
         for (auto node : next_node->at(current))
             // first feasible node is selected
             if (frequency[node] < ubs[node])
@@ -416,7 +420,7 @@ void crossover::AEX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
                 possible_next_node.push_back(node);
                 break;
             }
-        // if not insert node bellow lbs
+        // ...if not insert node bellow lbs
         if (possible_next_node.empty())
             for (uint node = 0; node < node_cnt; node++)
                 if (frequency[node] < lbs[node])
@@ -448,11 +452,10 @@ void crossover::AEX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
     }
 }
 
-void crossover::NBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> & x, vector<uint> & y, uint gap_node)> alignmentFunction)
+void crossover::NBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> &x, vector<uint> &y, uint gap_node)> alignmentFunction)
 {
     const uint gap_node = node_cnt;
     alignmentFunction(parent1, parent2, gap_node);
-    
 
     child = parent2;
     std::unordered_set<uint> nodes;
@@ -473,16 +476,15 @@ void crossover::NBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
         if (nodes.count(parent1[i]))
             child.insert(child.begin() + std::min((uint)child.size(), i), parent1[i]);
 
-    alignment::removeGap(child, gap_node); 
+    alignment::removeGap(child, gap_node);
 }
 
-void crossover::PBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> & x, vector<uint> & y, uint gap_node)> alignmentFunction)
+void crossover::PBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> &x, vector<uint> &y, uint gap_node)> alignmentFunction)
 {
     const uint gap_node = node_cnt;
     alignmentFunction(parent1, parent2, gap_node);
 
-    std::uniform_int_distribution<uint> position_rng(0, parent1.size() - 1 );
-    // LOG(std::count(parent1.begin(), parent1.end(), gap_node));
+    std::uniform_int_distribution<uint> position_rng(0, parent1.size() - 1);
     uint insert_cnt = std::max((int)position_rng(*rng) - (int)std::count(parent1.begin(), parent1.end(), gap_node), 0) + 1;
     vector<uint> node_frequencies(node_cnt + 1, 0);
     std::set<uint> insert_idxs = {};
@@ -518,10 +520,10 @@ void crossover::PBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
     for (auto idx : insert_idxs)
         child.insert(child.begin() + idx, parent1[idx]);
 
-    alignment::removeGap(child, gap_node); 
+    alignment::removeGap(child, gap_node);
 }
 
-void crossover::OX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> & x, vector<uint> & y, uint gap_node)> alignmentFunction)
+void crossover::OX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> &x, vector<uint> &y, uint gap_node)> alignmentFunction)
 {
     const uint gap_node = node_cnt;
     alignmentFunction(parent1, parent2, gap_node);
@@ -574,7 +576,7 @@ void crossover::OX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
     core.insert(core.begin(), child.begin() + i, child.end());
     child = core;
 
-    alignment::removeGap(child, gap_node); 
+    alignment::removeGap(child, gap_node);
 }
 
 void crossover::OBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> freq1, vector<uint> freq2, std::mt19937 *rng)
@@ -613,7 +615,7 @@ void crossover::OBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
         }
 }
 
-void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> & x, vector<uint> & y, uint gap_node)> alignmentFunction)
+void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> &x, vector<uint> &y, uint gap_node)> alignmentFunction)
 {
     const uint gap_node = node_cnt;
     alignmentFunction(parent1, parent2, gap_node);
@@ -623,35 +625,42 @@ void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
         node_idxs[i] = {};
     for (uint i = 0; i < parent1.size(); i++)
         node_idxs.at(parent1[i]).push_back(i);
-     node_idxs.at(gap_node) = {};
+    node_idxs.at(gap_node) = {};
 
     child = vector<uint>(parent1.size(), gap_node);
-    queue<uint> queue;
-    queue.push(0);
+    std::stack<uint> stack;
+    stack.push(0);
 
     uint invalid_idx = child.size();
     uint final_idx = invalid_idx;
     vector<uint> walk(child.size(), invalid_idx);
-    
-    bool search = true;
-    while(queue.size() > 0 && search){
-        uint idx = queue.back();
-        queue.pop();
 
-        for (auto i : node_idxs.at(parent2[idx])){
-            if (walk[i] == invalid_idx){
-                queue.push(i);
+    bool search = true;
+    while (stack.size() > 0 && search)
+    {
+        uint idx = stack.top();
+        stack.pop();
+
+        for (auto i : node_idxs.at(parent2[idx]))
+        {
+            if (walk[i] == invalid_idx)
+            {
+                stack.push(i);
                 walk[i] = idx;
-                if (i == 0){
+                if (i == 0)
+                {
                     search = false;
                     break;
                 }
             }
         }
     }
-    if (walk[0] != invalid_idx){
+
+    if (walk[0] != invalid_idx)
+    {
         uint idx = walk[0];
-        while (idx != 0){
+        while (idx != 0)
+        {
             child[idx] = parent1[idx];
             idx = walk[idx];
         }
@@ -689,7 +698,7 @@ void crossover::HGreX(vector<uint> parent1, vector<uint> parent2, vector<uint> &
     crossover::HXHelper(parent1, parent2, child, lbs, ubs, f, rng);
 }
 
-void crossover::HRndX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::function<permutator::fitness_t(vector<uint>)> getFitness, std::mt19937 *rng)
+void crossover::HRndX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, std::mt19937 *rng)
 {
     std::function<uint(vector<uint>, vector<uint>)> f = [rng](vector<uint> permutation, vector<uint> next_feasible_nodes) -> uint
     {
@@ -789,9 +798,9 @@ void crossover::HXHelper(vector<uint> parent1, vector<uint> parent2, vector<uint
 }
 
 // from QAP Xover
-void crossover::rULX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, bool random, std::mt19937 *rng, std::function<void(vector<uint> & x, vector<uint> & y, uint gap_node)> alignmentFunction)
+void crossover::rULX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> lbs, vector<uint> ubs, bool random, std::mt19937 *rng, std::function<void(vector<uint> &x, vector<uint> &y, uint gap_node)> alignmentFunction)
 {
-    
+
     const uint node_cnt = lbs.size();
     const uint gap_node = node_cnt;
 
@@ -811,13 +820,10 @@ void crossover::rULX(vector<uint> parent1, vector<uint> parent2, vector<uint> &c
 
     for (auto idx : idxs)
     {
-        uint node1 = parent1[idx];
-        uint node2 = parent2[idx];
-
-        if (node1 == node2)
+        if (parent1[idx] == parent2[idx])
         {
-            child[idx] = node1;
-            frequency[node1]++;
+            child[idx] = parent1[idx];
+            frequency[parent1[idx]]++;
         }
     }
 
@@ -865,9 +871,6 @@ void crossover::rULX(vector<uint> parent1, vector<uint> parent2, vector<uint> &c
             bellow_lbs.pop_back();
         }
     }
-
-    if (bellow_lbs.size() > 0)
-        LOG(bellow_lbs.size()); 
 
     for (auto node : bellow_lbs)
         child.push_back(node);
@@ -917,7 +920,7 @@ void crossover::EULX(vector<uint> parent1, vector<uint> parent2, vector<uint> &c
     }
 }
 
-void crossover::UPMX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> & x, vector<uint> & y, uint gap_node)> alignmentFunction)
+void crossover::UPMX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> &x, vector<uint> &y, uint gap_node)> alignmentFunction)
 {
     const uint gap_node = node_cnt;
     alignmentFunction(parent1, parent2, gap_node);
@@ -932,7 +935,7 @@ void crossover::UPMX(vector<uint> parent1, vector<uint> parent2, vector<uint> &c
     child = parent1;
     std::uniform_int_distribution<uint> idx1_rng(0, child.size() - 1);
 
-    for (uint i = 0; i < child.size(); i++)
+    for (uint i = 0; i < child.size()/3; i++)
     {
         uint idx1 = idx1_rng(*rng);
         uint node = child[idx1];
@@ -947,13 +950,14 @@ void crossover::UPMX(vector<uint> parent1, vector<uint> parent2, vector<uint> &c
     alignment::removeGap(child, gap_node);
 }
 
-void crossover::SPX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::function<fitness_t(vector<uint>)> getFitness, std::mt19937 *rng, std::function<void(vector<uint> & x, vector<uint> & y, uint gap_node)> alignmentFunction)
+void crossover::SPX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::function<fitness_t(vector<uint>, uint)> getFitness, std::mt19937 *rng, std::function<void(vector<uint> &x, vector<uint> &y, uint gap_node)> alignmentFunction)
 {
     const uint gap_node = node_cnt;
     alignmentFunction(parent1, parent2, gap_node);
 
     child = parent1;
-    fitness_t best_fitness = getFitness(child);
+    fitness_t best_fitness = getFitness(child, gap_node);
+
     std::uniform_int_distribution<uint> position_rng(0, child.size() - 1);
     uint end = position_rng(*rng);
     int idx = end;
@@ -965,31 +969,34 @@ void crossover::SPX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
     do
     {
         idx = (idx + 1) % child.size();
-
         vector<uint> child1 = parent1;
         vector<uint> child2 = parent2;
 
         if (child1[idx] == child2[idx] || child1[idx] == gap_node || child2[idx] == gap_node)
             continue;
 
-        for (auto i : idxs){
-            if (child1[i] == parent2[idx]){
+        for (auto i : idxs)
+        {
+            if (child1[i] == parent2[idx])
+            {
                 child1[i] = parent1[idx];
                 child1[idx] = parent2[idx];
                 break;
             }
         }
 
-        for (auto i : idxs){
-            if (child2[i] == parent1[idx]){
+        for (auto i : idxs)
+        {
+            if (child2[i] == parent1[idx])
+            {
                 child2[i] = parent2[idx];
                 child2[idx] = parent1[idx];
                 break;
             }
         }
 
-        fitness_t child1_fitness = getFitness(child1);
-        fitness_t child2_fitness = getFitness(child2);
+        fitness_t child1_fitness = getFitness(child1, gap_node);
+        fitness_t child2_fitness = getFitness(child2, gap_node);
 
         if (child1_fitness <= child2_fitness)
         {
@@ -1015,6 +1022,73 @@ void crossover::SPX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
     alignment::removeGap(child, gap_node);
 }
 
+void crossover::MPX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng)
+{
+    std::uniform_int_distribution<uint> position_rng(0, parent1.size());
+    int min_size =  parent1.size()/2 > 10 ? 10 : 0;
+    int idx1, idx2;
+    do
+    {
+        idx1 = position_rng(*rng);
+        idx2 = position_rng(*rng);
+    } while (!(idx2 - idx1 >= min_size && idx2 - idx1 < parent1.size()/2));
+
+    vector<uint> core(parent1.begin() + idx1, parent1.begin() + idx2);
+    vector<uint> core_frequency(node_cnt + 1, 0);
+
+    for (auto node : core)
+        core_frequency[node]++;
+
+    child = parent2;
+
+    vector<uint> rand_idxs(child.size());
+    std::iota(rand_idxs.begin(), rand_idxs.end(), 0);
+    std::shuffle(rand_idxs.begin(), rand_idxs.end(), *rng);
+
+    vector<uint> remove(0);
+    for (auto idx : rand_idxs)
+    {
+        uint node = child[idx];
+        if (core_frequency[node] > 0)
+        {
+            remove.push_back(idx);
+            core_frequency[node]--;
+        }
+    }
+
+    std::sort(remove.begin(), remove.end(), std::greater<>());
+    for (auto idx : remove)
+        child.erase(child.begin() + idx);
+
+    child.insert(child.begin(), core.begin(), core.end());
+}
+
+void crossover::APX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> frequency)
+{
+    const uint gap_node = frequency.size();
+    alignment::backfillOneGap(parent1, parent2, gap_node);
+    frequency.push_back(0);
+    child.clear();
+
+    for (uint i = 0; i < parent1.size(); i++){
+        if (frequency[parent1[i]] > 0){
+            child.push_back(parent1[i]);
+            frequency[parent1[i]]--;
+        }
+        else if (frequency[parent2[i]] > 0){
+            child.push_back(parent2[i]);
+            frequency[parent2[i]]--;
+        }    
+    }
+
+    alignment::removeGap(child, gap_node);
+}
+
+
+
+//**********************************************************************************************************************
+// ALIGNMENT
+//**********************************************************************************************************************
 
 
 void alignment::removeGap(std::vector<uint> &permutation, uint gap_node)
@@ -1023,112 +1097,96 @@ void alignment::removeGap(std::vector<uint> &permutation, uint gap_node)
     permutation.erase(new_end, permutation.end());
 }
 
-void alignment::globalUniform(vector<uint> &x, vector<uint> &y, uint gap_node, uint difference_penalty, uint gap_penalty)
+void alignment::greedyUniform(vector<uint> &x, vector<uint> &y, uint gap_node, uint difference_penalty, uint gap_penalty)
 {
-    int i, j; // initialising variables
-
-    int m = x.size(); // length of gene1
-    int n = y.size(); // length of gene2
-
     // table for storing optimal substructure answers
-    vector<vector<uint>> dp;
-    for (uint i = 0; i < n + m + 1; i++)
-        dp.push_back(vector<uint>(n + m + 1, 0));
+    vector<vector<uint>> penalty_table;
+    for (uint i = 0; i < y.size() + x.size() + 1; i++)
+        penalty_table.push_back(vector<uint>(y.size() + x.size() + 1, 0));
 
     // initialising the table
-    for (i = 0; i <= (n + m); i++)
+    for (uint i = 0; i <= (y.size() + x.size()); i++)
     {
-        dp[i][0] = i * gap_penalty;
-        dp[0][i] = i * gap_penalty;
+        penalty_table[i][0] = i * gap_penalty;
+        penalty_table[0][i] = i * gap_penalty;
     }
 
     // calculating the minimum penalty
-    for (i = 1; i <= m; i++)
-        for (j = 1; j <= n; j++)
+    for (uint i = 1; i <= x.size(); i++)
+        for (uint j = 1; j <= y.size(); j++)
             if (x[i - 1] == y[j - 1])
-                dp[i][j] = dp[i - 1][j - 1];
+                penalty_table[i][j] = penalty_table[i - 1][j - 1];
             else
-                dp[i][j] = std::min({dp[i - 1][j - 1] + difference_penalty,
-                                     dp[i - 1][j] + gap_penalty,
-                                     dp[i][j - 1] + gap_penalty});
+                penalty_table[i][j] = std::min({penalty_table[i - 1][j - 1] + difference_penalty,
+                                                penalty_table[i - 1][j] + gap_penalty,
+                                                penalty_table[i][j - 1] + gap_penalty});
 
     // Reconstructing the solution
-    int l = n + m; // maximum possible length
+    int max_size = y.size() + x.size();
 
-    i = m;
-    j = n;
+    int i = x.size();
+    int j = y.size();
 
-    int xpos = l;
-    int ypos = l;
+    int x_position = max_size;
+    int y_position = max_size;
 
     // Final answers for the respective strings
-    vector<uint> xans(l + 1, gap_node);
-    vector<uint> yans(l + 1, gap_node);
+    vector<uint> x_answer(max_size + 1, gap_node);
+    vector<uint> y_answer(max_size + 1, gap_node);
 
     while (!(i == 0 || j == 0))
     {
         if (x[i - 1] == y[j - 1])
         {
-            xans[xpos--] = x[i - 1];
-            yans[ypos--] = y[j - 1];
+            x_answer[x_position--] = x[i - 1];
+            y_answer[y_position--] = y[j - 1];
             i--;
             j--;
         }
-        else if (dp[i - 1][j - 1] + difference_penalty == dp[i][j])
+        else if (penalty_table[i - 1][j - 1] + difference_penalty == penalty_table[i][j])
         {
-            xans[xpos--] = x[i - 1];
-            yans[ypos--] = y[j - 1];
+            x_answer[x_position--] = x[i - 1];
+            y_answer[y_position--] = y[j - 1];
             i--;
             j--;
         }
-        else if (dp[i - 1][j] + gap_penalty == dp[i][j])
+        else if (penalty_table[i - 1][j] + gap_penalty == penalty_table[i][j])
         {
-            xans[xpos--] = x[i - 1];
-            yans[ypos--] = gap_node;
+            x_answer[x_position--] = x[i - 1];
+            y_answer[y_position--] = gap_node;
             i--;
         }
-        else if (dp[i][j - 1] + gap_penalty == dp[i][j])
+        else if (penalty_table[i][j - 1] + gap_penalty == penalty_table[i][j])
         {
-            xans[xpos--] = gap_node;
-            yans[ypos--] = y[j - 1];
+            x_answer[x_position--] = gap_node;
+            y_answer[y_position--] = y[j - 1];
             j--;
         }
     }
-    while (xpos > 0)
+    while (x_position > 0)
     {
-        if (i > 0)
-            xans[xpos--] = x[--i];
-        else
-            xans[xpos--] = gap_node;
+        x_answer[x_position--] = i > 0 ? x[--i] : gap_node;
     }
-    while (ypos > 0)
+    while (y_position > 0)
     {
-        if (j > 0)
-            yans[ypos--] = y[--j];
-        else
-            yans[ypos--] = gap_node;
+        y_answer[y_position--] = i > 0 ? x[--i] : gap_node;
     }
 
-    // Since we have assumed the answer to be n+m long,
+    // Since we have assumed the answer to be x.size + y.size long,
     // we need to remove the extra gaps in the starting
-    // id represents the index from which the arrays
-    // xans, yans are useful
-    int id = 1;
-    for (i = l; i >= 1; i--)
+    // start represents the index from which the arrays
+    // x_answer, y_answer are useful
+    int start = 0;
+    while (y_answer[start] == gap_node && x_answer[start] == gap_node)
     {
-        if (yans[i] == gap_node && xans[i] == gap_node)
-        {
-            id = i + 1;
-            break;
-        }
+        start++;
     }
-    xans.erase(xans.begin(), xans.begin() + id);
-    yans.erase(yans.begin(), yans.begin() + id);
-    x = xans;
-    y = yans;
+    
+    x = vector<uint>(x_answer.begin() + start, x_answer.end());
+    y = vector<uint>(y_answer.begin() + start, y_answer.end());
 }
 
-void alignment::globalOneGap(vector<uint> &x, vector<uint> &y, uint gap_node)
+void alignment::greedyOneGap(vector<uint> &x, vector<uint> &y, uint gap_node)
 {
     if (x.size() == y.size())
         return;
@@ -1213,71 +1271,3 @@ void alignment::frontfillOneGap(vector<uint> &x, vector<uint> &y, uint gap_node)
     if (y.size() < x.size())
         y.insert(y.begin(), x.size() - y.size(), gap_node);
 }
-
-// void crossover::PMX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, vector<uint> freq1, vector<uint> freq2, std::mt19937 *rng)
-// {
-//     if (freq1 != freq2)
-//     {
-//         child = parent1;
-//         return;
-//     }
-//     std::uniform_int_distribution<uint> randPosition(0, parent1.size());
-//     uint start, end;
-//     do
-//     {
-//         start = randPosition(*rng);
-//         end = randPosition(*rng);
-//     } while (start >= end);
-
-//     LOG(start);
-//     LOG(end);
-
-//     vector<uint> core1(parent1.begin() + start, parent1.begin() + end);
-//     vector<uint> core2(parent2.begin() + start, parent2.begin() + end);
-
-//     child = parent2;
-//     vector<uint> randIdxs(child.size());
-//     std::iota(randIdxs.begin(), randIdxs.end(), 0);
-//     randIdxs.erase(randIdxs.begin() + start, randIdxs.begin() + end);
-//     std::shuffle(randIdxs.begin(), randIdxs.end(), *rng);
-
-//     std::unordered_map<uint, vector<uint>> partialMap;
-//     for (uint i = 0; i < freq1.size(); i++)
-//         partialMap[i] = {};
-//     for (uint i = 0; i < core1.size(); i++)
-//     {
-//         partialMap.at(core1[i]).push_back(core2[i]);
-//         child[start + i] = core1[i];
-//     }
-
-//     std::map<uint, vector<uint>> inserts;
-//     for (auto idx : randIdxs)
-//     {
-//         auto node = child[idx];
-//         if (partialMap.at(node).size() == 0)
-//             continue;
-
-//         inserts[idx] = partialMap.at(node);
-//         partialMap.at(node) = {};
-//         uint i = 0;
-
-//         while (i < inserts.at(idx).size())
-//         {
-//             node = inserts.at(idx)[i];
-//             inserts.at(idx).insert(inserts.at(idx).end(), partialMap.at(node).begin(), partialMap.at(node).end());
-//             if (partialMap.at(node).size() > 0)
-//                 inserts.at(idx).erase(inserts.at(idx).begin() + i);
-//             else
-//                 i++;
-//             partialMap.at(node) = {};
-//         }
-//     }
-//     LOG("--");
-//     for (auto [index, values] : inserts)
-//     {
-//         LOG(index);
-//         child.erase(child.begin() + index);
-//         child.insert(child.begin() + index, values.begin(), values.end());
-//     }
-//     LOG("--");
-// }

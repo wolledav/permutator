@@ -1,0 +1,37 @@
+## This is an example of specifying instances with a file.
+
+# Each line is an instance relative to trainInstancesDir
+# (see scenario.txt.tmpl) and an optional sequence of instance-specific
+# parameters that will be passed to target-runnerx when invoked on that
+# instance.
+
+# Empty lines and comments are ignored.
+
+A_01.json timeout 900
+A_01.json timeout 5400
+A_02.json timeout 900
+A_02.json timeout 5400
+A_03.json timeout 900
+A_03.json timeout 5400
+A_04.json timeout 900
+A_04.json timeout 5400 
+A_05.json timeout 900
+A_05.json timeout 5400
+A_06.json timeout 900
+A_06.json timeout 5400
+A_07.json timeout 900
+A_07.json timeout 5400
+A_08.json timeout 900 
+A_08.json timeout 5400
+A_09.json timeout 900
+A_09.json timeout 5400
+A_10.json timeout 900 
+A_10.json timeout 5400
+A_12.json timeout 900
+A_12.json timeout 5400
+A_13.json timeout 900
+A_13.json timeout 5400 
+A_14.json timeout 900
+A_14.json timeout 5400
+A_15.json timeout 900
+A_15.json timeout 5400

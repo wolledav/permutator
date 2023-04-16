@@ -66,7 +66,7 @@ namespace crossover
 
     void HGreX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng);
 
-    void HRndX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng);
+    void HRndX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::mt19937 *rng);
     
     void HProX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> lbs, std::vector<uint> ubs, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng);
 
@@ -76,18 +76,19 @@ namespace crossover
 
     void UPMX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
 
-    void SPX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::function<permutator::fitness_t(std::vector<uint>)> getFitness, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
+    void SPX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::function<permutator::fitness_t(std::vector<uint>, uint)> getFitness, std::mt19937 *rng, std::function<void(std::vector<uint> & x, std::vector<uint> & y, uint gap_node)> alignmentFunction);
 
+    void MPX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, uint node_cnt, std::mt19937 *rng);
 
+    void APX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> frequency);
 
-    // void PMX(std::vector<uint> parent1, std::vector<uint> parent2, std::vector<uint> &child, std::vector<uint> freq1, std::vector<uint> freq2, std::mt19937 *rng);
 }
 
 namespace alignment
 {
-    void globalUniform(std::vector<uint> &x, std::vector<uint> &y, uint gap_node, uint difference_penalty, uint gap_penalty);
+    void greedyUniform(std::vector<uint> &x, std::vector<uint> &y, uint gap_node, uint difference_penalty, uint gap_penalty);
 
-    void globalOneGap(std::vector<uint> &x, std::vector<uint> &y, uint gap_node);
+    void greedyOneGap(std::vector<uint> &x, std::vector<uint> &y, uint gap_node);
 
     void randomOneGap(std::vector<uint> &x, std::vector<uint> &y, uint gap_node, std::mt19937 *rng);
 

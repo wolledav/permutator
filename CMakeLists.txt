@@ -75,24 +75,24 @@ target_include_directories(ROADEF_meta PUBLIC
 
 
 
-# add_executable(EVRP_meta
-#         src/problem/EVRP/EVRP_meta.cpp
-#         src/config.cpp
-#         src/generic/ASCHEA.cpp
-#         src/generic/population.cpp
-#         src/generic/optimizer.cpp
-#         src/generic/instance.cpp
-#         src/generic/solution.cpp
-#         src/generic/operator.cpp
-#         src/problem/EVRP/EVRP.cpp
-#         lib/getopt/getopt.c
-#         )
+add_executable(EVRP_meta
+        src/problem/EVRP/EVRP_meta.cpp
+        src/config.cpp
+        src/generic/ASCHEA.cpp
+        src/generic/population.cpp
+        src/generic/optimizer.cpp
+        src/generic/instance.cpp
+        src/generic/solution.cpp
+        src/generic/operator.cpp
+        src/problem/EVRP/EVRP.cpp
+        lib/getopt/getopt.c
+        )
 
-# target_include_directories(EVRP_meta PUBLIC
-#         "${PROJECT_BINARY_DIR}/../"
-#         "${PROJECT_BINARY_DIR}/../src"
-#         "${PROJECT_BINARY_DIR}/../lib/nlohmann"
-#         )
+target_include_directories(EVRP_meta PUBLIC
+        "${PROJECT_BINARY_DIR}/../"
+        "${PROJECT_BINARY_DIR}/../src"
+        "${PROJECT_BINARY_DIR}/../lib/nlohmann"
+        )
 
 
 

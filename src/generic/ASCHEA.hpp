@@ -20,6 +20,9 @@
 #define POPULATIONS_MAX_CNT 32
 #define STATIC_POPULATION "static"
 #define DYNAMIC_POPULATION "dynamic"
+#define DYNAMIC_POPULATION_SIZE 8
+#define STATIC_POPULATION_SIZE 128
+#define TOURNAMENT_SIZE 4
 
 
 inline void LOGS(const std::vector<Solution> parents) {for (auto p : parents) p.print(); LOG(parents.size());}
@@ -31,21 +34,24 @@ class ASCHEA : public BasicOptimizer
         uint timeout_s;
         uint unimproved_cnt;
         Population* active_population;
-        std::vector<Population*> populations = std::vector<Population*>(POPULATIONS_MAX_CNT, nullptr);
         Population* best_population;
+        std::vector<Population*> populations = std::vector<Population*>(POPULATIONS_MAX_CNT, nullptr);
         std::vector<uint> population_counter = std::vector<uint>(POPULATIONS_MAX_CNT, 0);
+        
         double t_select = T_SELECT;
         uint population_frequency = POPULATION_FREQUENCY; 
         std::string population_type = DYNAMIC_POPULATION;
         double mutation_rate = MUTATION_RATE;     
+        uint tournament_size = TOURNAMENT_SIZE;
 
         std::function<void()> construction;
         std::function<void(std::vector<Solution> &parents)> selection;
-        std::function<void(std::vector<Solution> parents, std::vector<Solution> &children)> crossover;
+        void crossover(std::vector<Solution> parents, std::vector<Solution> &children);
         void mutation(std::vector<Solution> &children);
         std::function<void(std::vector<Solution> children)> replacement;
-        std::function<void(std::vector<uint> & permutation_1, std::vector<uint> & permutation_2, uint gap_node)> alignment;
+        std::function<void(std::vector<uint> &permutation_1, std::vector<uint> &permutation_2, uint gap_node)> alignment;
 
+        std::vector<std::string> crossover_list;
         std::vector<std::string> mutation_list;
 
         const std::map<std::string, std::function<void(Solution &child)>> mutation_map = {
@@ -86,7 +92,29 @@ class ASCHEA : public BasicOptimizer
             {"moveAll_4",      [this](Solution &child){return this->moveAll(child, 4);}},
             {"moveAll_10",      [this](Solution &child){return this->moveAll(child, 10);}},
             {"exchangeIds",      [this](Solution &child){return this->exchangeIds(child);}},
-            {"twoOpt",      [this](Solution &child){return this->twoOpt(child);}},     
+            {"exchangeNIds",      [this](Solution &child){return this->exchangeNIds(child);}},
+            {"twoOpt",      [this](Solution &child){return this->twoOpt(child);}}    
+        };
+
+        const std::map<std::string, std::function<void(std::vector<Solution>, std::vector<Solution>&)>> crossover_map = {
+            {"NBX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->NBX(parents, children); }},
+            {"PBX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->PBX(parents, children); }},
+            {"ERX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->ERX(parents, children); }},
+            {"AEX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->AEX(parents, children); }},
+            {"OX",      [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->OX(parents, children); }},
+            {"OBX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->OBX(parents, children); }},
+            {"CX",      [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->CX(parents, children); }},
+            {"HGreX",   [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->HGreX(parents, children); }},
+            {"HRndX",   [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->HRndX(parents, children); }},
+            {"HProX",   [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->HProX(parents, children); }},
+            {"ULX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->ULX(parents, children); }},
+            {"RULX",    [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->RULX(parents, children); }},
+            {"EULX",    [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->EULX(parents, children); }},
+            {"ERULX",   [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->ERULX(parents, children); }},
+            {"UPMX",    [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->UPMX(parents, children); }},
+            {"SPX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->SPX(parents, children); }},
+            {"MPX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->MPX(parents, children); }},
+            {"APX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->APX(parents, children); }}
         };
 
         //construction
@@ -96,8 +124,8 @@ class ASCHEA : public BasicOptimizer
         void constructNearestNeighbor();
 
         //selection
-        void constrainedTournament(std::vector<Solution> &parents);
-        void constrainedSortedTournament(std::vector<Solution> &parents);
+        void sortingTournament(std::vector<Solution> &parents);
+        void presortedTournament(std::vector<Solution> &parents);
 
         //crossover
         void ERX(std::vector<Solution> parents, std::vector<Solution> &children);
@@ -116,8 +144,8 @@ class ASCHEA : public BasicOptimizer
         void ERULX(std::vector<Solution> parents, std::vector<Solution> &children);
         void UPMX(std::vector<Solution> parents, std::vector<Solution> &children);
         void SPX(std::vector<Solution> parents, std::vector<Solution> &children);
-
-        void PMX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void MPX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void APX(std::vector<Solution> parents, std::vector<Solution> &children);
 
         //mutation
         void insert(Solution &child);
@@ -128,6 +156,7 @@ class ASCHEA : public BasicOptimizer
         void exchange(Solution &child, uint x, uint y, bool reverse);
         void moveAll(Solution &child, uint x);
         void exchangeIds(Solution &child);
+        void exchangeNIds(Solution &child);
         void twoOpt(Solution &child);   
 
         //replacement
@@ -141,15 +170,15 @@ class ASCHEA : public BasicOptimizer
         permutator::fitness_t penalizedFitness(Solution solution);
         permutator::fitness_t penalizedFitness(std::vector<permutator::fitness_t> penalties);
         void sortByPenalizedFitness(std::vector<Solution> &v);
-        
         void nichePopulation(std::vector<Solution> population, uint capacity, std::vector<bool> &leaders, std::vector<bool> &followers);
         void swapPopulation();
+        void setPopulation(const std::string &constr);
         
 
 
     public:
         explicit ASCHEA(Instance* inst, nlohmann::json config, uint seed=0);
-        ~ASCHEA() = default;
+        ~ASCHEA();
         void setConstruction(const std::string &constr);
         void setSelection(const std::string &constr);
         void setCrossover(const std::string &constr);

@@ -6,9 +6,6 @@
 # instance.
 
 # Empty lines and comments are ignored.
-# 100/100-1_100-2.tsp --time 1
-# 100/100-1_100-3.tsp --time 2
-# 100/100-1_100-4.tsp --time 3
 
 E-n22-k4.evrp timeout 1044          
 E-n23-k3.evrp timeout 1116          
@@ -27,23 +24,3 @@ X-n573-k30.evrp timeout 41616
 #X-n819-k171.evrp timeout 60696      
 #X-n916-k207.evrp timeout 66528      
 #X-n1001-k43.evrp timeout 108972     
-
-
-
-#E-n22-k4-s8.evrp timeout 10  
-#E-n23-k3-s9.evrp timeout 10 
-#E-n30-k3-s6.evrp timeout 10 
-#E-n33-k4-s6.evrp timeout 10 
-#E-n51-k5-s9.evrp timeout 10 
-#E-n76-k7-s9.evrp timeout 10 
-#E-n101-k8-s9.evrp timeout 10 
-#X-n143-k7-s4.evrp timeout 10 
-#X-n214-k11-s9.evrp timeout 10 
-#X-n351-k40-s35.evrp timeout 10 
-#X-n459-k26-s20.evrp timeout 10 
-#X-n573-k30-s6.evrp timeout 10 
-#X-n685-k75-s25.evrp timeout 10 
-#X-n749-k98-s30.evrp timeout 10 
-#X-n819-k171-s25.evrp timeout 10 
-#X-n916-k207-s9.evrp timeout 10 
-#X-n1001-k43-s9.evrp timeout 10 

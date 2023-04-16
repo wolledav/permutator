@@ -490,9 +490,7 @@ bool Optimizer::moveAll(uint x)
         // attempt all shifts by i from [-x, x]\{0}
         for (int i = 0; i <= (int)x*2; i++)
         {
-            // LOG(i);
             oprtr::moveAll(new_perm, node_id, 1, &positions);
-            // LOG(i);
             // Evaluate
             this->instance->computeFitness(new_perm, fitness, penalties);
 #pragma omp critical

@@ -5,6 +5,7 @@ output_file = sys.argv[1]
 params = sys.argv[2:]
 operators = []
 mutations = []
+crossover = []
 perturbations = []
 config = {}
 
@@ -18,21 +19,28 @@ for i in range(0, len(params), 2):
     elif param[0:3] == "mu_":
         if value == '1':
             mutations.append(param[3:])
+    elif param[0:3] == "xo_":
+        if value == '1':
+            crossover.append(param[3:])
     elif param == "perturbation":
         perturbations.append(value)
-    elif param == "crossover":
-        config[param] = value
-    elif param == "crossover_param":
-        config[param] = int(value)
     elif param == "selection":
         config[param] = value
     elif param == "replacement":
         config[param] = value
+    elif param == "alignment":
+        config[param] = value
+    elif param == "diff_p":
+        config[param] = int(value)
+    elif param == "gap_p":
+        config[param] = int(value)    
     elif param == "population_type":
         config[param] = value
     elif param == "population_size":
         config[param] = int(value)
     elif param == "frequency":
+        config[param] = int(value)
+    elif param == "tournament_size":
         config[param] = int(value)
     elif param == "t_select":
         config[param] = float(value)
@@ -68,6 +76,8 @@ for i in range(0, len(params), 2):
 config["operators"] = operators
 config["mutation"] = mutations
 config["perturbation"] = perturbations
+config["crossover"] = crossover
+
 
 file = open(output_file, "w")
 json.dump(config, file, indent=4)

@@ -11,7 +11,7 @@ EVRPInstance::EVRPInstance(const char *path, int cnt, int charger_cnt)
     : Instance(generateName(path, "EVRP"), cnt + charger_cnt, 1, 1)
 {
     this->parseDataFrom(path);
-    this->ubs[this->depot_id] = this->tours+1;
+    this->ubs[this->depot_id] = UINT_MAX;
     this->dist_mat.resize(this->node_cnt, this->node_cnt);
     this->penalty_func_cnt = 5;
     for (int i = 0; i < this->node_cnt; i++)

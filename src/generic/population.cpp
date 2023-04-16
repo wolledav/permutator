@@ -11,25 +11,11 @@ Population::Population(uint size, uint penalty_func_cnt, double t_target)
     this->last_gen_solutions = vector<Solution>(this->size);
 }
 
-void Population::update_t_t()
-{
-    vector<uint> penalty_violation_cnt(this->penalty_func_cnt, 0);
-    for (auto solution : this->solutions)
-    {
-        penalty_violation_cnt[0] += (uint)solution.is_feasible;
-        for (uint idx = 1; idx < penalty_violation_cnt.size(); idx++)
-            penalty_violation_cnt[idx] += solution.penalties[idx] > 0 ? 1 : 0;
-        
-    }
-    for (uint idx = 0; idx < penalty_violation_cnt.size(); idx++)
-        this->t_t[idx] = (double)penalty_violation_cnt[idx] / this->size;
-    
-}
-
 void Population::initializePenalty()
 {
     copy(this->solutions.begin(), this->solutions.end(), this->last_gen_solutions.begin());
     vector<fitness_t> fitness_stats(this->penalty_func_cnt, 0);
+
     for (auto solution : this->solutions)
         for (uint idx = 0; idx < fitness_stats.size(); idx++)
             fitness_stats[idx] += solution.penalties[idx];
@@ -40,6 +26,7 @@ void Population::initializePenalty()
             this->penalty.push_back(1);
         else
             this->penalty.push_back(100 * ((double)fitness_stats[0]) / fitness_stats[idx]);
+
     this->penalty_ceiling = *std::max_element(this->penalty.begin(), this->penalty.end());
 }
 
@@ -55,21 +42,35 @@ void Population::updatePenalty()
     double max = *std::max_element(this->penalty.begin(), this->penalty.end());
     if (max > this->penalty_ceiling)
         for (auto &p : this->penalty)
-            p = 1 + (p - min) * (this->penalty_ceiling / max); // linear scaling of penalties to range(1 .. this->penalty_ceiling)
+            p = 1 + (p - min) * (this->penalty_ceiling / max); // linear scaling of penalties to [1.0 ... this->penalty_ceiling]
     else
         for (auto &p : this->penalty)
             p = 1 + (p - min);
 }
 
+void Population::update_t_t()
+{
+    vector<uint> penalty_violation_cnt(this->penalty_func_cnt, 0);
+    for (auto solution : this->solutions)
+    {
+        penalty_violation_cnt[0] += (uint)solution.is_feasible;
+        for (uint idx = 1; idx < penalty_violation_cnt.size(); idx++)
+            penalty_violation_cnt[idx] += solution.penalties[idx] > 0 ? 1 : 0;        
+    }
+    for (uint idx = 0; idx < penalty_violation_cnt.size(); idx++)
+        this->t_t[idx] = (double)penalty_violation_cnt[idx] / this->size;
+}
+
+
 void Population::stallPopulationCheck()
 {
-    bool allSolutionsSame = true;
+    bool all_solutions_same = true;
     for (uint j = 0; j < this->size; j++)
     {
-        allSolutionsSame = allSolutionsSame && (this->last_gen_solutions[j].permutation == this->solutions[j].permutation);
+        all_solutions_same = all_solutions_same && (this->last_gen_solutions[j].permutation == this->solutions[j].permutation);
         this->last_gen_solutions[j] = this->solutions[j];
     }
-    this->is_stalled = allSolutionsSame;
+    this->is_stalled = all_solutions_same;
 }
 
 void Population::updateAvgFitness()
@@ -78,7 +79,8 @@ void Population::updateAvgFitness()
     {
         this->avg_fitness = 0;
         uint idx = 0;
-        for (idx; idx < this->getRealSize(); idx++){
+        for (idx; idx < this->getRealSize(); idx++)
+        {
             if (this->solutions[idx].is_feasible)
                 this->avg_fitness += this->solutions[idx].fitness;
             else
@@ -97,8 +99,9 @@ void Population::update()
     this->best_known_solution = this->solutions[0];
     this->updateAvgFitness();
     this->stallPopulationCheck();
-    this->updatePenalty();
     this->update_t_t();
+    this->updatePenalty();
+    
 }
 
 uint Population::getRealSize()
@@ -121,23 +124,24 @@ void Population::clear()
     this->solutions.clear();
 }
 
-void Population::print() 
-{ 
-    for (int i = solutions.size()-1; i >= 0; i--) 
-        solutions[i].print(); std::cout << "popSize: " <<  this->size << " | popGen: " << this->generation << std::endl;
+void Population::print()
+{
+    for (int i = solutions.size() - 1; i >= 0; i--)
+        solutions[i].print();
+    std::cout << "\npopulation size: " << this->size << " | generation: " << this->generation << std::endl << std::endl;
 }
 
-vector<double> Population::get_penalty_coefficients() 
+vector<double> Population::get_penalty()
 {
     return this->penalty;
 }
 
-vector<double> Population::get_t_t() 
+vector<double> Population::get_t_t()
 {
     return this->t_t;
 }
 
-double Population::get_t_target() 
+double Population::get_t_target()
 {
     return this->t_target;
 }

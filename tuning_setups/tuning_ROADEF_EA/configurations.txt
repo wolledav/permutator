@@ -1,0 +1,23 @@
+## Template for specifying initial parameter configurations, for
+## example, the default configuration, in irace.
+##
+## This filename must be specified via the --candidates-file command-line option
+## (or candidatesFile in scenario.txt).
+##
+## The format is one parameter configuration per line, and one parameter per
+## column. The first line gives the parameter name corresponding to
+## each column (names must match those given in the parameters
+## file). Each configuration must satisfy the
+## parameter conditions (NA should be used for those parameters that
+## are not enabled for a given configuration) and, if given, the
+## constraints that describe forbidden configurations.
+# param1 param2 mode   real mutation
+# 5        NA    "x2"   2.0   "low"
+
+# exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 revExchange_1_2 revExchange_2_2 revExchange_2_3 revExchange_2_4 revExchange_3_3 revExchange_3_4 revExchange_4_4 relocate_2 relocate_3 relocate_4 relocate_5 revRelocate_2 revRelocate_3 revRelocate_4 revRelocate_5 moveAll_1 moveAll_2 moveAll_3 moveAll_4
+# 1            0            1            1            1            1            0            1               0               0               0               0               0               0               0          0          0          1          1             1             0             1             0         1         1         1        
+
+
+population_type     population_size     frequency  tournament_size  t_select    t_target    mutation_rate   stop_on_feasible    construction    selection                replacement            insert_1 remove_1 twoOpt exchangeIds exchangeNIds  exchange_1_1  centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1  moveAll_10 NBX  PBX  ERX  AEX  OX   OBX  CX   HGreX HRndX HProX ULX RULX EULX ERULX UPMX SPX  MPX  APX alignment      difference_penalty  gap_penalty
+dynamic             NA                  4          4                0.3         0.5         0.8             0                   random          sortingTournament        segregational          1        1        1      1           0             1             1              1              1              1              0              0           0          1    0    0    1    1    0    0    1     0     0     0   0    1    0     0    1    0    1   randomOneGap   NA                  NA
+static              128                 NA         8                0.3         0.5         0.8             0                   greedy          presortedTournament      nicheSegregational     1        1        1      1           0             1             1              1              1              1              0              0           0          0    1    0    1    0    1    0    1     0     1     0   1    0    1     0    1    0    1   greedyUniform  1                   2

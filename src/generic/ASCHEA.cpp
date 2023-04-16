@@ -14,24 +14,27 @@ ASCHEA::ASCHEA(Instance *inst, json config, uint seed)
 {
     this->instance = inst;
     this->config = std::move(config);
-    this->population_type = this->config["population_type"].get<string>();
-    this->population_frequency = this->config["frequency"].get<uint>();
-    this->populations[0] = new Population(this->config["population_size"].get<uint>(), this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
-    this->active_population = this->populations[0];
-    this->best_known_solution = Solution(inst->node_cnt);
+
+    this->setPopulation(this->config["population_type"].get<string>());
 
     this->timeout_s = this->config["timeout"].get<uint>();
     this->t_select = this->config["t_select"].get<double>();
     this->mutation_rate = this->config["mutation_rate"].get<double>();
+    this->tournament_size = this->config["tournament_size"].get<uint>();
 
     this->setConstruction(this->config["construction"].get<string>());
     this->setSelection(this->config["selection"].get<string>());
-    this->setCrossover(this->config["crossover"].get<string>());
+    this->crossover_list = this->config["crossover"].get<vector<string>>();
     this->mutation_list = this->config["mutation"].get<vector<string>>();
     this->setReplacement(this->config["replacement"].get<string>());
     this->setAlignment(this->config["alignment"].get<string>());
 
     this->rng = ASCHEA::initRng(seed);
+}
+
+ASCHEA::~ASCHEA(){
+    for (auto population : this->populations)
+        delete  population;
 }
 
 void ASCHEA::run()
@@ -40,39 +43,14 @@ void ASCHEA::run()
     this->construction();
     this->active_population->initializePenalty();
 
-    // uint gap = this->instance->node_cnt;
-    // LOG(gap);
-    // Solution a = this->active_population->solutions[0];
-    // Solution b = this->active_population->solutions[1];
-
-    // alignment::randomUniform(a.permutation, b.permutation, gap, this->rng); //, this->config["diff_p"].get<uint>(), this->config["gap_p"].get<uint>());
-    // int width = (int)log10(gap) + 1;
-    // for (auto x : a.permutation)
-    //     if (x == gap)
-    //         std::cout << std::setw(width) << "_" << " ";
-    //     else 
-    //         std::cout << std::setw(width) << x << " ";
-    // std::cout << std::endl;
-
-    // for (auto x : b.permutation)
-    //     if (x == gap)
-    //         std::cout << std::setw(width) << "_" << " ";
-    //     else 
-    //         std::cout << std::setw(width) << x << " ";
-    // std::cout << std::endl;
-
-    // exit(0);
-
     uint gen = 0;
     while (!this->stop())
     {
         this->swapPopulation();
-        if (this->active_population->generation % 1 == 0)
-            std::cout << "pop: " << std::setw(4) << this->active_population->getMaxSize() << " gen: " << std::setw(4) << this->active_population->generation << std::endl;
         vector<Solution> parents(this->active_population->getMaxSize());
         vector<Solution> children(this->active_population->getMaxSize());
 
-        this->constrainedTournament(parents);
+        this->sortingTournament(parents);
         this->crossover(parents, children);
         this->mutation(children);
         this->replacement(children);
@@ -86,18 +64,12 @@ void ASCHEA::run()
         }
         gen++;
     }
-
-    // Population* bestPop = this->populations[0];
-    // for (auto pop : this->populations){
-    //     if (pop != nullptr &&  pop->best_known_solution.fitness < bestPop->best_known_solution.fitness ){
-    //         bestPop = pop;
-    //     }
-    // }
-    // this->active_population = bestPop;
-    this->best_population->print();
-    this->best_known_solution.print();
-    std::cout << "runtime: " << this->getRuntime() << "/" << this->timeout_s << "s" << std::endl;
-    LOG(gen);
+    #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
+        this->best_population->print();
+        this->best_known_solution.print();
+        std::cout << "\nruntime: " << this->getRuntime() << "/" << this->timeout_s << "s" << std::endl << std::endl;
+    #endif
+    
 }
 
 //**********************************************************************************************************************
@@ -106,7 +78,6 @@ void ASCHEA::run()
 
 /*
  * Adds nodes to random positions of the solution, until all nodes are at their LBs.
- * Uses this->initial_solution and sets this->current solution.
  */
 void ASCHEA::constructRandom()
 {
@@ -122,7 +93,6 @@ void ASCHEA::constructRandom()
 /*
  * Creates a random permutation of nodes.
  * Replicates the permutation, until the solution is not valid w.r.t. LBs and UBs.
- * Uses this->initial_solution and sets this->current solution.
  */
 void ASCHEA::constructRandomReplicate()
 {
@@ -181,16 +151,6 @@ void ASCHEA::constructGreedy()
 
 void ASCHEA::constructNearestNeighbor()
 {
-    // // init of penalty coefs (if they dont exist) based on one random solution
-    // if (this->population->get_penalty_coefficients().size() == 0 ){
-    //     Solution solution(this->instance->node_cnt);
-    //     construct::randomReplicate(solution.permutation, solution.frequency, this->instance->lbs, this->instance->ubs, this->rng);
-    //     solution.is_feasible = this->instance->computeFitness(solution.permutation, solution.fitness, solution.penalties);
-    //     this->population->append(solution);
-    //     this->population->initPenaltyCoefs();
-    //     this->population->clear();
-    // }
-
     while (this->active_population->getRealSize() < this->active_population->getMaxSize() && !this->stop())
     {
         // random starting point solution
@@ -234,17 +194,16 @@ void ASCHEA::constructNearestNeighbor()
 // SELECTION
 //**********************************************************************************************************************
 
-void ASCHEA::constrainedTournament(vector<Solution> &parents)
+void ASCHEA::sortingTournament(vector<Solution> &parents)
 {
     sortByPenalizedFitness(this->active_population->solutions);
-    this->constrainedSortedTournament(parents);
+    this->presortedTournament(parents);
 }
 
-void ASCHEA::constrainedSortedTournament(vector<Solution> &parents)
+void ASCHEA::presortedTournament(vector<Solution> &parents)
 {
 
-    uint tournament_size = 4;
-    vector<uint> tournament(tournament_size);
+    vector<uint> tournament(this->tournament_size);
     vector<Solution> feasible_solutions(0);
     vector<Solution> source_population;
 
@@ -262,7 +221,7 @@ void ASCHEA::constrainedSortedTournament(vector<Solution> &parents)
             source_population = this->active_population->solutions;
 
         std::uniform_int_distribution<uint> rnd_idx(0, source_population.size() - 1);
-        for (uint tournament_idx = 0; tournament_idx < tournament_size; tournament_idx++)
+        for (uint tournament_idx = 0; tournament_idx < this->tournament_size; tournament_idx++)
             tournament[tournament_idx] = rnd_idx(*this->rng);
 
         parents[parent_idx] = this->active_population->solutions[*min_element(tournament.begin(), tournament.end())];
@@ -272,6 +231,18 @@ void ASCHEA::constrainedSortedTournament(vector<Solution> &parents)
 //**********************************************************************************************************************
 // CROSSOVER
 //**********************************************************************************************************************
+
+
+void ASCHEA::crossover(vector<Solution> parents, vector<Solution> &children)
+{
+    std::uniform_int_distribution<uint> crossover_rng(0, this->crossover_list.size() - 1);
+    string xover = this->crossover_list[crossover_rng(*this->rng)];
+    #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
+             LOG(xover);
+    #endif
+    this->crossover_map.at(xover)(parents, children);
+}
+
 
 void ASCHEA::ERX(vector<Solution> parents, vector<Solution> &children)
 {
@@ -433,11 +404,6 @@ void ASCHEA::HGreX(vector<Solution> parents, vector<Solution> &children)
 
 void ASCHEA::HRndX(vector<Solution> parents, vector<Solution> &children)
 {
-    std::function<fitness_t(vector<uint>)> f = [this](vector<uint> p)
-    {
-        return this->getFitness(p);
-    };
-
     for (uint idx = 0; idx < children.size(); idx += 2)
     {
         if (this->stop())
@@ -446,11 +412,11 @@ void ASCHEA::HRndX(vector<Solution> parents, vector<Solution> &children)
         vector<uint> permutation_2 = parents[idx + 1].permutation;
         vector<uint> new_perm(0);
 
-        crossover::HRndX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
+        crossover::HRndX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
         children[idx] = Solution(new_perm, *this->instance);
 
         new_perm = vector<uint>(0);
-        crossover::HRndX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
+        crossover::HRndX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
         children[idx + 1] = Solution(new_perm, *this->instance);
     }
 }
@@ -590,8 +556,10 @@ void ASCHEA::UPMX(vector<Solution> parents, vector<Solution> &children)
 
 void ASCHEA::SPX(vector<Solution> parents, vector<Solution> &children)
 {
-    std::function<fitness_t(vector<uint>)> f = [this](vector<uint> p)
+    std::function<fitness_t(vector<uint>, uint)> f = [this](vector<uint> p, uint gap_node)
     {
+        auto end = std::remove(p.begin(), p.end(), gap_node);
+        p.erase(end, p.end());
         return this->getFitness(p);
     };
 
@@ -612,31 +580,46 @@ void ASCHEA::SPX(vector<Solution> parents, vector<Solution> &children)
     }
 }
 
-void ASCHEA::PMX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::MPX(vector<Solution> parents, vector<Solution> &children)
 {
-    //     for (uint idx = 0; idx < children.size(); idx += 2)
-    //     {
-    //         if (this->stop())
-    //             return;
-    //         vector<uint> permutation_1 = parents[idx].permutation;
-    //         vector<uint> permutation_2 = parents[idx + 1].permutation;
-    //         vector<uint> new_perm(0);
+    for (uint idx = 0; idx < children.size(); idx += 2)
+    {
+        if (this->stop())
+            return;
+        vector<uint> permutation_1 =  parents[idx].permutation; 
+        vector<uint> permutation_2 =  parents[idx + 1].permutation;
+        vector<uint> new_perm(0);
 
-    //         LOG("--------------");
-    //         parents[idx].print();
-    //         parents[idx+1].print();
+        crossover::MPX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng);
+        children[idx] = Solution(new_perm, *this->instance);
 
-    //         // crossover::PMX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng);
-    //         children[idx] = Solution(new_perm, *this->instance);
-    //         children[idx].print();
-
-    //         new_perm = vector<uint>(0);
-    //         // crossover::PMX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng);
-    //         children[idx + 1] = Solution(new_perm, *this->instance);
-    //         children[idx+1].print();
-    //         exit(0);
-    //     }
+        new_perm = vector<uint>(0);
+        crossover::MPX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng);
+        children[idx + 1] = Solution(new_perm, *this->instance);
+    }
 }
+
+void ASCHEA::APX(vector<Solution> parents, vector<Solution> &children)
+{
+    for (uint idx = 0; idx < children.size(); idx += 2)
+    {
+        if (this->stop())
+            return;
+        vector<uint> permutation_1 =  parents[idx].permutation; 
+        vector<uint> permutation_2 =  parents[idx + 1].permutation;
+        vector<uint> frequency_1 =  parents[idx].frequency; 
+        vector<uint> frequency_2 =  parents[idx + 1].frequency;
+        vector<uint> new_perm(0);
+
+        crossover::APX(permutation_1, permutation_2, new_perm, frequency_1);
+        children[idx] = Solution(new_perm, *this->instance);
+
+        new_perm = vector<uint>(0);
+        crossover::APX(permutation_2, permutation_1, new_perm, frequency_2);
+        children[idx + 1] = Solution(new_perm, *this->instance);
+    }
+}
+
 
 //**********************************************************************************************************************
 // MUTATION
@@ -729,7 +712,7 @@ void ASCHEA::exchange(Solution &child, uint x, uint y, bool reverse)
 void ASCHEA::moveAll(Solution &child, uint x)
 {
     std::uniform_int_distribution<uint> node_rng(0, this->instance->node_cnt - 1);
-    std::uniform_int_distribution<int> offset_rng(-x, x);
+    std::uniform_int_distribution<int> offset_rng(-(int)x, x);
     oprtr::moveAll(child.permutation, node_rng(*this->rng), offset_rng(*this->rng));
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
@@ -745,6 +728,22 @@ void ASCHEA::exchangeIds(Solution &child)
     } while (nodeX != nodeY);
 
     oprtr::exchangeIds(child.permutation, child.frequency, this->instance->lbs, this->instance->ubs, nodeX, nodeY);
+    child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
+}
+
+void ASCHEA::exchangeNIds(Solution &child)
+{
+    std::uniform_int_distribution<uint> node_rng(0, this->instance->node_cnt - 1);
+    uint nodeX, nodeY;
+    
+    do
+    {
+        nodeX = node_rng(*this->rng);
+        nodeY = node_rng(*this->rng);
+    } while (nodeX != nodeY);
+
+    std::uniform_int_distribution<uint> swap_rng(0, std::max(child.frequency[nodeX], child.frequency[nodeY]));
+    oprtr::exchangeNIds(child.permutation, child.frequency, this->instance->lbs, this->instance->ubs, nodeX, nodeY, swap_rng(*this->rng));
     child.is_feasible = this->instance->computeFitness(child.permutation, child.fitness, child.penalties);
 }
 
@@ -915,81 +914,25 @@ void ASCHEA::setConstruction(const string &constr)
 
 void ASCHEA::setSelection(const string &constr)
 {
-    if (constr == "constrainedTournament")
+    if (constr == "sortingTournament")
         this->selection = [this](vector<Solution> &parents)
-        { return constrainedTournament(parents); };
-    else if (constr == "constrainedSortedTournament")
+        { return sortingTournament(parents); };
+    else if (constr == "presortedTournament")
         this->selection = [this](vector<Solution> &parents)
-        { return constrainedSortedTournament(parents); };
+        { return presortedTournament(parents); };
     else
         throw std::system_error(EINVAL, std::system_category(), constr);
 }
 
-void ASCHEA::setCrossover(const string &constr)
-{
-    if (constr == "NBX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->NBX(parents, children); };
-    else if (constr == "PBX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->PBX(parents, children); };
-    else if (constr == "ERX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->ERX(parents, children); };
-    else if (constr == "AEX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->AEX(parents, children); };
-    else if (constr == "OX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->OX(parents, children); };
-    else if (constr == "OBX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->OBX(parents, children); };
-    else if (constr == "CX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->CX(parents, children); };
-    else if (constr == "PMX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->PMX(parents, children); };
-    else if (constr == "HGreX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->HGreX(parents, children); };
-    else if (constr == "HRndX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->HRndX(parents, children); };
-    else if (constr == "HProX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->HProX(parents, children); };
-    else if (constr == "ULX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->ULX(parents, children); };
-    else if (constr == "RULX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->RULX(parents, children); };
-    else if (constr == "EULX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->EULX(parents, children); };
-    else if (constr == "ERULX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->ERULX(parents, children); };
-    else if (constr == "UPMX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->UPMX(parents, children); };
-    else if (constr == "SPX")
-        this->crossover = [this](vector<Solution> parents, vector<Solution> &children)
-        { return this->SPX(parents, children); };
-    else
-        throw std::system_error(EINVAL, std::system_category(), constr);
-}
 
 void ASCHEA::setAlignment(const string &constr)
 {
-    if (constr == "globalUniform")
+    if (constr == "greedyUniform")
         this->alignment = [this](vector<uint> &permutation_1, vector<uint> &permutation_2, uint gap_node)
-        { return alignment::globalUniform(permutation_1, permutation_2, gap_node, 1, 1); };
-    else if (constr == "globalOneGap")
+        { return alignment::greedyUniform(permutation_1, permutation_2, gap_node, this->config["diff_p"].get<uint>(), this->config["gap_p"].get<uint>()); };
+    else if (constr == "greedyOneGap")
         this->alignment = [this](vector<uint> &permutation_1, vector<uint> &permutation_2, uint gap_node)
-        { return alignment::globalOneGap(permutation_1, permutation_2, gap_node); };
+        { return alignment::greedyOneGap(permutation_1, permutation_2, gap_node); };
     else if (constr == "randomUniform")
         this->alignment = [this](vector<uint> &permutation_1, vector<uint> &permutation_2, uint gap_node)
         { return alignment::randomUniform(permutation_1, permutation_2, gap_node, this->rng); };
@@ -1037,23 +980,23 @@ void ASCHEA::nichePopulation(vector<Solution> population, uint capacity, vector<
 
     for (uint i = 0; i < population.size(); i++)
     {
-        if (!follower_mask[i])
+        if (follower_mask[i]) 
+            continue;
+
+        leader_mask[i] = true;
+        uint occupancy = 1;
+        for (uint j = i + 1; j < population.size(); j++)
         {
-            leader_mask[i] = true;
-            uint occupancy = 1;
-            for (uint j = i + 1; j < population.size(); j++)
+            if (!follower_mask[j] && levenshtein_distance(population[i].permutation, population[j].permutation) <= this->active_population->niche_radius)
             {
-                if (!follower_mask[j] && levenshtein_distance(population[i].permutation, population[j].permutation) <= this->active_population->niche_radius)
+                if (occupancy < capacity)
                 {
-                    if (occupancy < capacity)
-                    {
-                        leader_mask[j] = true;
-                        occupancy += 1;
-                    }
-                    else
-                    {
-                        follower_mask[j] = true;
-                    }
+                    leader_mask[j] = true;
+                    occupancy += 1;
+                }
+                else
+                {
+                    follower_mask[j] = true;
                 }
             }
         }
@@ -1081,12 +1024,12 @@ void ASCHEA::sortByPenalizedFitness(vector<Solution> &v)
 
 fitness_t ASCHEA::penalizedFitness(Solution solution)
 {
-    return (fitness_t)round(inner_product(solution.penalties.begin(), solution.penalties.end(), this->active_population->get_penalty_coefficients().begin(), 0.));
+    return (fitness_t)round(inner_product(solution.penalties.begin(), solution.penalties.end(), this->active_population->get_penalty().begin(), 0.));
 }
 
 fitness_t ASCHEA::penalizedFitness(vector<fitness_t> penalties)
 {
-    return (fitness_t)round(inner_product(penalties.begin(), penalties.end(), this->active_population->get_penalty_coefficients().begin(), 0.));
+    return (fitness_t)round(inner_product(penalties.begin(), penalties.end(), this->active_population->get_penalty().begin(), 0.));
 }
 
 bool ASCHEA::stop()
@@ -1095,8 +1038,39 @@ bool ASCHEA::stop()
            (config["stop_on_feasible"] && this->best_known_solution.is_feasible);
 }
 
+void ASCHEA::setPopulation(const string &constr){
+    
+    if (constr == "dynamic"){
+        this->population_type = constr;
+        this->population_frequency = this->config["frequency"].get<uint>();
+        this->populations[0] = new Population(DYNAMIC_POPULATION_SIZE, this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
+    }
+    else if (constr == "static")
+    {
+        this->population_type = constr;
+        this->populations[0] = new Population(this->config["population_size"].get<uint>(), this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
+    }
+    else
+    {
+        throw std::system_error(EINVAL, std::system_category(), constr);
+    }
+    this->active_population = this->populations[0];
+    this->best_known_solution = Solution(this->instance->node_cnt);
+}
+
 void ASCHEA::swapPopulation()
 {
+    if (this->population_type == STATIC_POPULATION){
+        if (this->active_population->is_stalled){
+            auto begin = this->active_population->solutions.begin();
+            auto end = this->active_population->solutions.end();
+            this->active_population->solutions.erase(std::min(begin + this->instance->penalty_func_cnt, end), end);
+            this->construction;
+        }
+        this->active_population->generation++;
+        return;
+    }
+
     // choose the next population to run
     int active_population_idx = -1;
     do {
@@ -1122,7 +1096,9 @@ void ASCHEA::swapPopulation()
     {
         if (this->active_population->avg_fitness < this->populations[idx2]->avg_fitness || this->populations[idx2]->is_stalled)
         {
-            std::cout << "--------erased: " << this->populations[idx2]->getMaxSize() << " stall: " << (this->populations[idx2]->is_stalled ? "true" : "false") << "  | fitness: " << this->active_population->avg_fitness << "|" << this->populations[idx2]->avg_fitness << std::endl;
+            #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
+                std::cout << "\nerased: " << this->populations[idx2]->getMaxSize() << " | stall: " << (this->populations[idx2]->is_stalled ? "true" : "false") << " | fitness: " << this->active_population->avg_fitness << "|" << this->populations[idx2]->avg_fitness << std::endl << std::endl;
+            #endif  
             if (this->best_population == this->populations[idx2])
                 this->best_population = this->active_population;
             delete this->populations[idx2];
@@ -1131,6 +1107,10 @@ void ASCHEA::swapPopulation()
             active_population_idx -= 1;
         }
     }
+
+    #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
+             std::cout << "population: " << std::setw(6) << this->active_population->getMaxSize() << " | generation: " << std::setw(6) << this->active_population->generation << std::endl;
+    #endif
 }
 
 void ASCHEA::saveToJson(json &container)

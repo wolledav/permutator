@@ -1,0 +1,129 @@
+## Template for parameter description file for Iterated Race.
+##
+## The format is one parameter per line. Each line contains:
+##
+## 1: Name of the parameter. An unquoted alphanumeric string,
+##    example: ants
+
+## 2: Switch to pass the parameter. A quoted (possibly empty) string, 
+##    if the value and the switch must be separated, add a space at
+##    the end of the string. Example : "--version1 --ants "
+
+## 3: Type. An unquoted single letter, among 
+##     i: Integer, c: categorical, o: ordinal, r: real.
+
+## 4: For c and o: All possible values, that is, a variable number of
+##    quoted or unquoted strings separated by commas within
+##    parenthesis. Empty strings and strings containing commas or
+##    spaces must be quoted.
+##    For i,r: a pair of unquoted numbers representing minimum and
+##    maximum values. 
+
+## 5: A conditional parameter can be defined according to the values of
+##    one or several other parameters.  This is done by adding a
+##    character '|' followed by an R expression involving the names of
+##    other parameters. This expression must return TRUE if the 
+##    condition is satisfied, FALSE otherwise.
+
+# 1:                2:                  3:  4:                   5:
+#param1          "--param1 "            i   (1, 10)              | mode %in% c("x1", "x2")
+#param2          "--param2 "            i   (1, 10)              | mode %in% c("x1", "x3") && real > 2.5 && real <= 3.5
+#mode            "--"                   c   ("x1" ,"x2", "x3")
+#real            "--paramreal="         r   (1.5, 4.5)
+#mutation        "--mutation="          o   ("none", "very low", "low", "medium", "high", "very high", "all")
+#unused         "-u "                   c   (1, 2, 10, 20)
+
+## ASCHEA PARAMETERS
+population_type     "population_type "  c   (dynamic, static)
+population_size     "population_size "  i   (8, 1000000)        | population_type == "static"
+frequency           "frequency "        i   (2, 32)             | population_type == "dynamic"
+tournament_size     "tournament_size "  i   (4, 128) 
+t_select            "t_select "         r   (0.1, 0.9)
+t_target            "t_target "         r   (0.1, 0.9)
+mutation_rate       "mutation_rate "    r   (0.1, 1.0)
+stop_on_feasible    "stop_on_feasible " c   (0)
+
+
+## CONSTRUCTION
+construction        "construction "     c   (greedy, random, randomReplicate, nearestNeighbor)
+
+
+## SELECTION
+selection           "selection "        c   (sortingTournament, presortedTournament)
+
+
+## ALIGNMENT
+alignment           "alignment "         c   (greedyUniform, greedyOneGap, randomUniform, randomOneGap, backfillOneGap, frontfillOneGap)
+difference_penalty  "diff_p "            i   (1,10)              | alignment = "greedyUniform"
+gap_penalty         "gap_p "             i   (1,10)              | alignment = "greedyUniform"
+
+
+## CROSSOVER OPERATORS
+NBX         "xo_NBX "       c (0, 1)
+PBX         "xo_PBX "       c (0, 1)
+ERX         "xo_ERX "       c (0, 1)
+AEX         "xo_AEX "       c (0, 1)
+OX          "xo_OX "        c (0, 1)
+OBX         "xo_OBX "       c (0, 1)
+CX          "xo_CX "        c (0, 1)
+HGreX       "xo_HGreX "     c (0, 1)
+HRndX       "xo_HRndX "     c (0, 1)
+HProX       "xo_HProX "     c (0, 1)
+ULX         "xo_ULX "       c (0, 1)
+RULX        "xo_RULX "      c (0, 1)
+EULX        "xo_EULX "      c (0, 1)
+ERULX       "xo_ERULX "     c (0, 1)
+UPMX        "xo_UPMX "      c (0, 1)
+SPX         "xo_SPX "       c (0, 1)
+MPX         "xo_MPX "       c (0, 1)
+APX         "xo_APX "       c (0, 1)
+
+
+## REPLACEMENT
+replacement         "replacement "      c   (segregational, nicheSegregational)
+
+
+## MUTATION OPERATORS
+insert_1            "mu_insert_1 "          c   (0, 1)
+remove_1            "mu_remove_1 "          c   (0, 1)
+twoOpt              "mu_twoOpt "            c   (0, 1)
+exchangeIds         "mu_exchangeIds "       c   (0, 1)
+exchangeNIds        "mu_exchangeNIds "      c   (0, 1)
+exchange_1_1        "mu_exchange_1_1 "      c   (0, 1)
+centExchange_1      "mu_centExchange_1 "    c   (0, 1)
+centExchange_2      "mu_centExchange_2 "    c   (0, 1)
+centExchange_3      "mu_centExchange_3 "    c   (0, 1)
+centExchange_4      "mu_centExchange_4 "    c   (0, 1)
+centExchange_5      "mu_centExchange_5 "    c   (0, 1)
+relocate_1          "mu_relocate_1 "        c   (0, 1)
+moveAll_10          "mu_moveAll_10 "        c   (0, 1)
+
+
+
+
+#exchange_1_2        "mu_exchange_1_2 "      c   (0, 1)
+#exchange_2_2        "mu_exchange_2_2 "      c   (0, 1)
+#exchange_2_3        "mu_exchange_2_3 "      c   (0, 1)
+#exchange_2_4        "mu_exchange_2_4 "      c   (0, 1)
+#exchange_3_3        "mu_exchange_3_3 "      c   (0, 1)
+#exchange_3_4        "mu_exchange_3_4 "      c   (0, 1)
+#exchange_4_4        "mu_exchange_4_4 "      c   (0, 1)
+#revExchange_1_2       "mu_revExchange_1_2 "     c   (0, 1)
+#revExchange_2_2       "mu_revExchange_2_2 "     c   (0, 1)
+#revExchange_2_3       "mu_revExchange_2_3 "     c   (0, 1)
+#revExchange_2_4       "mu_revExchange_2_4 "     c   (0, 1)
+#revExchange_3_3       "mu_revExchange_3_3 "     c   (0, 1)
+#revExchange_3_4       "mu_revExchange_3_4 "     c   (0, 1)
+#revExchange_4_4       "mu_revExchange_4_4 "     c   (0, 1)
+#relocate_2          "mu_relocate_2 "        c   (0, 1)
+#relocate_3          "mu_relocate_3 "        c   (0, 1)
+#relocate_4          "mu_relocate_4 "        c   (0, 1)
+#relocate_5          "mu_relocate_5 "        c   (0, 1)
+#revRelocate_2         "mu_revRelocate_2 "       c   (0, 1)
+#revRelocate_3         "mu_revRelocate_3 "       c   (0, 1)
+#revRelocate_4         "mu_revRelocate_4 "       c   (0, 1)
+#revRelocate_5         "mu_revRelocate_5 "       c   (0, 1)
+#moveAll_1       "mu_moveAll_1 "     c   (0, 1)
+#moveAll_2       "mu_moveAll_2 "     c   (0, 1)
+#moveAll_3       "mu_moveAll_3 "     c   (0, 1)
+#moveAll_4       "mu_moveAll_4 "     c   (0, 1)
