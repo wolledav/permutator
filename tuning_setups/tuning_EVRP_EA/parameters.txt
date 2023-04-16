@@ -54,8 +54,8 @@ selection           "selection "        c   (sortingTournament, presortedTournam
 
 ## ALIGNMENT
 alignment           "alignment "         c   (greedyUniform, greedyOneGap, randomUniform, randomOneGap, backfillOneGap, frontfillOneGap)
-difference_penalty  "diff_p "            i   (1,10)              | alignment = "greedyUniform"
-gap_penalty         "gap_p "             i   (1,10)              | alignment = "greedyUniform"
+difference_penalty  "diff_p "            i   (1,10)              | alignment == "greedyUniform"
+gap_penalty         "gap_p "             i   (1,10)              | alignment == "greedyUniform"
 
 
 ## CROSSOVER OPERATORS

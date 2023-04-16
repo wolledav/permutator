@@ -31,13 +31,8 @@ void Population::initializePenalty()
     double max = *std::max_element(this->penalty.begin(), this->penalty.end());
     this->penalty_ceiling = std::max(*std::max_element(this->penalty.begin(), this->penalty.end()), PENALTY_CEILING);
     
-    for (auto &p : this->penalty){
+    for (auto &p : this->penalty)
             p = 1 + (p - min) * (this->penalty_ceiling / max);
-            LOG(p);
-    }
-    LOG("ceiling:");
-    //this->penalty_ceiling = std::max(*std::max_element(this->penalty.begin(), this->penalty.end()), PENALTY_CEILING);
-    LOG(penalty_ceiling);
 }
 
 void Population::updatePenalty()
@@ -50,12 +45,14 @@ void Population::updatePenalty()
 
     double min = *std::min_element(this->penalty.begin(), this->penalty.end());
     double max = *std::max_element(this->penalty.begin(), this->penalty.end());
+
     if (max > this->penalty_ceiling)
         for (auto &p : this->penalty)
             p = 1 + (p - min) * (this->penalty_ceiling / max); // linear scaling of penalties to [1.0 ... this->penalty_ceiling]
     else
         for (auto &p : this->penalty)
             p = 1 + (p - min);
+        
 }
 
 void Population::update_t_t()

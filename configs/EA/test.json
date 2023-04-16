@@ -1,6 +1,6 @@
 {
-    "population_type": "dynamic",
-    "population_size": 8,
+    "population_type": "static",
+    "population_size": 80,
     "frequency": 4,
     "t_select": 0.3,
     "t_target": 0.5,

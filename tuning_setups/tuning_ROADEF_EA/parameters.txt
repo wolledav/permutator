@@ -54,8 +54,8 @@ selection           "selection "        c   (sortingTournament, presortedTournam
 
 ## ALIGNMENT
 alignment           "alignment "        c   (greedyUniform, greedyOneGap, randomUniform, randomOneGap, backfillOneGap, frontfillOneGap)
-difference_penalty  "diff_p "           i   (1,10)              | alignment = "greedyUniform"
-gap_penalty         "gap_p "            i   (1,10)              | alignment = "greedyUniform"
+difference_penalty  "diff_p "           i   (1,10)              | alignment == "greedyUniform"
+gap_penalty         "gap_p "            i   (1,10)              | alignment == "greedyUniform"
 
 
 ## CROSSOVER OPERATORS
@@ -86,17 +86,18 @@ replacement         "replacement "      c   (segregational, nicheSegregational)
 ## MUTATION OPERATORS
 insert_1            "mu_insert_1 "          c   (0, 1)
 remove_1            "mu_remove_1 "          c   (0, 1)
+relocate_1          "mu_relocate_1 "        c   (0, 1)
 twoOpt              "mu_twoOpt "            c   (0, 1)
 exchangeIds         "mu_exchangeIds "       c   (0, 1)
 exchangeNIds        "mu_exchangeNIds "      c   (0, 1)
 exchange_1_1        "mu_exchange_1_1 "      c   (0, 1)
+moveAll_10          "mu_moveAll_10 "        c   (0, 1)
 centExchange_1      "mu_centExchange_1 "    c   (0, 1)
 centExchange_2      "mu_centExchange_2 "    c   (0, 1)
 centExchange_3      "mu_centExchange_3 "    c   (0, 1)
 centExchange_4      "mu_centExchange_4 "    c   (0, 1)
 centExchange_5      "mu_centExchange_5 "    c   (0, 1)
-relocate_1          "mu_relocate_1 "        c   (0, 1)
-moveAll_10          "mu_moveAll_10 "        c   (0, 1)
+
 
 
 
