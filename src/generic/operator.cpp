@@ -484,12 +484,12 @@ void crossover::PBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
 {
     const uint gap_node = node_cnt;
     alignmentFunction(parent1, parent2, gap_node);
-
+    // LOG(1);
     std::uniform_int_distribution<uint> position_rng(0, parent1.size() - 1);
-    uint insert_cnt = std::max((int)position_rng(*rng) - (int)std::count(parent1.begin(), parent1.end(), gap_node), 0) + 1;
+    uint insert_cnt = std::max((int)position_rng(*rng) - (int)std::count(parent1.begin(), parent1.end(), gap_node), 0);
     vector<uint> node_frequencies(node_cnt + 1, 0);
     std::set<uint> insert_idxs = {};
-
+    // LOG(1.5);
     while (insert_idxs.size() < insert_cnt)
     {
         uint idx = position_rng(*rng);
@@ -497,13 +497,13 @@ void crossover::PBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
         if (node != gap_node && insert_idxs.insert(idx).second)
             node_frequencies[node] += 1;
     }
-
+    // LOG(2);
     child = parent2;
     vector<uint> rand_idxs(child.size());
     std::iota(rand_idxs.begin(), rand_idxs.end(), 0);
     std::shuffle(rand_idxs.begin(), rand_idxs.end(), *rng);
     vector<uint> remove(0);
-
+    // LOG(3);
     // randomly iter over child and erase at most the same number of nodes as chosen to insert
     for (auto idx : rand_idxs)
     {
@@ -514,14 +514,16 @@ void crossover::PBX(vector<uint> parent1, vector<uint> parent2, vector<uint> &ch
             remove.push_back(idx);
         }
     }
+    // LOG(4);
     std::sort(remove.begin(), remove.end(), std::greater<>());
     for (auto idx : remove)
         child.erase(child.begin() + idx);
-
+    // LOG(5);
     for (auto idx : insert_idxs)
         child.insert(child.begin() + idx, parent1[idx]);
-
+    // LOG(6);
     alignment::removeGap(child, gap_node);
+    // LOG(7);
 }
 
 void crossover::OX(vector<uint> parent1, vector<uint> parent2, vector<uint> &child, uint node_cnt, std::mt19937 *rng, std::function<void(vector<uint> &x, vector<uint> &y, uint gap_node)> alignmentFunction)
@@ -896,11 +898,13 @@ void crossover::EULX(vector<uint> parent1, vector<uint> parent2, vector<uint> &c
         if (!in_parent)
             candidate_list.push_back(idx);
     }
-
-    bool improved = true;
-    while (improved)
+    uint invalid = candidate_list.size();
+    uint idx1 = 0;
+    uint idx2 = 0;
+    while (idx1 != invalid && idx2 != invalid)
     {
-        improved = false;
+        idx1 = invalid;
+        idx2 =  invalid;
         fitness_t min_fitness = getFitness(child);
         vector<uint> best_permutation = child;
         for (int i = 0; i < (int)candidate_list.size() - 1; i++)
@@ -911,12 +915,17 @@ void crossover::EULX(vector<uint> parent1, vector<uint> parent2, vector<uint> &c
                 fitness_t fitness = getFitness(child);
                 if (fitness < min_fitness)
                 {
+                    idx1 = i;
+                    idx2 = j;
                     min_fitness = fitness;
                     best_permutation = child;
-                    improved = true;
                 }
                 std::swap(child[candidate_list[i]], child[candidate_list[j]]);
             }
+        }
+        if (idx1 != invalid && idx2 != invalid){
+            candidate_list.erase(candidate_list.begin() + idx2);
+            candidate_list.erase(candidate_list.begin() + idx1);
         }
         child = best_permutation;
     }

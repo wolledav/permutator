@@ -47,22 +47,28 @@ void ASCHEA::run()
     uint gen = 0;
     while (!this->stop())
     {
+        // LOG(1);
         this->swapPopulation();
         vector<Solution> parents(this->active_population->getMaxSize());
         vector<Solution> children(this->active_population->getMaxSize());
+        // LOG(2);
         this->selection(parents);
+        // LOG(3);
         this->crossover(parents, children);
+        // LOG(4);
         this->mutation(children);
+        // LOG(5);
         this->replacement(children);
         if (!this->stop())
             this->active_population->update();
-
+        // LOG(6);
         // not penalized fitness because different populations have different penalties
         if (!this->stop() && this->active_population->best_known_solution.fitness < this->best_known_solution.fitness)
         {
             this->best_known_solution = this->active_population->best_known_solution;
             this->best_population = this->active_population;
         }
+        // LOG(7);
         gen++;
     }
     #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
@@ -243,6 +249,7 @@ void ASCHEA::crossover(vector<Solution> parents, vector<Solution> &children)
     #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
              LOG(xover);
     #endif
+    // LOG(xover);
     this->crossover_map.at(xover)(parents, children);
 }
 
@@ -297,9 +304,10 @@ void ASCHEA::NBX(vector<Solution> parents, vector<Solution> &children)
         
         crossover::NBX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng, this->alignment);
         children[idx] = Solution(new_perm, *this->instance);
-
+        LOG(parents.size());
         crossover::NBX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng, this->alignment);
         children[idx + 1] = Solution(new_perm, *this->instance);
+        LOG(children.size());
     }
 }
 
@@ -307,18 +315,21 @@ void ASCHEA::PBX(vector<Solution> parents, vector<Solution> &children)
 {
     for (uint idx = 0; idx < children.size(); idx += 2)
     {
+        
+        // LOG(this->stop());
         if (this->stop())
             return;
         vector<uint> permutation_1 = parents[idx].permutation;
         vector<uint> permutation_2 = parents[idx + 1].permutation;
         vector<uint> new_perm(0);
-
+        // LOG(idx);
         crossover::PBX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng, this->alignment);
         children[idx] = Solution(new_perm, *this->instance);
-
+        // LOG(parents.size());
         new_perm = vector<uint>(0);
         crossover::PBX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);  
+        children[idx + 1] = Solution(new_perm, *this->instance);
+        // LOG(children.size());  
     }
 }
 
@@ -1051,7 +1062,8 @@ void ASCHEA::setPopulation(const string &constr){
     else if (constr == "static")
     {
         this->population_type = constr;
-        this->populations[0] = new Population(this->config["population_size"].get<uint>(), this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
+        uint size = this->config["population_size"].get<uint>() + this->config["population_size"].get<uint>() % 2; // ensure even population size
+        this->populations[0] = new Population(size, this->instance->penalty_func_cnt, this->config["t_target"].get<double>());
     }
     else
     {
