@@ -1,32 +1,31 @@
+
 {
     "num_threads": 1,
-    "timeout": 300,
+    "timeout": 60,
     "population_type": "dynamic",
-    "frequency": 19,
-    "tournament_size": 106,
-    "t_select": 0.1979,
-    "t_target": 0.8879,
-    "mutation_rate": 0.6459,
+    "frequency": 16,
+    "tournament_size": 24,
+    "t_select": 0.1814,
+    "t_target": 0.7963,
+    "mutation_rate": 0.452,
     "stop_on_feasible": false,
-    "construction": "nearestNeighbor",
+    "construction": "randomReplicate",
     "selection": "presortedTournament",
-    "alignment": "greedyOneGap",
+    "alignment": "backfillOneGap",
     "replacement": "segregational",
     "operators": [],
     "mutation": [
         "insert_1",
-        "twoOpt",
+        "remove_1",
         "exchangeIds",
-        "centExchange_1",
-        "centExchange_4",
-        "relocate_1"
+        "exchange_1_1",
+        "moveAll_10"
     ],
     "perturbation": [],
     "crossover": [
         "ERX",
-        "AEX",
-        "HGreX",
-        "HRndX",
-        "ULX"
+        "UPMX",
+        "SPX",
+        "APX"
     ]
 }

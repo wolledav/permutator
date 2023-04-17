@@ -3,7 +3,6 @@
 #include "solution.hpp"
 #include "utils.hpp"
 
-#define INVALID_SOLUTION_FITNESS ULONG_MAX
 #define GROWTH_COEFFICIENT 1.1
 #define NICHE_RADIUS 5
 #define PENALTY_CEILING 1000000.0
@@ -31,7 +30,7 @@ class Population
         uint generation = 0;
         uint niche_radius = NICHE_RADIUS;
         std::vector<Solution> solutions = {};
-        fitness_t avg_fitness = INVALID_SOLUTION_FITNESS;
+        fitness_t avg_fitness = MAX_FITNESS;
         Solution best_known_solution;
 
         Population(uint size, uint penalty_func_cnt, double t_target);

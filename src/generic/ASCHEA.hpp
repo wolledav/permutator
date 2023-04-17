@@ -96,25 +96,25 @@ class ASCHEA : public BasicOptimizer
             {"twoOpt",      [this](Solution &child){return this->twoOpt(child);}}    
         };
 
-        const std::map<std::string, std::function<void(std::vector<Solution>, std::vector<Solution>&)>> crossover_map = {
-            {"NBX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->NBX(parents, children); }},
-            {"PBX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->PBX(parents, children); }},
-            {"ERX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->ERX(parents, children); }},
-            {"AEX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->AEX(parents, children); }},
-            {"OX",      [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->OX(parents, children); }},
-            {"OBX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->OBX(parents, children); }},
-            {"CX",      [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->CX(parents, children); }},
-            {"HGreX",   [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->HGreX(parents, children); }},
-            {"HRndX",   [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->HRndX(parents, children); }},
-            {"HProX",   [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->HProX(parents, children); }},
-            {"ULX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->ULX(parents, children); }},
-            {"RULX",    [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->RULX(parents, children); }},
-            {"EULX",    [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->EULX(parents, children); }},
-            {"ERULX",   [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->ERULX(parents, children); }},
-            {"UPMX",    [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->UPMX(parents, children); }},
-            {"SPX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->SPX(parents, children); }},
-            {"MPX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->MPX(parents, children); }},
-            {"APX",     [this](std::vector<Solution> parents, std::vector<Solution> &children) { return this->APX(parents, children); }}
+        const std::map<std::string, std::function<void(Solution, Solution, Solution&)>> crossover_map = {
+            {"NBX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->NBX  (parent1,  parent2,  child); }},
+            {"PBX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->PBX  (parent1,  parent2,  child); }},
+            {"ERX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->ERX  (parent1,  parent2,  child); }},
+            {"AEX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->AEX  (parent1,  parent2,  child); }},
+            {"OX",      [this](Solution parent1, Solution parent2, Solution& child) { return this->OX   (parent1,  parent2,  child); }},
+            {"OBX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->OBX  (parent1,  parent2,  child); }},
+            {"CX",      [this](Solution parent1, Solution parent2, Solution& child) { return this->CX   (parent1,  parent2,  child); }},
+            {"HGreX",   [this](Solution parent1, Solution parent2, Solution& child) { return this->HGreX(parent1,  parent2,  child); }},
+            {"HRndX",   [this](Solution parent1, Solution parent2, Solution& child) { return this->HRndX(parent1,  parent2,  child); }},
+            {"HProX",   [this](Solution parent1, Solution parent2, Solution& child) { return this->HProX(parent1,  parent2,  child); }},
+            {"ULX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->ULX  (parent1,  parent2,  child); }},
+            {"RULX",    [this](Solution parent1, Solution parent2, Solution& child) { return this->RULX (parent1,  parent2,  child); }},
+            {"EULX",    [this](Solution parent1, Solution parent2, Solution& child) { return this->EULX (parent1,  parent2,  child); }},
+            {"ERULX",   [this](Solution parent1, Solution parent2, Solution& child) { return this->ERULX(parent1,  parent2,  child); }},
+            {"UPMX",    [this](Solution parent1, Solution parent2, Solution& child) { return this->UPMX (parent1,  parent2,  child); }},
+            {"SPX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->SPX  (parent1,  parent2,  child); }},
+            {"MPX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->MPX  (parent1,  parent2,  child); }},
+            {"APX",     [this](Solution parent1, Solution parent2, Solution& child) { return this->APX  (parent1,  parent2,  child); }}
         };
 
         //construction
@@ -128,24 +128,24 @@ class ASCHEA : public BasicOptimizer
         void presortedTournament(std::vector<Solution> &parents);
 
         //crossover
-        void ERX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void AEX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void NBX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void PBX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void OX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void OBX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void CX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void HGreX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void HRndX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void HProX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void ULX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void RULX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void EULX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void ERULX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void UPMX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void SPX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void MPX(std::vector<Solution> parents, std::vector<Solution> &children);
-        void APX(std::vector<Solution> parents, std::vector<Solution> &children);
+        void ERX(Solution parent1, Solution parent2, Solution& child);
+        void AEX(Solution parent1, Solution parent2, Solution& child);
+        void NBX(Solution parent1, Solution parent2, Solution& child);
+        void PBX(Solution parent1, Solution parent2, Solution& child);
+        void OX(Solution parent1, Solution parent2, Solution& child);
+        void OBX(Solution parent1, Solution parent2, Solution& child);
+        void CX(Solution parent1, Solution parent2, Solution& child);
+        void HGreX(Solution parent1, Solution parent2, Solution& child);
+        void HRndX(Solution parent1, Solution parent2, Solution& child);
+        void HProX(Solution parent1, Solution parent2, Solution& child);
+        void ULX(Solution parent1, Solution parent2, Solution& child);
+        void RULX(Solution parent1, Solution parent2, Solution& child);
+        void EULX(Solution parent1, Solution parent2, Solution& child);
+        void ERULX(Solution parent1, Solution parent2, Solution& child);
+        void UPMX(Solution parent1, Solution parent2, Solution& child);
+        void SPX(Solution parent1, Solution parent2, Solution& child);
+        void MPX(Solution parent1, Solution parent2, Solution& child);
+        void APX(Solution parent1, Solution parent2, Solution& child);
 
         //mutation
         void insert(Solution &child);

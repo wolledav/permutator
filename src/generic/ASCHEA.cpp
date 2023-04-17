@@ -35,6 +35,7 @@ ASCHEA::ASCHEA(Instance *inst, json config, uint seed)
 ASCHEA::~ASCHEA(){
     for (auto population : this->populations)
         delete  population;
+    delete this->rng;
 }
 
 void ASCHEA::run()
@@ -47,28 +48,24 @@ void ASCHEA::run()
     uint gen = 0;
     while (!this->stop())
     {
-        // LOG(1);
         this->swapPopulation();
+        
         vector<Solution> parents(this->active_population->getMaxSize());
         vector<Solution> children(this->active_population->getMaxSize());
-        // LOG(2);
+        
         this->selection(parents);
-        // LOG(3);
         this->crossover(parents, children);
-        // LOG(4);
         this->mutation(children);
-        // LOG(5);
         this->replacement(children);
         if (!this->stop())
             this->active_population->update();
-        // LOG(6);
+
         // not penalized fitness because different populations have different penalties
         if (!this->stop() && this->active_population->best_known_solution.fitness < this->best_known_solution.fitness)
         {
             this->best_known_solution = this->active_population->best_known_solution;
             this->best_population = this->active_population;
         }
-        // LOG(7);
         gen++;
     }
     #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
@@ -242,333 +239,157 @@ void ASCHEA::presortedTournament(vector<Solution> &parents)
 
 void ASCHEA::crossover(vector<Solution> parents, vector<Solution> &children)
 {
-    if (this->stop())
-        return;
     std::uniform_int_distribution<uint> crossover_rng(0, this->crossover_list.size() - 1);
-    string xover = this->crossover_list[crossover_rng(*this->rng)];
+    for (uint idx = 0; idx < children.size(); idx += 2)
+    {
+        if (this->stop())
+            return;
+        string xover = this->crossover_list[crossover_rng(*this->rng)];
+        #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
+                 std::cout << std::setw(6) << xover << ","; 
+        #endif
+        this->crossover_map.at(xover)(parents[idx], parents[idx+1], children[idx]);
+        this->crossover_map.at(xover)(parents[idx+1], parents[idx], children[idx+1]);
+    }
     #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
-             LOG(xover);
+        std::cout << std::endl << std::endl;
     #endif
-    // LOG(xover);
-    this->crossover_map.at(xover)(parents, children);
 }
 
 
-void ASCHEA::ERX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::ERX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::ERX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::ERX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::ERX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::AEX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::AEX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::AEX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::AEX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::AEX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::NBX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::NBX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm;
-        
-        crossover::NBX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx] = Solution(new_perm, *this->instance);
-        LOG(parents.size());
-        crossover::NBX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-        LOG(children.size());
-    }
+    vector<uint> new_perm;    
+    crossover::NBX(parent1.permutation, parent2.permutation, new_perm, this->instance->node_cnt, this->rng, this->alignment);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::PBX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::PBX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        
-        // LOG(this->stop());
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-        // LOG(idx);
-        crossover::PBX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx] = Solution(new_perm, *this->instance);
-        // LOG(parents.size());
-        new_perm = vector<uint>(0);
-        crossover::PBX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-        // LOG(children.size());  
-    }
+    vector<uint> new_perm(0);
+    crossover::PBX(parent1.permutation, parent2.permutation, new_perm, this->instance->node_cnt, this->rng, this->alignment);
+    child = Solution(new_perm, *this->instance);   
 }
 
-void ASCHEA::OX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::OX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::OX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::OX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);  
-    }
+    vector<uint> new_perm(0);
+    crossover::OX(parent1.permutation, parent2.permutation, new_perm, this->instance->node_cnt, this->rng, this->alignment);
+    child = Solution(new_perm, *this->instance);    
 }
 
-void ASCHEA::OBX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::OBX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> frequency_1 = parents[idx].frequency;
-        vector<uint> frequency_2 = parents[idx + 1].frequency;
-        vector<uint> new_perm(0);
-
-        crossover::OBX(permutation_1, permutation_2, new_perm, frequency_1, frequency_2, this->rng);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::OBX(permutation_2, permutation_1, new_perm, frequency_2, frequency_1, this->rng);
-        children[idx + 1] = Solution(new_perm, *this->instance);  
-    }
+    vector<uint> new_perm(0);
+    crossover::OBX(parent1.permutation, parent2.permutation, new_perm, parent1.frequency, parent2.frequency, this->rng);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::CX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::CX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::CX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::CX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::CX(parent1.permutation, parent2.permutation, new_perm, this->instance->node_cnt, this->rng, this->alignment);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::HGreX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::HGreX(Solution parent1, Solution parent2, Solution& child)
 {
     std::function<fitness_t(vector<uint>)> f = [this](vector<uint> p)
     {
         return this->getFitness(p);
     };
 
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::HGreX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::HGreX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    
+    crossover::HGreX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::HRndX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::HRndX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::HRndX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::HRndX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::HRndX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, this->rng);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::HProX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::HProX(Solution parent1, Solution parent2, Solution& child)
 {
     std::function<fitness_t(vector<uint>)> f = [this](vector<uint> p)
     {
         return this->getFitness(p);
     };
 
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
+    vector<uint> new_perm(0);
 
-        crossover::HProX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::HProX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    crossover::HProX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, f, this->rng);
+    child = Solution(new_perm, *this->instance);    
 }
 
-void ASCHEA::ULX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::ULX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::rULX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, false, this->rng, this->alignment);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::rULX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, false, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::rULX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, false, this->rng, this->alignment);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::RULX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::RULX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
+    vector<uint> new_perm(0);
 
-        crossover::rULX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, true, this->rng, this->alignment);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::rULX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, true, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    crossover::rULX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, true, this->rng, this->alignment);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::EULX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::EULX(Solution parent1, Solution parent2, Solution& child)
 {
     std::function<fitness_t(vector<uint>)> f = [this](vector<uint> p)
     {
         return this->getFitness(p);
     };
 
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
+    vector<uint> new_perm(0);
 
-        crossover::rULX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, false, this->rng, this->alignment);
-        crossover::EULX(permutation_1, permutation_2, new_perm, f);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::rULX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, false, this->rng, this->alignment);
-        crossover::EULX(permutation_2, permutation_1, new_perm, f);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    crossover::rULX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, false, this->rng, this->alignment);
+    crossover::EULX(parent1.permutation, parent2.permutation, new_perm, f);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::ERULX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::ERULX(Solution parent1, Solution parent2, Solution& child)
 {
     std::function<fitness_t(vector<uint>)> f = [this](vector<uint> p)
     {
         return this->getFitness(p);
     };
 
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
+    vector<uint> new_perm(0);
 
-        crossover::rULX(permutation_1, permutation_2, new_perm, this->instance->lbs, this->instance->ubs, true, this->rng, this->alignment);
-        crossover::EULX(permutation_1, permutation_2, new_perm, f);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::rULX(permutation_2, permutation_1, new_perm, this->instance->lbs, this->instance->ubs, true, this->rng, this->alignment);
-        crossover::EULX(permutation_2, permutation_1, new_perm, f);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    crossover::rULX(parent1.permutation, parent2.permutation, new_perm, this->instance->lbs, this->instance->ubs, true, this->rng, this->alignment);
+    crossover::EULX(parent1.permutation, parent2.permutation, new_perm, f);
+    child = Solution(new_perm, *this->instance);    
 }
 
-void ASCHEA::UPMX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::UPMX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 = parents[idx].permutation;
-        vector<uint> permutation_2 = parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::UPMX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::UPMX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::UPMX(parent1.permutation, parent2.permutation, new_perm, this->instance->node_cnt, this->rng, this->alignment);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::SPX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::SPX(Solution parent1, Solution parent2, Solution& child)
 {
     std::function<fitness_t(vector<uint>, uint)> f = [this](vector<uint> p, uint gap_node)
     {
@@ -577,61 +398,23 @@ void ASCHEA::SPX(vector<Solution> parents, vector<Solution> &children)
         return this->getFitness(p);
     };
 
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 =  parents[idx].permutation; 
-        vector<uint> permutation_2 =  parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::SPX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, f, this->rng, this->alignment);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::SPX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, f, this->rng, this->alignment);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::SPX(parent1.permutation, parent2.permutation, new_perm, this->instance->node_cnt, f, this->rng, this->alignment);
+    child = Solution(new_perm, *this->instance);    
 }
 
-void ASCHEA::MPX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::MPX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 =  parents[idx].permutation; 
-        vector<uint> permutation_2 =  parents[idx + 1].permutation;
-        vector<uint> new_perm(0);
-
-        crossover::MPX(permutation_1, permutation_2, new_perm, this->instance->node_cnt, this->rng);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::MPX(permutation_2, permutation_1, new_perm, this->instance->node_cnt, this->rng);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::MPX(parent1.permutation, parent2.permutation, new_perm, this->instance->node_cnt, this->rng);
+    child = Solution(new_perm, *this->instance);
 }
 
-void ASCHEA::APX(vector<Solution> parents, vector<Solution> &children)
+void ASCHEA::APX(Solution parent1, Solution parent2, Solution& child)
 {
-    for (uint idx = 0; idx < children.size(); idx += 2)
-    {
-        if (this->stop())
-            return;
-        vector<uint> permutation_1 =  parents[idx].permutation; 
-        vector<uint> permutation_2 =  parents[idx + 1].permutation;
-        vector<uint> frequency_1 =  parents[idx].frequency; 
-        vector<uint> frequency_2 =  parents[idx + 1].frequency;
-        vector<uint> new_perm(0);
-
-        crossover::APX(permutation_1, permutation_2, new_perm, frequency_1);
-        children[idx] = Solution(new_perm, *this->instance);
-
-        new_perm = vector<uint>(0);
-        crossover::APX(permutation_2, permutation_1, new_perm, frequency_2);
-        children[idx + 1] = Solution(new_perm, *this->instance);
-    }
+    vector<uint> new_perm(0);
+    crossover::APX(parent1.permutation, parent2.permutation, new_perm, parent1.frequency);
+    child = Solution(new_perm, *this->instance);
 }
 
 

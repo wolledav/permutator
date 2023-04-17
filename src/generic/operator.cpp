@@ -681,7 +681,7 @@ void crossover::HGreX(vector<uint> parent1, vector<uint> parent2, vector<uint> &
 {
     std::function<uint(vector<uint>, vector<uint>)> f = [getFitness](vector<uint> permutation, vector<uint> next_feasible_nodes) -> uint
     {
-        fitness_t best_fitness = UINT_MAX;
+        fitness_t best_fitness = MAX_FITNESS;
         uint best_node;
 
         for (auto node : next_feasible_nodes)

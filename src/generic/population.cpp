@@ -97,7 +97,7 @@ void Population::updateAvgFitness()
     }
     else
     {
-        this->avg_fitness = INVALID_SOLUTION_FITNESS;
+        this->avg_fitness = MAX_FITNESS;
     }
 }
 
