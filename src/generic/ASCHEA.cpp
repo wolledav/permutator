@@ -44,7 +44,7 @@ void ASCHEA::run()
     this->construction();
     this->best_known_solution = this->active_population->solutions[0];
     this->active_population->initializePenalty();
-
+    
     uint gen = 0;
     while (!this->stop())
     {
@@ -52,14 +52,14 @@ void ASCHEA::run()
         
         vector<Solution> parents(this->active_population->getMaxSize());
         vector<Solution> children(this->active_population->getMaxSize());
-        
+       
         this->selection(parents);
         this->crossover(parents, children);
         this->mutation(children);
         this->replacement(children);
         if (!this->stop())
             this->active_population->update();
-
+        
         // not penalized fitness because different populations have different penalties
         if (!this->stop() && this->active_population->best_known_solution.fitness < this->best_known_solution.fitness)
         {
@@ -211,9 +211,12 @@ void ASCHEA::presortedTournament(vector<Solution> &parents)
     vector<Solution> feasible_solutions(0);
     vector<Solution> source_population;
 
-    for (auto p : this->active_population->solutions)
+    for (auto p : this->active_population->solutions){
+        if (this->stop())
+            return;
         if (p.is_feasible)
             feasible_solutions.push_back(p);
+    }
 
     for (uint parent_idx = 0; parent_idx < parents.size(); parent_idx++)
     {
@@ -426,6 +429,7 @@ void ASCHEA::mutation(vector<Solution> &children)
 {
     std::uniform_int_distribution<uint> mutation_rng(0, this->mutation_list.size() - 1);
     std::uniform_real_distribution<> norm_rng(0.0, 1.0);
+    uint i = 0;
     for (auto &child : children)
     {
         if (this->stop())
@@ -572,6 +576,8 @@ void ASCHEA::nicheSegregational(vector<Solution> children)
 
     vector<bool> leader_mask(0), follower_mask(0);
     this->nichePopulation(children, 1, leader_mask, follower_mask);
+    if (this->stop()) 
+        return;
     int leader_follower_balance = 0;
 
     vector<uint> feasible_idxs(0), rest_of_idxs(0);
@@ -590,6 +596,8 @@ void ASCHEA::nicheSegregational(vector<Solution> children)
     {
         for (auto idx : feasible_idxs)
         {
+            if (this->stop()) 
+                return;
             if (!mask[idx])
                 continue;
             if (this->active_population->getRealSize() < this->active_population->getMaxSize() * t_select)
@@ -610,14 +618,16 @@ void ASCHEA::nicheSegregational(vector<Solution> children)
     sort(rest_of_idxs.begin(), rest_of_idxs.end());
 
     for (auto mask : {leader_mask, follower_mask})
-    {
-        for (auto idx : rest_of_idxs)
+        for (auto idx : rest_of_idxs){
+            if (this->stop()) 
+                return;
             if (mask[idx] && this->active_population->getRealSize() < this->active_population->getMaxSize() && (true || find(this->active_population->solutions.begin(), this->active_population->solutions.end(), children[idx]) == this->active_population->solutions.end()))
             {
                 this->active_population->append(children[idx]);
                 leader_follower_balance += leader_mask[idx] ? 1 : -1;
             }
-    }
+        }
+    
     this->construction();
 
     // adaptive niche radius
@@ -648,6 +658,8 @@ void ASCHEA::segregational(vector<Solution> children)
 
     for (auto idx : feasible_idxs)
     {
+        if (this->stop()) 
+            return;
         if (this->active_population->getRealSize() < this->active_population->getMaxSize() * t_select)
         {
             if (find(this->active_population->solutions.begin(), this->active_population->solutions.end(), children[idx]) == this->active_population->solutions.end())
@@ -668,6 +680,8 @@ void ASCHEA::segregational(vector<Solution> children)
         vector<bool> zero_penalty_presence(this->instance->penalty_func_cnt, true);
         for (auto idx : rest_of_idxs)
         {
+            if (this->stop()) 
+                return;
             bool add = false;
             for (uint i = 0; i < zero_penalty_presence.size(); i++)
                 if (zero_penalty_presence[i] && children[idx].penalties[i] == 0)
@@ -783,7 +797,9 @@ void ASCHEA::nichePopulation(vector<Solution> population, uint capacity, vector<
         leader_mask[i] = true;
         uint occupancy = 1;
         for (uint j = i + 1; j < population.size(); j++)
-        {
+        {   
+            if (this->stop()) 
+                return;
             if (!follower_mask[j] && levenshtein_distance(population[i].permutation, population[j].permutation) <= this->active_population->niche_radius)
             {
                 if (occupancy < capacity)

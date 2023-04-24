@@ -1,34 +1,37 @@
-
 {
     "num_threads": 1,
-    "timeout": 5400,
-    "population_type": "dynamic",
-    "frequency": 17,
-    "tournament_size": 78,
-    "t_select": 0.4039,
-    "t_target": 0.6927,
-    "mutation_rate": 0.6742,
+    "timeout": 10512,
+    "population_type": "static",
+    "frequency": 28,
+    "population_size": 10000,
+    "tournament_size": 31,
+    "t_select": 0.4056,
+    "t_target": 0.8442,
+    "mutation_rate": 0.3888,
     "stop_on_feasible": false,
-    "construction": "nearestNeighbor",
+    "construction": "random",
     "selection": "sortingTournament",
-    "alignment": "frontfillOneGap",
-    "replacement": "segregational",
+    "alignment": "greedyUniform",
+    "diff_p": 9,
+    "gap_p": 1,
+    "replacement": "nicheSegregational",
     "operators": [],
     "mutation": [
-        "twoOpt",
-        "exchangeNIds",
-        "exchange_1_1",
-        "moveAll_10",
+        "insert_1",
+        "remove_1",
+        "exchangeIds",
         "centExchange_2",
         "centExchange_4",
-        "centExchange_5"
+        "relocate_1"
     ],
     "perturbation": [],
     "crossover": [
+        "NBX",
         "PBX",
-        "ERX",
-        "HProX",
-        "ULX",
-        "MPX"
+        "AEX",
+        "OX",
+        "OBX",
+        "CX",
+        "HRndX"
     ]
 }

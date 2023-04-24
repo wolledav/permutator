@@ -35,8 +35,8 @@
 
 ## ASCHEA PARAMETERS
 population_type     "population_type "  c   (dynamic, static)
-population_size     "population_size "  i   (8, 1000000)        | population_type == "static"
-frequency           "frequency "        i   (2, 32)             | population_type == "dynamic"
+population_size     "population_size "  i   (8, 100000)        | population_type == "static"
+frequency           "frequency "        i   (2, 32)            | population_type == "dynamic"
 tournament_size     "tournament_size "  i   (4, 128) 
 t_select            "t_select "         r   (0.1, 0.9)
 t_target            "t_target "         r   (0.1, 0.9)

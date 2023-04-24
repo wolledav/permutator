@@ -44,8 +44,10 @@ CONFIG_FILE=./config_${CONFIG_ID}-${INSTANCE_ID}-${SEED}.json
 
 stringarray=($CONFIG_PARAMS)
 TIMEOUT=${stringarray[1]} # in seconds
-TIMEOUT=$(($TIMEOUT/3600))
-TIMEOUT=$(($TIMEOUT+1))
+TIMEOUT=$(($TIMEOUT/60))
+TIMEOUT=$(($TIMEOUT+30))
+TIMEOUT_HOURS=$(($TIMEOUT/60))
+TIMEOUT_MINUTES=$(($TIMEOUT%60))
 
 python3 ../../scripts/common/create_config.py $CONFIG_FILE $FIXED_PARAMS $CONFIG_PARAMS
 sed -i 's/"/\\"/g' $CONFIG_FILE
@@ -62,8 +64,8 @@ CMD=`echo "$CMD" | tr '\n' ' '`
 exec qsub <<EOF
 #!/bin/bash
 #PBS -q default@meta-pbs.metacentrum.cz
-#PBS -l walltime=$TIMEOUT:30:0
-#PBS -l select=1:ncpus=1:mem=8gb:scratch_local=16gb:cl_carex=False:cl_vinca=False:cl_draba=False
+#PBS -l walltime=$TIMEOUT_HOURS:$TIMEOUT_MINUTES:0
+#PBS -l select=1:ncpus=1:mem=8gb:scratch_local=16gb:cl_carex=False:cl_draba=False:cl_vinca=False
 #PBS -N EVRP-EA-batch
 #PBS -o $DIR/$STDOUT
 #PBS -e $DIR/$STDERR
@@ -72,7 +74,9 @@ cd \$SCRATCHDIR
 
 cp /storage/praha1/home/pazoudav/permutator ./ -r
 cd permutator
+rm -r -f build
 
+module purge
 module add cmake
 cmake -S . -B"build" 
 cmake --build build
