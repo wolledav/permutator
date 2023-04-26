@@ -10,6 +10,7 @@
 
 #define WORKLOAD_PENALTY  1000000
 #define EXCLUSION_PENALTY 1000000
+#define JOB_MISSING_PENALTY 1000000
 
 class ROADEFInstance : public Instance
 {

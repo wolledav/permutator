@@ -52,7 +52,6 @@ void ASCHEA::run()
         
         vector<Solution> parents(this->active_population->getMaxSize());
         vector<Solution> children(this->active_population->getMaxSize());
-       
         this->selection(parents);
         this->crossover(parents, children);
         this->mutation(children);
@@ -68,6 +67,7 @@ void ASCHEA::run()
         }
         gen++;
     }
+
     #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
         this->best_population->print();
         this->best_known_solution.print();
@@ -118,7 +118,7 @@ void ASCHEA::constructGreedy()
         for (uint i = 0; i < this->instance->node_cnt / 5; i++)
             this->append(solution);
 
-        bool valid = this->instance->computeFitness(solution.permutation, solution.fitness, solution.penalties);
+        bool valid = this->instance->FrequencyInBounds(solution.frequency);
 
         while (!valid && !this->stop())
         {
@@ -162,7 +162,7 @@ void ASCHEA::constructNearestNeighbor()
         for (uint i = 0; i < 4; i++)
             this->append(solution);
 
-        bool valid = this->instance->computeFitness(solution.permutation, solution.fitness, solution.penalties);
+        bool valid = this->instance->FrequencyInBounds(solution.frequency);
 
         while (!valid && !this->stop())
         {
@@ -249,7 +249,7 @@ void ASCHEA::crossover(vector<Solution> parents, vector<Solution> &children)
             return;
         string xover = this->crossover_list[crossover_rng(*this->rng)];
         #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
-                 std::cout << std::setw(6) << xover << ","; 
+                 std::cout << std::setw(6) << xover << ", "; 
         #endif
         this->crossover_map.at(xover)(parents[idx], parents[idx+1], children[idx]);
         this->crossover_map.at(xover)(parents[idx+1], parents[idx], children[idx+1]);
@@ -434,9 +434,23 @@ void ASCHEA::mutation(vector<Solution> &children)
     {
         if (this->stop())
             return;
-        if (norm_rng(*this->rng) < this->mutation_rate)
-            this->mutation_map.at(this->mutation_list[mutation_rng(*this->rng)])(child);
+        if (norm_rng(*this->rng) < this->mutation_rate){
+            string mutation_str = this->mutation_list[mutation_rng(*this->rng)];
+            #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
+                 std::cout << mutation_str << ", "; 
+            #endif
+            this->mutation_map.at(mutation_str)(child);
+
+        } else {
+            #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
+                 std::cout << "none" << ", "; 
+            #endif
+        }
+            
     }
+    #if defined STDOUT_ENABLED && STDOUT_ENABLED == 1
+        std::cout << std::endl << std::endl;
+    #endif
 }
 
 void ASCHEA::insert(Solution &child)
@@ -869,6 +883,7 @@ void ASCHEA::setPopulation(const string &constr){
         throw std::system_error(EINVAL, std::system_category(), constr);
     }
     this->active_population = this->populations[0];
+    this->best_population = this->active_population;
     this->best_known_solution = Solution(this->instance->node_cnt);
 }
 

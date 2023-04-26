@@ -45,7 +45,8 @@ void oprtr::remove(vector<uint> &permutation, vector<uint> &frequency, vector<ui
 // relocate([1,2,3,4], 1, 2, 2, false) -> [1,4,2,3]
 void oprtr::relocate(vector<uint> &permutation, uint from, uint to, uint length, bool reverse)
 {
-    if (from + length > permutation.size() || to > permutation.size() - length)
+    // LOG(from); LOG(to); LOG(length); LOG(permutation.size());
+    if (from + length > permutation.size() || to > (int)permutation.size() - length)
         return;
         
     vector<uint> subsequence(permutation.begin() + from, permutation.begin() + from + length);
@@ -623,6 +624,14 @@ void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
     const uint gap_node = node_cnt;
     alignmentFunction(parent1, parent2, gap_node);
 
+    // for (auto n : parent1)
+    //     std::cout << n << " ";
+    // LOG("\n");
+
+    // for (auto n : parent2)
+    //     std::cout << n << " ";
+    // LOG("\n\n");
+
     std::unordered_map<uint, vector<uint>> node_idxs;
     for (uint i = 0; i <= node_cnt; i++)
         node_idxs[i] = {};
@@ -635,7 +644,6 @@ void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
     stack.push(0);
 
     uint invalid_idx = child.size();
-    uint final_idx = invalid_idx;
     vector<uint> walk(child.size(), invalid_idx);
 
     bool search = true;
@@ -643,9 +651,13 @@ void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
     {
         uint idx = stack.top();
         stack.pop();
+        // LOG(idx);
+        // LOG(parent2[idx]);
+        // LOG("-");
 
         for (auto i : node_idxs.at(parent2[idx]))
         {
+            // LOG(i);
             if (walk[i] == invalid_idx)
             {
                 stack.push(i);
@@ -657,6 +669,7 @@ void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
                 }
             }
         }
+        // LOG("---");
     }
 
     if (walk[0] != invalid_idx)
@@ -669,6 +682,10 @@ void crossover::CX(vector<uint> parent1, vector<uint> parent2, vector<uint> &chi
         }
         child[0] = parent1[0];
     }
+
+    // for (auto n : child)
+    //     std::cout << n << " ";
+    // LOG(" ");
 
     for (uint idx = 0; idx < child.size(); idx++)
         if (child[idx] == gap_node)
@@ -1108,7 +1125,115 @@ void alignment::removeGap(std::vector<uint> &permutation, uint gap_node)
     permutation.erase(new_end, permutation.end());
 }
 
-void alignment::greedyUniform(vector<uint> &x, vector<uint> &y, uint gap_node, uint difference_penalty, uint gap_penalty)
+void  alignment::greedyUniform(vector<uint> &x, vector<uint> &y, uint gap_node, uint difference_penalty, uint gap_penalty)
+{
+    int i, j; // initialising variables
+     
+    int m = x.size(); // length of gene1
+    int n = y.size(); // length of gene2
+     
+    // table for storing optimal substructure answers
+    vector<vector<int>> dp;
+    for (uint i = 0; i < y.size() + x.size() + 1; i++)
+        dp.push_back(vector<int>(y.size() + x.size() + 1, 0));
+    // int dp[n+m+1][n+m+1] = {0};
+ 
+    // initialising the table
+    for (i = 0; i <= (n+m); i++)
+    {
+        dp[i][0] = i * gap_penalty;
+        dp[0][i] = i * gap_penalty;
+    }   
+ 
+    // calculating the minimum penalty
+    for (i = 1; i <= m; i++)
+    {
+        for (j = 1; j <= n; j++)
+        {
+            if (x[i - 1] == y[j - 1])
+            {
+                dp[i][j] = dp[i - 1][j - 1];
+            }
+            else
+            {
+                dp[i][j] = std::min({dp[i - 1][j - 1] + difference_penalty ,
+                                dp[i - 1][j] + gap_penalty    ,
+                                dp[i][j - 1] + gap_penalty    });
+            }
+        }
+    }
+ 
+    // Reconstructing the solution
+    int l = n + m; // maximum possible length
+     
+    i = m; j = n;
+     
+    int xpos = l;
+    int ypos = l;
+ 
+    // Final answers for the respective strings
+    vector<int> xans(l+1);
+    vector<int> yans(l+1);
+     
+    while ( !(i == 0 || j == 0))
+    {
+        if (x[i - 1] == y[j - 1])
+        {
+            xans[xpos--] = (int)x[i - 1];
+            yans[ypos--] = (int)y[j - 1];
+            i--; j--;
+        }
+        else if (dp[i - 1][j - 1] + difference_penalty == dp[i][j])
+        {
+            xans[xpos--] = (int)x[i - 1];
+            yans[ypos--] = (int)y[j - 1];
+            i--; j--;
+        }
+        else if (dp[i - 1][j] + gap_penalty == dp[i][j])
+        {
+            xans[xpos--] = (int)x[i - 1];
+            yans[ypos--] = gap_node;
+            i--;
+        }
+        else if (dp[i][j - 1] + gap_penalty == dp[i][j])
+        {
+            xans[xpos--] = gap_node;
+            yans[ypos--] = (int)y[j - 1];
+            j--;
+        }
+    }
+    while (xpos > 0)
+    {
+        if (i > 0) xans[xpos--] = (int)x[--i];
+        else xans[xpos--] = gap_node;
+    }
+    while (ypos > 0)
+    {
+        if (j > 0) yans[ypos--] = (int)y[--j];
+        else yans[ypos--] = gap_node;
+    }
+ 
+    // Since we have assumed the answer to be n+m long,
+    // we need to remove the extra gaps in the starting
+    // id represents the index from which the arrays
+    // xans, yans are useful
+    int id = 1;
+    for (i = l; i >= 1; i--)
+    {
+        if ((char)yans[i] == gap_node && (char)xans[i] == gap_node)
+        {
+            id = i + 1;
+            break;
+        }
+    }
+ 
+    x = vector<uint>(xans.begin() + id, xans.end());
+    y = vector<uint>(yans.begin() + id, yans.end());
+
+    return;
+}
+
+void greedyUniform2(vector<uint> &x, vector<uint> &y, uint gap_node, uint difference_penalty, uint gap_penalty)
 {
     // table for storing optimal substructure answers
     vector<vector<uint>> penalty_table;

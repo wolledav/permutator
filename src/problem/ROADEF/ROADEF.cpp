@@ -62,10 +62,15 @@ bool ROADEFInstance::computeFitness(const std::vector<uint> &permutation, permut
 
     penalties.clear();
     penalties.push_back((fitness_t)round(this->solution.final_objective));
-    penalties.push_back((fitness_t)round(1000*this->solution.workload_underuse)); //*1000 used for .3 decimal precision
+    penalties.push_back((fitness_t)round(1000*this->solution.workload_underuse)); //*1000 used for 3 decimal precision
     penalties.push_back((fitness_t)round(1000*this->solution.workload_overuse));
     penalties.push_back(this->solution.exclusion_penalty);
-    fitness = penalties[0] + WORKLOAD_PENALTY*(penalties[1] + penalties[2]) + EXCLUSION_PENALTY*penalties[3];
+    // LOG(1);
+    vector<uint> frequency(this->node_cnt,0);
+    for (auto p : permutation)
+        frequency[p] += 1;
+    // LOG(2);
+    fitness = penalties[0] + WORKLOAD_PENALTY*(penalties[1] + penalties[2]) + EXCLUSION_PENALTY*penalties[3] + JOB_MISSING_PENALTY*this->getLBPenalty(frequency);
 
     return this->solution.is_valid();
 }

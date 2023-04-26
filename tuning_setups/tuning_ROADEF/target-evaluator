@@ -52,9 +52,9 @@ done
 # This is an example of reading a number from the output of
 # target-runner. It assumes that the objective value is the first number in
 # the first column of the only line starting with a digit.
-if [ ! -s "${STDOUT}" ]; then
-    error "${STDOUT}: No such file or directory"
-fi
+# if [ ! -s "${STDOUT}" ]; then
+#     error "${STDOUT}: No such file or directory"
+# fi
 # You may need to update this to parse the output of your algorithm.
 CONFIG_FILE="./config_${CANDIDATE}-${INSTANCEID}-${SEED}.json"
 COST=$(tail -n 1 ${STDOUT} 2> /dev/null | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
