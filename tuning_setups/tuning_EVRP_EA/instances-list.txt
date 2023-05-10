@@ -18,9 +18,10 @@ X-n143-k7-s4.evrp timeout 10512
 X-n214-k11-s9.evrp timeout 15984       
 X-n351-k40-s35.evrp timeout 27720       
 X-n459-k26-s20.evrp timeout 34416       
-X-n573-k30-s6.evrp timeout 41616          
-X-n685-k75-s25.evrp timeout 51048       
-X-n749-k98-s30.evrp timeout 56016       
-X-n819-k171-s25.evrp timeout 60696      
-X-n916-k207-s9.evrp timeout 66528      
+#X-n573-k30-s6.evrp timeout 41616       
+#X-n685-k75-s25.evrp timeout 51048       
+#X-n749-k98-s30.evrp timeout 56016       
+#X-n819-k171-s25.evrp timeout 60696      
+#X-n916-k207-s9.evrp timeout 66528      
 #X-n1001-k43-s9.evrp timeout 108972     
+    

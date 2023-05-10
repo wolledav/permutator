@@ -81,13 +81,16 @@ module add cmake
 cmake -S . -B"build" 
 cmake --build build
 
-cd tuning_setups/tuning_ROADEF/
+cd tuning_setups/tuning_ROADEF_EA/
 echo "${CONFIG}" > $CONFIG_FILE
 cat $CONFIG_FILE >& 2
 echo $CMD >& 2
 eval "$CMD"
 RET=\$?
 echo "OK" >& 2
+cd \$SCRATCHDIR
+rm permutator -rf
+trap 'clean_scratch' TERM EXIT
 exit \$RET
 EOF
 
