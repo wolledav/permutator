@@ -1,0 +1,30 @@
+#!/bin/bash
+#PBS -q default@meta-pbs.metacentrum.cz
+#PBS -l walltime=$TIMEOUT_HOURS:$TIMEOUT_MINUTES:0
+#PBS -l select=1:ncpus=1:mem=16gb:scratch_local=16gb:cl_carex=False:cl_draba=False:cl_vinca=False
+#PBS -N ROADEF-LS-batch
+#PBS -o $DIR/$STDOUT
+#PBS -e $DIR/$STDERR
+
+cd \$SCRATCHDIR
+
+cp /storage/praha1/home/pazoudav/permutator ./ -r
+cd permutator
+rm -r -f build
+
+module purge
+module add cmake
+cmake -S . -B"build" 
+cmake --build build
+
+cd tuning_setups/tuning_ROADEF/
+echo "${CONFIG}" > $CONFIG_FILE
+cat $CONFIG_FILE >& 2
+echo $CMD >& 2
+eval "$CMD"
+RET=\$?
+echo "OK" >& 2
+cd \$SCRATCHDIR
+rm permutator -rf
+trap 'clean_scratch' TERM EXIT
+exit \$RET
