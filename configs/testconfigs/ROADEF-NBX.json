@@ -1,0 +1,29 @@
+{
+    "num_threads": 1,
+    "population_type": "dynamic",
+    "frequency": 26,
+    "tournament_size": 18,
+    "t_select": 0.2943,
+    "t_target": 0.6861,
+    "mutation_rate": 0.9355,
+    "stop_on_feasible": false,
+    "construction": "random",
+    "selection": "sortingTournament",
+    "alignment": "randomUniform",
+    "replacement": "segregational",
+    "operators": [],
+    "mutation": [
+        "insert_1",
+        "exchangeIds",
+        "exchangeNIds",
+        "exchange_1_1",
+        "centExchange_1",
+        "centExchange_2",
+        "centExchange_4",
+        "centExchange_5",
+        "relocate_1"
+    ],
+    "crossover": [
+"NBX"
+    ]
+}

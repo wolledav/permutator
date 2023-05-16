@@ -45,7 +45,7 @@ CONFIG_FILE=./config_${CONFIG_ID}-${INSTANCE_ID}-${SEED}.json
 stringarray=($CONFIG_PARAMS)
 TIMEOUT=${stringarray[1]} # in seconds
 TIMEOUT=$(($TIMEOUT/60)) # in minutes
-TIMEOUT=$(($TIMEOUT+15)) # + reserve
+TIMEOUT=$(($TIMEOUT+5)) # + reserve
 TIMEOUT_HOURS=$(($TIMEOUT/60)) 
 TIMEOUT_MINUTES=$(($TIMEOUT%60))
 
@@ -61,10 +61,10 @@ CMD="$EXE -d $INSTANCE -s $SEED -c $CONFIG_FILE -e"
 CMD=`echo "$CMD" | tr '\n' ' '` 
 
 # PBS just prints the jobID, so it should be good to go.z
-OUTPUT="Connection refused"
-while [[ $OUTPUT == *"Connection refused"* || $OUTPUT == *"errno=111"* ]]
+OUTPUT="onnect"
+while [[ $OUTPUT == *"onnect"* ]]
 do
-    OUTPUT=$(qsub <<EOF
+    OUTPUT=$(qsub <<EOF 2>&1
 #!/bin/bash
 #PBS -q default@meta-pbs.metacentrum.cz
 #PBS -l walltime=$TIMEOUT_HOURS:$TIMEOUT_MINUTES:0
@@ -96,9 +96,9 @@ rm permutator -rf
 trap 'clean_scratch' TERM EXIT
 exit \$RET
 EOF
-2>&1)
+)
 
-    if [[ $OUTPUT == *"Connection refused"* || $OUTPUT == *"errno=111"* ]]
+    if [[ $OUTPUT == *"onnect"* ]]
     then
         sleep 60
     fi

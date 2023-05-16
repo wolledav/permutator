@@ -1,0 +1,59 @@
+# 2023-05-15 09:53:50 CEST: Iteration 8 of 8
+# experimentsUsedSoFar: 8395
+# remainingBudget: 1605
+# currentBudget: 1605
+# nbConfigurations: 66
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|         27|         66|        913| 3.893935003e+12|         66|01:37:03|   NA|  NA|    NA|
+|x|         17|         66|        913| 1.947467502e+12|        125|00:22:05|-0.01|0.49|0.7161|
+|x|          4|         66|        964| 1.298799003e+12|        184|01:34:56|-0.09|0.27|0.9987|
+|x|         12|         66|        964| 9.740992528e+11|        243|01:37:08|+0.05|0.29|0.7995|
+|-|          7|         45|        964| 8.178732028e+11|        302|01:52:29|-0.13|0.10|0.9746|
+|=|         22|         45|        974| 7.480800025e+11|        340|00:21:51|-0.08|0.10|0.9455|
+|=|          9|         45|        970| 6.425544306e+11|        378|00:19:51|-0.08|0.07|0.9764|
+|=|         13|         45|        970| 1.049759002e+12|        416|00:24:05|-0.06|0.07|0.9605|
+|=|         26|         45|        965| 9.327581134e+11|        454|01:37:01|-0.03|0.08|0.9245|
+|=|         19|         45|        965| 8.395823020e+11|        492|00:26:23|-0.03|0.07|0.8265|
+|=|         10|         45|        913| 3.549031821e+11|        530|00:27:28|+0.01|0.10|0.8216|
+|=|         11|         45|        965| 6.997854187e+11|        568|00:21:17|-0.02|0.06|0.8677|
+|=|         24|         45|        967| 6.459634634e+11|        606|01:38:05|-0.03|0.05|0.8891|
+|=|         20|         45|        967| 6.242747183e+11|        644|00:23:18|-0.01|0.06|0.8868|
+|=|         23|         45|        965| 5.962755372e+11|        682|01:37:54|+0.00|0.07|0.8758|
+|=|          5|         45|        965| 5.590083162e+11|        720|01:35:42|-0.02|0.05|0.8989|
+|=|          6|         45|        965| 5.261254825e+11|        758|01:38:40|-0.02|0.04|0.9046|
+|=|         15|         45|        965| 4.968962891e+11|        796|01:37:57|-0.02|0.04|0.9146|
+|=|         16|         45|        965| 4.707438529e+11|        834|00:23:06|-0.02|0.04|0.9171|
+|=|         14|         45|        965| 4.473297606e+11|        872|00:21:19|-0.01|0.04|0.9217|
+|=|          3|         45|        975| 4.399872567e+11|        910|00:20:51|-0.01|0.04|0.9211|
+|=|         25|         45|        975| 4.273857015e+11|        948|01:36:09|-0.00|0.04|0.9164|
+|=|          2|         45|        975| 4.088037146e+11|        986|01:36:25|-0.00|0.04|0.9262|
+|=|         18|         45|        975| 4.091131446e+11|       1024|00:24:04|+0.00|0.04|0.9229|
+|=|         21|         45|        975| 3.928470989e+11|       1062|01:38:04|+0.00|0.04|0.9170|
+|=|          1|         45|        975| 3.777375952e+11|       1100|00:24:39|-0.00|0.04|0.9282|
+|=|          8|         45|        975| 3.637473139e+11|       1138|00:21:27|-0.00|0.03|0.9351|
+|=|         28|         45|        975| 3.511243823e+11|       1183|00:22:10|+0.00|0.04|0.9337|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         975    mean value:  3.511243823e+11
+Description of the best-so-far configuration:
+    .ID. metaheuristic stop_on_feasible first_improve    construction perturbation allow_infeasible local_search insert_1 remove_1 twoOpt exchangeIds exchangeNIds exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 revExchange_1_2 revExchange_2_2 revExchange_2_3 revExchange_2_4 revExchange_3_3 revExchange_3_4 revExchange_4_4 centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 revRelocate_2 revRelocate_3 revRelocate_4 revRelocate_5 moveAll_1 moveAll_2 moveAll_3 moveAll_4 moveAll_10 ils_k bvns_min_k bvns_max_k .PARENT.
+975  975          BVNS                0             1 randomReplicate   randomMove                1         PVND        1        0      1           1            1            1            0            0            0            1            1            0            1               0               0               1               0               1               0               1              0              0              1              1              1          0          0          0          0          1             0             0             0             0         1         1         0         0          0    NA          7         11      864
+
+# 2023-05-16 12:55:30 CEST: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic stop_on_feasible first_improve    construction perturbation allow_infeasible local_search insert_1 remove_1 twoOpt exchangeIds exchangeNIds exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 revExchange_1_2 revExchange_2_2 revExchange_2_3 revExchange_2_4 revExchange_3_3 revExchange_3_4 revExchange_4_4 centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 revRelocate_2 revRelocate_3 revRelocate_4 revRelocate_5 moveAll_1 moveAll_2 moveAll_3 moveAll_4 moveAll_10 ils_k bvns_min_k bvns_max_k
+975          BVNS                0             1 randomReplicate   randomMove                1         PVND        1        0      1           1            1            1            0            0            0            1            1            0            1               0               0               1               0               1               0               1              0              0              1              1              1          0          0          0          0          1             0             0             0             0         1         1         0         0          0    NA          7         11
+965          BVNS                0             1 randomReplicate   randomMove                1         PVND        1        0      1           1            1            1            0            0            0            1            1            1            1               0               0               1               0               1               0               1              1              0              1              1              1          0          1          0          0          1             0             0             0             0         1         1         0         0          0    NA          8         11
+960           ILS                0             1 randomReplicate   randomMove                1         PVND        1        1      1           1            1            0            0            0            0            1            1            1            0               0               0               1               0               1               0               1              0              0              1              0              1          1          0          0          0          1             0             0             1             0         0         1         0         0          0     7         NA         NA
+972          BVNS                0             1 randomReplicate   randomMove                1         PVND        1        0      1           1            1            1            0            0            0            1            1            1            1               1               0               1               0               1               0               1              0              0              1              1              1          0          1          0          0          1             0             0             0             0         1         1         0         0          0    NA          4         11
+967          BVNS                0             1 randomReplicate   randomMove                1         PVND        1        1      1           1            1            0            1            0            0            1            1            1            1               0               0               1               1               0               1               1              1              0              1              1              1          0          0          0          0          0             1             0             0             0         0         1         0         0          0    NA          4         11
+964           ILS                0             0 randomReplicate   randomSwap                1         PVND        1        0      1           1            0            0            0            1            0            0            0            0            0               1               0               1               0               1               0               0              0              0              0              1              0          0          0          0          0          0             1             0             0             1         0         1         0         1          1     4         NA         NA
+970           ILS                0             1 randomReplicate doubleBridge                1         PVND        1        0      1           1            0            0            1            1            0            0            0            0            1               1               0               1               0               1               0               0              0              0              0              1              0          0          1          0          0          1             1             0             0             0         0         1         0         1          1     5         NA         NA

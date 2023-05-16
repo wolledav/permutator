@@ -1,0 +1,83 @@
+#!/bin/bash
+
+OPERATORS=( NBX PBX ERX AEX OX OBX CX HGreX HRndX HProX ULX RULX EULX ERULX UPMX SPX MPX APX )
+
+for op in "${OPERATORS[@]}"
+do
+    sed  27s/.*/\"$op\"/ configs/testconfigs/NBX.json -i
+    cp configs/testconfigs/NBX.json configs/testconfigs/ROADEF-$op.json 
+done
+exit 0
+
+
+INSTANCES=( A_01.json 
+            A_01.json 
+            A_02.json 
+            A_02.json 
+            A_03.json 
+            A_03.json 
+            A_04.json 
+            A_04.json 
+            A_05.json 
+            A_05.json 
+            A_06.json 
+            A_06.json 
+            A_07.json 
+            A_07.json 
+            A_08.json 
+            A_08.json 
+            A_09.json 
+            A_09.json 
+            A_10.json 
+            A_10.json 
+            A_12.json 
+            A_12.json 
+            A_13.json 
+            A_13.json 
+            A_14.json 
+            A_14.json 
+            A_15.json 
+            A_15.json )
+
+TIMES=( 900
+        5400
+        900
+        5400
+        900
+        5400
+        900
+        5400
+        900
+        5400
+        900
+        5400
+        900
+        5400
+        900 
+        5400
+        900
+        5400
+        900 
+        5400
+        900
+        5400
+        900
+        5400
+        900
+        5400
+        900
+        5400 )
+
+
+for op in "${OPERATORS[@]}"
+do
+    for i in {1..50}
+    do 
+        for j in {0..10}
+        do 
+            time=${TIMES[$j]}
+            instance=${INSTANCES[$j]}
+            bash test-runner ROADEF $op $instance $time $i
+        done
+    done
+done

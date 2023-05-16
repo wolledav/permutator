@@ -1,0 +1,70 @@
+#!/bin/bash
+DIR=`pwd`
+
+PROBLEM=$1
+OPERATOR=$2
+INSTANCE=$3
+TIME=$4
+RUN_NUMBER=$5
+
+EXE=../../build/$PROBLEM_meta
+
+shift 5 || error "Not enough parameters"
+# CONFIG_PARAMS=$*
+CONFIG_FILE=./configs/testconfigs/$PROBLEM-$OPERATOR.json
+
+# stringarray=($CONFIG_PARAMS)
+TIMEOUT=$(($TIME/60)) # in minutes
+TIMEOUT=$(($TIMEOUT+5)) # + reserve
+TIMEOUT_HOURS=$(($TIMEOUT/60)) 
+TIMEOUT_MINUTES=$(($TIMEOUT%60))
+
+INSTANCE=data_demo/datasets/$PROBLEM/$INSTANCE
+
+STDOUT=$DIR/data-$PROBLEM-$OPERATOR-$INSTANCE.stdout
+# STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${RUN_NUMBER}.stderr
+
+CMD="$EXE -d $INSTANCE -s $RANDOM -c $CONFIG_FILE -t $TIME -e"
+CMD=`echo "$CMD" | tr '\n' ' '` 
+
+# PBS just prints the jobID, so it should be good to go.
+OUTPUT="onnect"
+while [[ $OUTPUT == *"onnect"* ]]
+do
+    OUTPUT=$(qsub <<EOF 2>&1
+#!/bin/bash
+#PBS -q default@meta-pbs.metacentrum.cz
+#PBS -l walltime=$TIMEOUT_HOURS:$TIMEOUT_MINUTES:0
+#PBS -l select=1:ncpus=1:mem=16gb:scratch_local=16gb:cl_carex=False:cl_draba=False:cl_vinca=False
+#PBS -N $PROBLEM-$OPERATOR-$INSTANCE-$RUN_NUMBER
+
+cd \$SCRATCHDIR
+
+cp /storage/praha1/home/pazoudav/permutator ./ -r
+cd permutator
+rm -r -f build
+
+module purge
+module add cmake
+cmake -S . -B"build" 
+cmake --build build
+
+echo $CMD >& 2
+eval "$CMD"
+RET=\$?
+echo "OK" >& 2
+cd \$SCRATCHDIR
+rm permutator -rf
+trap 'clean_scratch' TERM EXIT
+exit \$RET
+EOF
+)
+
+    if [[ $OUTPUT == *"onnect"* ]]
+    then
+        sleep 60
+    fi
+done
+
+echo "$OUTPUT " >> $STDOUT
+

@@ -1,0 +1,54 @@
+# 2023-05-15 17:05:47 CEST: Iteration 8 of 8
+# experimentsUsedSoFar: 8277
+# remainingBudget: 1723
+# currentBudget: 1723
+# nbConfigurations: 88
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|         21|         88|       1326|     744.0000000|         88|00:23:04|   NA|  NA|    NA|
+|x|         19|         88|       1277|     1550.000000|        169|00:23:35|+0.01|0.50|0.9467|
+|x|          1|         88|       1291|     1719.000000|        250|01:37:16|+0.06|0.37|0.9979|
+|x|         11|         88|       1291|     1666.000000|        331|00:23:28|+0.18|0.39|0.8401|
+|-|         20|         56|       1291|     200001332.8|        412|00:13:46|+0.02|0.22|0.6705|
+|=|         12|         56|       1291|     166668156.3|        461|00:27:05|+0.06|0.22|0.6074|
+|=|          6|         56|       1282| 3.554300176e+10|        510|00:22:23|-0.03|0.12|0.7881|
+|=|         15|         56|       1282| 3.110012682e+10|        559|01:38:33|+0.02|0.14|0.7358|
+|-|         10|         48|       1282| 2.764455727e+10|        608|01:38:09|+0.05|0.16|0.6818|
+|-|          3|         45|       1282| 2.488010178e+10|        649|00:23:59|+0.04|0.14|0.7337|
+|-|          7|         42|       1330| 7.566472913e+10|        687|00:22:22|+0.07|0.16|0.6895|
+|!|         16|         42|       1312| 4.970567287e+10|        722|01:38:24|+0.10|0.18|0.6509|
+|-|         18|         37|       1282| 1.913854000e+10|        757|00:20:55|+0.15|0.22|0.6028|
+|-|          5|         35|       1282| 1.777150154e+10|        787|01:35:50|+0.18|0.24|0.5786|
+|!|          9|         35|       1312| 3.976453877e+10|        815|01:38:24|+0.21|0.26|0.5487|
+|-|         13|         31|       1312| 3.727925515e+10|        843|01:37:57|+0.25|0.30|0.5224|
+|-|          2|         28|       1330| 4.895953125e+10|        867|01:37:05|+0.29|0.33|0.4962|
+|-|          4|         23|       1330| 4.623955742e+10|        888|01:38:06|+0.37|0.40|0.4467|
+|!|          8|         23|       1330| 4.380589660e+10|        904|01:35:46|+0.38|0.41|0.4267|
+|!|         17|         23|       1330| 4.161560187e+10|        920|00:23:02|+0.39|0.42|0.4084|
+|-|         14|         16|       1330| 3.963390659e+10|        936|00:21:34|-0.02|0.03|0.8207|
+|=|         22|         16|       1330| 3.783236541e+10|        952|00:21:02|-0.03|0.02|0.8297|
+|=|         23|         16|       1312| 2.593339546e+10|        968|01:38:40|-0.02|0.02|0.8329|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best-so-far configuration:        1312    mean value:  2.593339546e+10
+Description of the best-so-far configuration:
+     .ID. population_type tournament_size t_select t_target mutation_rate stop_on_feasible construction         selection     alignment NBX PBX ERX AEX OX OBX CX HGreX HRndX HProX ULX RULX EULX ERULX UPMX SPX MPX APX   replacement insert_1 remove_1 twoOpt exchangeIds exchangeNIds exchange_1_1 centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1 moveAll_10 population_size frequency difference_penalty gap_penalty .PARENT.
+1312 1312         dynamic              18   0.2943   0.6861        0.9355                0       random sortingTournament randomUniform   0   0   0   1  0   1  0     0     0     0   1    1    0     0    1   0   1   0 segregational        1        0      0           0            1            0              1              1              0              1              1          1          0              NA        26                 NA          NA     1197
+
+# 2023-05-16 15:26:23 CEST: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+     population_type tournament_size t_select t_target mutation_rate stop_on_feasible construction         selection     alignment NBX PBX ERX AEX OX OBX CX HGreX HRndX HProX ULX RULX EULX ERULX UPMX SPX MPX APX   replacement insert_1 remove_1 twoOpt exchangeIds exchangeNIds exchange_1_1 centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1 moveAll_10 population_size frequency difference_penalty gap_penalty
+1312         dynamic              18   0.2943   0.6861        0.9355                0       random sortingTournament randomUniform   0   0   0   1  0   1  0     0     0     0   1    1    0     0    1   0   1   0 segregational        1        0      0           0            1            0              1              1              0              1              1          1          0              NA        26                 NA          NA
+1330         dynamic              32   0.2752   0.5627        0.9622                0       random sortingTournament randomUniform   0   0   0   1  0   1  0     0     0     0   1    1    0     0    1   0   1   0 segregational        1        0      0           1            1            1              1              1              0              1              1          1          1              NA        26                 NA          NA
+1344         dynamic              30   0.3755   0.4566        0.6840                0       random sortingTournament randomUniform   0   0   0   1  0   1  0     0     0     0   1    1    0     0    1   0   1   0 segregational        1        0      0           1            1            1              1              1              0              1              1          1          1              NA        14                 NA          NA
+1294         dynamic              78   0.2045   0.6898        0.7391                0       random sortingTournament randomUniform   1   0   0   1  0   1  0     0     0     0   1    1    0     0    1   0   1   0 segregational        1        0      0           1            1            1              1              1              0              1              1          1          1              NA        12                 NA          NA
+1323         dynamic              92   0.1174   0.7090        0.7687                0       random sortingTournament randomUniform   0   0   0   1  0   1  0     0     0     0   1    1    0     0    1   0   1   0 segregational        1        0      0           1            1            1              1              1              0              1              1          1          1              NA        32                 NA          NA
+1310         dynamic              36   0.1749   0.5494        0.9592                0       random sortingTournament randomUniform   0   0   0   1  0   1  0     0     0     0   1    1    0     0    1   0   1   0 segregational        1        0      0           1            1            1              1              1              0              1              1          1          1              NA        29                 NA          NA
+1325         dynamic              87   0.2149   0.5363        0.9094                0       random sortingTournament randomUniform   0   0   0   1  0   1  0     0     0     0   1    1    0     0    1   0   1   0 segregational        1        0      0           1            1            1              1              1              0              1              1          1          1              NA        20                 NA          NA

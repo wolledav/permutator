@@ -1,0 +1,49 @@
+#!/bin/bash
+
+OPERATORS=( NBX PBX ERX AEX OX OBX CX HGreX HRndX HProX ULX RULX EULX ERULX UPMX SPX MPX APX )
+
+# for op in "${OPERATORS[@]}"
+# do
+#     sed  26s/.*/\"$op\"/ configs/testconfigs/NBX.json -i
+#     cp configs/testconfigs/NBX.json configs/testconfigs/EVRP-$op.json 
+# done
+
+
+INSTANCES=( E-n22-k4-s8.evrp          
+            E-n23-k3-s9.evrp           
+            E-n30-k3-s6.evrp           
+            E-n33-k4-s6.evrp           
+            E-n51-k5-s9.evrp           
+            E-n76-k7-s9.evrp           
+            E-n101-k8-s9.evrp          
+            X-n143-k7-s4.evrp         
+            X-n214-k11-s9.evrp        
+            X-n351-k40-s35.evrp        
+            X-n459-k26-s20.evrp )
+
+TIMES=( 1044          
+        1116          
+        1260          
+        1368          
+        1980          
+        2952          
+        3924         
+        10512        
+        15984       
+        27720       
+        34416 )
+
+
+for op in "${OPERATORS[@]}"
+do
+    for i in {1..50}
+    do 
+        for j in {0..10}
+        do 
+            time=${TIMES[$j]}
+            instance=${INSTANCES[$j]}
+            bash.exe test-runner EVRP $op $instance $time $i
+        done
+    done
+done
+
