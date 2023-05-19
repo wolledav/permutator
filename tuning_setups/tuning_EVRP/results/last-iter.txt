@@ -1,0 +1,45 @@
+# 2023-05-15 08:59:11 CEST: Iteration 4 of 7
+# experimentsUsedSoFar: 3002
+# remainingBudget: 6998
+# currentBudget: 1749
+# nbConfigurations: 148
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|         12|        148|        560|     15910.00000|        148|03:01:34|   NA|  NA|    NA|
+|x|          1|        148|        583|     22177.50000|        293|07:48:39|+0.52|0.76|0.4173|
+|x|          3|        148|        539|     14999.66667|        438|00:24:13|+0.39|0.59|0.6756|
+|x|          8|        148|        656|     11380.00000|        583|00:45:02|+0.43|0.57|0.5759|
+|-|         11|         86|        656|     9218.400000|        728|00:27:38|+0.03|0.22|0.5748|
+|-|          4|         55|        656|     9605.666667|        811|04:33:17|+0.10|0.25|0.4675|
+|-|          9|         31|        656|     10531.28571|        863|03:03:27|+0.25|0.36|0.3307|
+|-|          5|         26|        656|     9278.500000|        891|00:28:25|+0.32|0.40|0.2621|
+|-|          7|         24|        656|     11149.66667|        914|09:41:02|+0.34|0.41|0.2357|
+|-|          2|         20|        656|     10104.00000|        935|00:56:56|+0.39|0.45|0.2026|
+|!|         10|         20|        656|     9261.909091|        952|01:11:35|+0.39|0.44|0.1846|
+|-|          6|         17|        656|     8560.083333|        969|00:29:21|-0.03|0.05|0.7276|
+|=|         13|         17|        656|     7966.230769|        986|00:28:37|-0.03|0.05|0.6700|
+|=|         14|         17|        627|     9493.428571|       1003|07:47:32|-0.03|0.04|0.6847|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         627    mean value:      9493.428571
+Description of the best-so-far configuration:
+    .ID. metaheuristic stop_on_feasible first_improve construction  perturbation allow_infeasible local_search insert_1 remove_1 twoOpt exchangeIds exchangeNIds exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 revExchange_1_2 revExchange_2_2 revExchange_2_3 revExchange_2_4 revExchange_3_3 revExchange_3_4 revExchange_4_4 centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 revRelocate_2 revRelocate_3 revRelocate_4 revRelocate_5 moveAll_1 moveAll_2 moveAll_3 moveAll_4 moveAll_10 ils_k bvns_min_k bvns_max_k .PARENT.
+627  627           ILS                0             0       greedy randomMoveAll                1         PVND        1        0      1           1            0            1            0            0            1            1            0            1            1               0               0               0               0               1               1               0              1              1              1              0              0          1          0          0          0          0             1             0             0             0         0         1         1         1          1     8         NA         NA      424
+
+# 2023-05-17 02:06:38 CEST: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    metaheuristic stop_on_feasible first_improve    construction       perturbation allow_infeasible local_search insert_1 remove_1 twoOpt exchangeIds exchangeNIds exchange_1_1 exchange_1_2 exchange_2_2 exchange_2_3 exchange_2_4 exchange_3_3 exchange_3_4 exchange_4_4 revExchange_1_2 revExchange_2_2 revExchange_2_3 revExchange_2_4 revExchange_3_3 revExchange_3_4 revExchange_4_4 centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1 relocate_2 relocate_3 relocate_4 relocate_5 revRelocate_2 revRelocate_3 revRelocate_4 revRelocate_5 moveAll_1 moveAll_2 moveAll_3 moveAll_4 moveAll_10 ils_k bvns_min_k bvns_max_k
+627           ILS                0             0          greedy      randomMoveAll                1         PVND        1        0      1           1            0            1            0            0            1            1            0            1            1               0               0               0               0               1               1               0              1              1              1              0              0          1          0          0          0          0             1             0             0             0         0         1         1         1          1     8         NA         NA
+599          BVNS                0             0          greedy randomDoubleBridge                1         PVND        1        0      1           1            0            1            1            1            1            1            0            0            0               1               0               0               1               1               0               1              0              1              1              1              1          1          1          0          0          1             1             0             1             0         0         1         1         1          1    NA          3         11
+656          BVNS                0             0 nearestNeighbor      randomMoveAll                1         PVND        1        0      1           1            0            0            1            1            1            0            1            0            0               1               1               1               0               0               0               1              0              0              0              0              1          1          0          0          0          1             1             1             1             1         0         0         0         1          1    NA          1          8
+632          BVNS                0             0 nearestNeighbor randomDoubleBridge                1         PVND        1        1      1           1            1            0            0            0            1            0            0            1            0               1               0               0               0               0               0               1              0              1              1              1              1          1          0          1          1          0             1             1             0             0         0         0         0         0          0    NA          5         11
+622           ILS                0             0 nearestNeighbor         randomSwap                1         PVND        1        0      1           0            0            1            1            1            0            1            1            0            1               1               0               1               1               1               0               0              0              1              1              1              1          1          1          0          0          0             1             0             1             1         1         0         1         1          1     4         NA         NA
+642           ILS                0             0 nearestNeighbor      randomMoveAll                1         PVND        1        0      1           1            1            0            1            0            0            0            1            0            0               1               0               1               0               1               0               0              1              0              0              1              0          1          1          1          1          0             1             0             0             0         0         1         0         1          1     5         NA         NA
+583          BVNS                0             0          greedy      randomMoveAll                1         PVND        1        1      1           1            1            1            1            1            1            0            1            0            1               1               0               0               1               0               0               0              1              1              1              1              1          1          1          0          1          0             0             0             0             1         0         0         1         1          1    NA          1          8

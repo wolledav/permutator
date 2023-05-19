@@ -1,0 +1,42 @@
+# 2023-05-15 09:43:35 CEST: Iteration 4 of 7
+# experimentsUsedSoFar: 2876
+# remainingBudget: 7124
+# currentBudget: 1781
+# nbConfigurations: 151
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|         12|        151|        574|     13167.00000|        151|04:38:35|   NA|  NA|    NA|
+|x|          3|        151|        574|     28517.00000|        299|09:44:03|+0.65|0.82|0.2986|
+|x|          6|        151|        550|     23454.00000|        447|01:16:06|+0.70|0.80|0.3275|
+|x|         11|        151|        574|     14657.75000|        595|00:55:56|+0.74|0.80|0.2859|
+|-|          8|         28|        574|     11803.20000|        743|00:25:24|+0.25|0.40|0.4913|
+|-|          1|         15|        574|     9931.333333|        768|00:25:37|+0.37|0.48|0.3720|
+|-|          9|         12|        550|     12723.57143|        780|04:32:20|+0.47|0.55|0.3075|
+|-|          5|         10|        574|     1259091.625|        789|00:39:28|+0.63|0.67|0.1433|
+|-|          4|          8|        574|     1119249.111|        796|00:28:19|+0.70|0.73|0.1316|
+|!|         10|          8|        574|     2011187.400|        801|08:10:18|+0.70|0.73|0.1190|
+|-|          7|          7|        574|     1829944.909|        806|03:01:12|+0.77|0.79|0.0893|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         401    mean value:      833334943.5
+Description of the best-so-far configuration:
+    .ID. population_type tournament_size t_select t_target mutation_rate stop_on_feasible    construction         selection    alignment NBX PBX ERX AEX OX OBX CX HGreX HRndX HProX ULX RULX EULX ERULX UPMX SPX MPX APX   replacement insert_1 remove_1 twoOpt exchangeIds exchangeNIds exchange_1_1 centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1 moveAll_10 population_size frequency difference_penalty gap_penalty .PARENT.
+401  401         dynamic              43   0.2815   0.3224         0.441                0 nearestNeighbor sortingTournament greedyOneGap   0   1   1   0  1   1  1     1     1     1   0    1    0     0    0   1   0   0 segregational        1        1      0           0            0            0              1              1              0              1              1          1          0              NA        11                 NA          NA      274
+
+# 2023-05-16 20:01:00 CEST: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    population_type tournament_size t_select t_target mutation_rate stop_on_feasible    construction         selection     alignment NBX PBX ERX AEX OX OBX CX HGreX HRndX HProX ULX RULX EULX ERULX UPMX SPX MPX APX   replacement insert_1 remove_1 twoOpt exchangeIds exchangeNIds exchange_1_1 centExchange_1 centExchange_2 centExchange_3 centExchange_4 centExchange_5 relocate_1 moveAll_10 population_size frequency difference_penalty gap_penalty
+401         dynamic              43   0.2815   0.3224        0.4410                0 nearestNeighbor sortingTournament  greedyOneGap   0   1   1   0  1   1  1     1     1     1   0    1    0     0    0   1   0   0 segregational        1        1      0           0            0            0              1              1              0              1              1          1          0              NA        11                 NA          NA
+396         dynamic              83   0.2247   0.4369        0.5610                0 nearestNeighbor sortingTournament randomUniform   0   0   1   0  0   1  1     0     1     1   0    1    1     0    0   1   1   1 segregational        1        1      0           0            0            0              0              1              1              1              1          1          1              NA         8                 NA          NA
+498         dynamic              35   0.5117   0.1961        0.4461                0          greedy sortingTournament randomUniform   0   1   1   1  0   0  1     0     0     0   0    0    0     0    0   1   0   1 segregational        1        0      0           0            1            1              1              1              0              0              1          1          1              NA        13                 NA          NA
+574         dynamic              98   0.2881   0.6483        0.6493                0 nearestNeighbor sortingTournament randomUniform   1   0   1   0  0   0  1     0     1     1   1    1    1     0    0   1   0   1 segregational        1        1      0           0            0            0              0              0              1              0              0          1          1              NA        13                 NA          NA
+595         dynamic              23   0.4435   0.3209        0.1702                0          random sortingTournament  greedyOneGap   0   0   1   0  1   0  1     1     1     0   0    1    0     0    0   1   0   1 segregational        1        1      0           1            0            0              1              0              0              1              1          1          0              NA        17                 NA          NA
+549         dynamic             124   0.3828   0.1886        0.5041                0 randomReplicate sortingTournament randomUniform   1   1   1   0  1   1  0     0     1     1   0    1    1     0    0   1   1   1 segregational        1        1      1           0            0            0              0              1              0              1              1          1          1              NA         5                 NA          NA
+550         dynamic              82   0.3562   0.2656        0.6568                0 nearestNeighbor sortingTournament randomUniform   1   1   1   0  0   1  1     0     1     1   0    1    1     0    0   1   0   0 segregational        1        0      0           0            0            0              0              1              1              1              1          1          1              NA        19                 NA          NA

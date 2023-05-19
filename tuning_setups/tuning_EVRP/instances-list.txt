@@ -47,3 +47,39 @@ X-n459-k26-s20.evrp timeout 34416
 #X-n819-k171-s25.evrp timeout 10 
 #X-n916-k207-s9.evrp timeout 10 
 #X-n1001-k43-s9.evrp timeout 10 
+
+E-n22-k4-s8.evrp 
+E-n23-k3-s9.evrp 
+E-n30-k3-s6.evrp 
+E-n33-k4-s6.evrp 
+E-n51-k5-s9.evrp 
+E-n76-k7-s9.evrp 
+E-n101-k8-s9.evrp 
+X-n143-k7-s4.evrp 
+X-n214-k11-s9.evrp 
+X-n351-k40-s35.evrp 
+X-n459-k26-s20.evrp 
+X-n573-k30-s6.evrp 
+X-n685-k75-s25.evrp 
+X-n749-k98-s30.evrp 
+X-n819-k171-s25.evrp 
+X-n916-k207-s9.evrp 
+X-n1001-k43-s9.evrp 
+
+1044          
+1116          
+1260          
+1368          
+1980          
+2952          
+3924         
+10512        
+15984       
+27720       
+34416       
+41616       
+51048       
+56016       
+60696      
+66528      
+108972     

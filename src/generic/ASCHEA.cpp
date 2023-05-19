@@ -62,8 +62,14 @@ void ASCHEA::run()
         // not penalized fitness because different populations have different penalties
         if (!this->stop() && this->active_population->best_known_solution.fitness < this->best_known_solution.fitness)
         {
+            if (!this->best_known_solution.is_feasible && this->active_population->best_known_solution.is_feasible)
+                this->first_feasible = this->getRuntime();
             this->best_known_solution = this->active_population->best_known_solution;
             this->best_population = this->active_population;
+            if (this->best_known_solution.is_feasible){
+                this->last_improvement = std::chrono::steady_clock::now();
+                this->steps.emplace_back(this->getRuntime(), this->best_known_solution.fitness);
+            }
         }
         gen++;
     }
@@ -944,4 +950,22 @@ void ASCHEA::swapPopulation()
 
 void ASCHEA::saveToJson(json &container)
 {
+    std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(this->last_improvement - this->start);
+    container["name"] = this->instance->name;
+    container["last_improvement"] = sec.count();
+    container["timeout"] = this->timeout_s;
+
+    if (this->steps.empty())
+        container["steps"] = {};
+    
+    for (auto s : this->steps)
+    {
+        container["steps"][itos(s.first)] = s.second;
+    }
+    this->best_known_solution.saveToJson(container);
+    container["config"] = this->config;
+    container["first_feasible"] = this->first_feasible;
 }
+
+
+

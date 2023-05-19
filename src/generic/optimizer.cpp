@@ -1335,9 +1335,12 @@ bool Optimizer::operationCall(const string &operation_name)
         this->operation_histogram[operation_name].second++;
     if (this->current_solution < this->best_known_solution)
     {
+        if (!this->best_known_solution.is_feasible && this->current_solution.is_feasible)
+            this->first_feasible = this->getRuntime();
         this->best_known_solution = this->current_solution;
         this->last_improvement = std::chrono::steady_clock::now();
         this->steps.emplace_back(this->getRuntime(), this->current_solution.fitness);
+        
     }
     return result;
 }
@@ -1419,5 +1422,6 @@ void Optimizer::saveToJson(json &container)
         container["steps"][itos(s.first)] = s.second;
     }
     this->best_known_solution.saveToJson(container);
-    container["config"] = this->config;
+    container["config"] = this->config;  
+    container["first_feasible"] = this->first_feasible;
 }

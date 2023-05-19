@@ -18,6 +18,8 @@ class BasicOptimizer
         Solution best_known_solution;
         std::chrono::steady_clock::time_point start, last_improvement;
         Instance* instance;
+        std::vector<std::pair<long, permutator::fitness_t>> steps;
+        long first_feasible = 0;
 
         long getRuntime() {return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - this->start).count();};
         virtual bool stop() = 0;

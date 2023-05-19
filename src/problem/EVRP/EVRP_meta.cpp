@@ -55,7 +55,7 @@ int main (int argc, char *argv[])
         output_file << output.dump(4);
     } else {
         inst.print_solution(&sol, std::cout);
-        std::cout << sol.fitness << std::endl;
+        std::cout << sol.fitness << " " <<  sol.is_feasible << std::endl;
     }
     return 0;
 } 

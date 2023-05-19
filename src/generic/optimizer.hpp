@@ -26,7 +26,6 @@ class Optimizer : public BasicOptimizer
         std::function<void()> metaheuristic;
         std::function<void()> local_search;
         std::basic_ostream<char> *log_stream = nullptr;
-        std::vector<std::pair<long, permutator::fitness_t>> steps;
         const std::map<std::string, std::function<bool()>> operation_map = {
             {"insert_1",      [this](){return this->insert1();}},
             {"remove_1",      [this](){return this->remove1();}},
