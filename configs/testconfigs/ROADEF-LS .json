@@ -1,0 +1,35 @@
+{
+    "stop_on_feasible": false,
+    "first_improve": false,
+    "num_threads": 1,
+    "metaheuristic": "BVNS",
+    "bvns_min_k": 7,
+    "bvns_max_k": 11,
+    "construction": "randomReplicate",
+    "allow_infeasible": true,
+    "local_search": "BVNS",
+    "operators": [
+        "insert_1",
+        "twoOpt",
+        "exchangeIds",
+        "exchangeNIds",
+        "exchange_1_1",
+        "exchange_2_4",
+        "exchange_3_3",
+        "exchange_4_4",
+        "revExchange_2_3",
+        "revExchange_3_3",
+        "revExchange_4_4",
+        "centExchange_3",
+        "centExchange_4",
+        "centExchange_5",
+        "relocate_5",
+        "moveAll_1",
+        "moveAll_2"
+    ],
+    "perturbation": [
+        "randomMove"
+    ]
+}
+
+

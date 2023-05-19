@@ -1,0 +1,27 @@
+{
+    "num_threads": 1,
+    "population_type": "dynamic",
+    "frequency": 11,
+    "tournament_size": 43,
+    "t_select": 0.2815,
+    "t_target": 0.3224,
+    "mutation_rate": 0.441,
+    "stop_on_feasible": false,
+    "construction": "nearestNeighbor",
+    "selection": "sortingTournament",
+    "alignment": "greedyOneGap",
+    "replacement": "segregational",
+    "operators": [],
+    "mutation": [
+        "insert_1",
+        "remove_1",
+        "centExchange_1",
+        "centExchange_2",
+        "centExchange_4",
+        "centExchange_5",
+        "relocate_1"
+    ],
+    "crossover": [
+"RULX"
+    ]
+}
