@@ -1,0 +1,30 @@
+#!/bin/bash
+#PBS -q default@meta-pbs.metacentrum.cz
+#PBS -l walltime=168:0:0
+#PBS -l select=1:ncpus=1:mem=8gb:scratch_local=256gb:cl_halmir=True
+#PBS -N ROADEF-LS-batch-tuning
+#PBS -m ae
+
+DATADIR=/storage/praha1/home/pazoudav
+echo "$PBS_JOBID is running on node `hostname -f` in a scratch directory $SCRATCHDIR" >> $DATADIR/jobs_info.txt
+test -n "$SCRATCHDIR" || { echo >&2 "Variable SCRATCHDIR is not set!"; exit 1; }
+
+
+cd $SCRATCHDIR
+cp $DATADIR/permutator ./ -r  || { echo >&2 "Error while copying input file(s)!"; exit 2; }
+
+cd permutator/
+# module add cmake
+# cmake -S . -B"./build"
+# cmake --build build
+cd tuning_setups/tuning_ROADEF/
+
+PATH=$PATH:$DATADIR/Rpackages/irace/bin/
+module purge
+module load r/r-4.1.1-intel-19.0.4-ilb46fy
+export R_LIBS_USER="/storage/praha1/home/pazoudav/Rpackages"
+Rscript -e 'library("irace")'
+
+irace 
+
+# cp $SCRATCHDIR/permutator/tuning_setups/tuning_ROADEF/irace.Rdata $DATADIR
