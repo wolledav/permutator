@@ -5,7 +5,7 @@
 
 **Creators:** [David Woller](http://imr.ciirc.cvut.cz/People/David), Jan Hrazdíra
 
-**Contributors:** [David Woller](http://imr.ciirc.cvut.cz/People/David), Jan Hrazdíra, David Kolečkář, Jan Švrčina
+**Contributors:** [David Woller](http://imr.ciirc.cvut.cz/People/David), Jan Hrazdíra, David Kolečkář, Jan Švrčina, David Pažout
 
 **Contact:** wolledav@ciirc.cvut.cz
 
@@ -23,13 +23,15 @@ Currently, the following **problems** are formulated:
 - Non-Permutation Flowshop Scheduling (NPFS)
 - Quadratic Assignment Problem (QAP)
 - Sudoku
-- Travelling Salesman Problem on Self-Deleting Graphs (TSPSD)
-- weak Travelling Salesman Problem on Self-Deleting Graphs (weak TSPSD)
+- Traveling Salesman Problem on Self-Deleting Graphs (TSPSD)
+- weak Traveling Salesman Problem on Self-Deleting Graphs (weak TSPSD)
+- Electric Vehicle Routing Problem (EVRP)
+- ROADEF/EURO challenge 2020: maintenance planning problem (ROADEF)
 
-All **datasets** and experimental **results** are stored separately in a publicly available [Google Drive repository](https://drive.google.com/drive/folders/1BAbfwAIO1iAvtP9s4yG5JJ_jpsE_qtyS?usp=sharing).
+<!-- All **datasets** and experimental **results** are stored separately in a publicly available [Google Drive repository](https://drive.google.com/drive/folders/1BAbfwAIO1iAvtP9s4yG5JJ_jpsE_qtyS?usp=sharing). -->
 
 
-**Keywords:** permutative representation, metaheuristics, Iterated Local Search, Variable Neighborhood Search
+**Keywords:** permutative representation, metaheuristics, Iterated Local Search, Variable Neighborhood Search, ASCHEA
 
 **Relevant literature:**
 
@@ -71,27 +73,17 @@ Parameters:
 
 -c . . . solver configuration file (optional)
 
+-e . . . enable ASCHEA instead of LS 
+
 
 In the permutator/ directory, run
 ```
 ./cmake-build-debug/TSPSD_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json
 ```
-The solver prints details about the search progress to the console in debug mode.
 
-To run in release mode and with all optional parameters, run
+# Components overview
 
-```
-./cmake-build-release/wTSPSD_meta -d ./data_demo/datasets/TSPSD/berlin52-13.2.json -i ./data_demo/results/TSPSD/berlin52-13.2_init.json -o ./data_demo/results/wTSPSD/berlin52-13.2.json  -c ./configs/TSPSD_config_opt.json -t 60
-```
-
-
-
-
-
-
-
-
-## Components overview
+## Local Search Solver
 
 The solver implements several metaheuristic algorithms, perturbations, local search heuristics, local search operators and construction procedures.
 
@@ -138,6 +130,82 @@ The solver implements several metaheuristic algorithms, perturbations, local sea
 | random           | none       |
 | random replicate | none       |
 
+## ASCHEA Solver
+
+The solver implements several crossover operators, mutation operators, construction procedures 
+and population parameters.
+
+### Crossover operators
+| Name              
+|-------------------
+| AEX
+| APX
+| CX 
+| ERULX
+| ERX
+| EULX
+| HGrX
+| HPrX
+| HRnX
+| MPX
+| NBX
+| OBX
+| OX 
+| PBX
+| RULX
+| SPX
+| ULX
+| UPMX
+
+
+
+
+### Alignment operators
+| Name              | Parameters    |
+|-------------------|---------------|
+|greedy uniform      | gap_penalty, neq_penalty
+|greedy one-gap       | none
+|random one-gap       | none
+|random uniform      | none
+|back-fill one-gap     | none
+|front-fill one-gap    | none
+
+### Mutation operators
+| Name              | Parameters    |
+|-------------------|---------------|
+| insert1           | none          |
+| remove1           | none          |
+| relocate          | x, reverse    |
+| exchange          | x, y, reverse |
+| centered exchange | x             |
+| moveAll           | x             |
+| exchangeIds       | none          |
+| exchangeNIds      | none          |
+
+### Construction procedures
+| Name             | Parameters |
+|------------------|------------|
+| greedy           | none       |
+| nearest neighbors| none       |
+| random           | none       |
+| random replicate | none       |
+
+### Replacement procedures
+| Name             | Parameters |
+|------------------|------------|
+| segregational    | none       |
+| niche segregational| none         |
+
+
+### Population parameters
+| Name              | Condition    |
+|-------------------|---------------|
+| type              | == "static" or "dynamic"          |
+| counter base      | type==dynamic             |
+| size              | type==static            |
+| t select          | none  |
+| t target          | none  |
+| mutation rate     | none  |
 
 
 ## Tuning
@@ -146,30 +214,6 @@ The **permutator** can be automatically tuned to achieve optimal performance on 
 For this purpose, the [irace](https://mlopez-ibanez.github.io/irace/) package is used.
 Tuning setups for individual problems are prepared in the permutator/tuning_setups/ directory.
 
-
-
-
-## Gurobi benchmark
-
-Some of the addressed problems were formulated as MILP and the permutator was compared with the Gurobi optimizer.
-The experiment can be replicated using the following instructions.
-
-TODO UPDATE
-
-### Gurobi installation
-1) Download and extract Gurobi to /opt
-2) Add to ~/.bashrc:
-```
-export GUROBI_HOME="/opt/gurobi951/linux64"
-export PATH="${PATH}:${GUROBI_HOME}/bin"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${GUROBI_HOME}/lib"
-```
-3) Run
-```
-cd /opt/gurobi951/linux64/src/build
-make
-cp libgurobi_c++.a ../../lib/
-```
 
 
 
